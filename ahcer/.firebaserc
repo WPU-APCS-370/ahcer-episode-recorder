@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "wpu-ahcer": {
+      "hosting": {
+        "ahcer": [
+          "wpu-ahcer"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "wpu-ahcer"
+  }
+}

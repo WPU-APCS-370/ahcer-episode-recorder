@@ -105,6 +105,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "ahcer:build:production",
+            "firebaseProject": "wpu-ahcer",
+            "firebaseHostingSite": "wpu-ahcer"
+          }
         }
       }
     }
