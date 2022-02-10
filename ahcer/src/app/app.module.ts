@@ -31,13 +31,13 @@ import {MatButtonModule} from "@angular/material/button";
     provideDatabase(() => getDatabase()),
     provideFirestore(() => getFirestore()),
     provideRemoteConfig(() => getRemoteConfig()),
-    provideStorage(() => getStorage())
-  ],
-  providers: [
-    ScreenTrackingService,UserTrackingService,
+    provideStorage(() => getStorage()),
     MatToolbarModule,
     MatIconModule,
     MatButtonModule
+  ],
+  providers: [
+    ScreenTrackingService,UserTrackingService,
   ],
   bootstrap: [AppComponent]
 })
