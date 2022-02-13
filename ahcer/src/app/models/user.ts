@@ -3,5 +3,5 @@ export interface User {
   firstName : string,
   lastName : string,
   emailAddress : string,
-  id : number
+  id : string
 }
