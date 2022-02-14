@@ -16,6 +16,8 @@ import { provideStorage,getStorage } from '@angular/fire/storage';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatListModule} from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import {MatButtonModule} from "@angular/material/button";
     provideStorage(() => getStorage()),
     MatToolbarModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService,
