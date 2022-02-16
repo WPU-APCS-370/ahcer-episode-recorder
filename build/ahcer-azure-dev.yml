@@ -14,6 +14,14 @@ steps:
     inputs:
       versionSpec: '16.x'
     displayName: 'Install Node.js'
+  
+  - task: Bash@3
+    displayName: 'checking directory'
+    inputs:
+      targetType: 'inline'
+      script: |
+        pwd
+        dir
 
   - task: Npm@1
     displayName: 'NPM Install'
@@ -25,14 +33,6 @@ steps:
     inputs:
       verbose: true
   
-  - task: Bash@3
-    displayName: 'checking directory'
-    inputs:
-      targetType: 'inline'
-      script: |
-        pwd
-        dir
-
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: 'AHCER-App/ahcer/dist/ahcer'
