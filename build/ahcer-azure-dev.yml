@@ -24,6 +24,14 @@ steps:
     displayName: 'NPM build prod'
     inputs:
       verbose: true
+  
+  - task: Bash@3
+    displayName: 'checking directory'
+    inputs:
+      targetType: 'inline'
+      script: |
+        pwd
+        dir
 
   - task: ArchiveFiles@2
     inputs:
