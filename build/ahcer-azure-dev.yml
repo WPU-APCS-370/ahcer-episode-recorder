@@ -21,3 +21,18 @@ steps:
       npm install
       ng build --prod
     displayName: 'npm install and build'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: 'AHCER-App/ahcer/dist'
+      includeRootFolder: false
+      archiveType: 'tar'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).tar.gz'
+      replaceExistingArchive: false
+      verbose: true
+  - task: CopyFiles@2
+    displayName: 'Copy App File Archive'
+    inputs:
+      SourceFolder: '$(Build.ArtifactStagingDirectory)'
+      Contents: $(Build.BuildId).tar.gz
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/ArtifactsToBePublished'
