@@ -20,7 +20,14 @@ steps:
     inputs:
       workingDir: AHCER-App/ahcer
       verbose: true
-  
+
+  - task: Npm@1
+      displayName: 'npm build prod'
+      inputs:
+        command: custom
+        workingDir: AHCER-App/ahcer
+        verbose: true
+        customCommand: 'run build-prod'
 
   - task: ArchiveFiles@2
     inputs:
