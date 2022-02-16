@@ -15,27 +15,21 @@ steps:
       versionSpec: '16.x'
     displayName: 'Install Node.js'
   
-  - task: Bash@3
-    displayName: 'checking directory'
-    inputs:
-      targetType: 'inline'
-      script: |
-        pwd
-        dir
-
   - task: Npm@1
     displayName: 'NPM Install'
     inputs:
       verbose: true
+      workingDir: acher
 
   - task: Npm@1
     displayName: 'NPM build prod'
     inputs:
       verbose: true
+      workingDir: acher
   
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: 'AHCER-App/ahcer/dist/ahcer'
+      rootFolderOrFile: 'ahcer/dist'
       includeRootFolder: false
       archiveType: 'tar'
       archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).tar.gz'
