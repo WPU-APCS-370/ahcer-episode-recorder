@@ -18,13 +18,11 @@ steps:
   - task: Npm@1
     displayName: 'NPM Install'
     inputs:
-      workingDir: AHCER-App/ahcer
       verbose: true
 
   - task: Npm@1
     displayName: 'NPM build prod'
     inputs:
-      workingDir: AHCER-App/ahcer
       verbose: true
 
   - task: ArchiveFiles@2
