@@ -19,13 +19,13 @@ steps:
     displayName: 'NPM Install'
     inputs:
       verbose: true
-      workingDir: acher
+      workingDir: ahcer
 
   - task: Npm@1
     displayName: 'NPM build prod'
     inputs:
       verbose: true
-      workingDir: acher
+      workingDir: ahcer
   
   - task: ArchiveFiles@2
     inputs:
