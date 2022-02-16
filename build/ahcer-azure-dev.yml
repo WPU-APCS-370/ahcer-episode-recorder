@@ -24,6 +24,8 @@ steps:
   - task: Npm@1
     displayName: 'NPM build prod'
     inputs:
+      command: custom
+      customCommand: 'run build-prod'
       verbose: true
       workingDir: ahcer
   
