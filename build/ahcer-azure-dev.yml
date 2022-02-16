@@ -15,12 +15,12 @@ steps:
       versionSpec: '16.x'
     displayName: 'Install Node.js'
 
-  - script: |
-      cd ahcer
-      npm install -g @angular/cli
-      npm install
-      ng build --prod
-    displayName: 'npm install and build'
+  - task: Npm@1
+    displayName: 'NPM Install'
+    inputs:
+      workingDir: AHCER-App/ahcer
+      verbose: true
+  
 
   - task: ArchiveFiles@2
     inputs:
