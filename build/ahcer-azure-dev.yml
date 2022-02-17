@@ -22,6 +22,7 @@ steps:
     displayName: 'npm install and build'
   
   - task: ArchiveFiles@2
+    displayName: 'archive web files'
     inputs:
       rootFolderOrFile: ahcer/dist
       includeRootFolder: false
@@ -29,3 +30,19 @@ steps:
       archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).tar.gz'
       replaceExistingArchive: false
       verbose: true
+  
+  - task: CopyFiles@2
+    displayName: 'copy web archives'
+    inputs:
+      SourceFolder: $(Build.ArtifactStagingDirectory)
+      Contents: $(Build.BuildId).tar.gz
+      TargetFolder: $(Build.ArtifactStagingDirectory)/ArtifactsToBePublished
+  
+  - task: PublishBuildArtifacts@1
+    displayName: "publishing web artifacts"
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)/ArtifactsToBePublished
+      ArtifactName: 'ahcer-web'
+      publishLocation: 'Container'
+
+            
