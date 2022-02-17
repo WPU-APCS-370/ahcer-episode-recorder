@@ -15,6 +15,7 @@ steps:
     displayName: 'Install Node.js'
 
   - script: |
+      cd ahcer
       npm install -g @angular/cli
       npm install
       ng build --output-path=dist
