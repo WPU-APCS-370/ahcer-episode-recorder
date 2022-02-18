@@ -10,7 +10,7 @@ const routes: Routes = [
     path: 'about',
     component: AboutComponent
   }, {
-    path: 'create-patient',
+    path: 'add-patient',
     component: CreatePatientComponent
   }
 ];

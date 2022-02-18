@@ -1,4 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import {FormBuilder, Validators} from "@angular/forms";
+import {PatientServicesService} from "../services/patient-services.service";
+import {Router} from "@angular/router";
+import {Patient} from "../models/patient";
+import firebase from "firebase/compat/app";
+import Timestamp = firebase.firestore.Timestamp;
+import {catchError, tap, throwError} from "rxjs";
+import firestore = firebase.firestore;
 
 @Component({
   selector: 'app-create-patient',
@@ -7,9 +15,49 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreatePatientComponent implements OnInit {
 
-  constructor() { }
+  patientForm =this.fb.group({
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    gender: [''],
+    birthDate: [null, Validators.required],
+    dateOfDiagnosis: [null],
+    primaryPhysicianName: [''],
+    primaryPhysicianPhone: [''],
+    otherDoctorInfo: ['']
+  });
+
+  constructor(private fb: FormBuilder,
+              private patientService: PatientServicesService,
+              private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  onCreatePatient() {
+    const val = this.patientForm.value;
+    const newPatient: Partial<Patient> = {
+      firstName: val.firstName,
+      lastName: val.lastName,
+      gender: val.gender,
+      primaryPhysicianName: val.primaryPhysicianName,
+      primaryPhysicianPhone: val.primaryPhysicianPhone,
+      otherDoctorInfo: val.otherDoctorInfo
+    };
+
+    newPatient.birthDate = Timestamp.fromDate(val.birthDate);
+    if(val.dateOfDiagnosis)
+      newPatient.dateOfDiagnosis = Timestamp.fromDate(val.dateOfDiagnosis);
+
+    this.patientService.createPatient(newPatient)
+      .pipe(
+        tap(() => this.router.navigateByUrl('/')),
+        catchError(err => {
+          console.log(err);
+          alert('Could not add new patient.');
+          return throwError(err);
+        })
+      )
+      .subscribe();
   }
 
 }
