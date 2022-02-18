@@ -13,13 +13,15 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import { AboutComponent } from './about/about.component';
+import { CreatePatientComponent } from './create-patient/create-patient.component';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 
 @NgModule({
   declarations: [
     AppComponent,
-    AboutComponent
+    AboutComponent,
+    CreatePatientComponent
   ],
   imports: [
     BrowserModule,
