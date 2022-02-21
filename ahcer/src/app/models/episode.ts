@@ -1,7 +1,7 @@
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 export interface Episode {
-  symptoms: {
+  symptoms?: {
     eyes: string,
     leftArm: string,
     leftHand: string,
@@ -10,12 +10,13 @@ export interface Episode {
     rightHand: string,
     rightLeg: string,
   },
-  startTime: Timestamp,
-  endTime: Timestamp,
-  otherMedication: string,
-  otherTrigger: string,
-  knownTriggers: [string],
-  notes: string,
-  rescueMedication: [string],
+  id: string,
+  startTime?: Timestamp,
+  endTime?: Timestamp,
+  otherMedication?: string,
+  otherTrigger?: string,
+  knownTriggers?: [string],
+  notes?: string,
+  rescueMedication?: [string],
 
 }
