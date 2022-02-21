@@ -10,3 +10,16 @@
 .container {
   min-height: calc(100vh - 128px);
 }
+
+@media only screen and (max-width: 600px) {
+  .container {
+    min-height: calc(100vh - 112px);
+  }
+}
+
+.nav-bar {
+  position: sticky;
+  position: -webkit-sticky; /* For macOS/iOS Safari */
+  top: 0; /* Sets the sticky toolbar to be on top */
+  z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+}
