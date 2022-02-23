@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {PatientServices} from "./services/patient-services.service";
 
 @Component({
   selector: 'app-root',
@@ -6,9 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  dataSource: any;
-  displayedColumns: any;
-  title: '' | undefined;
-  myDisplayedColumns: any;
-
+  title = 'ahcer';
+  constructor(private patientservice: PatientServices ) {
+    console.log(patientservice.getPatient());
+  }
 }
