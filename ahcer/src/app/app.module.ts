@@ -15,11 +15,15 @@ import {MatListModule} from "@angular/material/list";
 import { AboutComponent } from './about/about.component';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
+import {PatientServices} from "./services/patient-services.service";
+import { ViewPatientComponent } from './view-patient/view-patient.component';
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [
     AppComponent,
-    AboutComponent
+    AboutComponent,
+    ViewPatientComponent
   ],
   imports: [
     BrowserModule,
@@ -31,10 +35,11 @@ import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatCardModule
   ],
   providers: [
-    ScreenTrackingService,UserTrackingService,
+    ScreenTrackingService,UserTrackingService, PatientServices
   ],
   bootstrap: [AppComponent]
 })
