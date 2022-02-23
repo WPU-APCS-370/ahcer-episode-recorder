@@ -16,6 +16,8 @@ import { AboutComponent } from './about/about.component';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import { HomeComponent } from './home/home.component';
+import {MatTableModule} from "@angular/material/table";
+import {CdkTableModule} from "@angular/cdk/table";
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { HomeComponent } from './home/home.component';
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatTableModule,
+    CdkTableModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService,

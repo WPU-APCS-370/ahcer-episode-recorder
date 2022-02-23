@@ -6,6 +6,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  displayedColumns: any;
+  episodes = [
+    {
+    startDate: '12/12/22',
+    time: '12:20 PM'
+   }
+  ]
 
   constructor() { }
 
