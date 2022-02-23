@@ -10,9 +10,5 @@ export class AppComponent {
   displayedColumns: any;
   title: '' | undefined;
   myDisplayedColumns: any;
-  myDataArray: any;
 
 }
-
-
-
