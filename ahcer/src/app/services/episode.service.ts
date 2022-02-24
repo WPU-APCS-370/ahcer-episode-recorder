@@ -13,11 +13,10 @@ export class EpisodeService {
 
   constructor(private db: AngularFirestore) { }
 
-  getEpisodesByPatient(userId: string, patientId: string,
-                       sortOrder: OrderByDirection = 'asc'): Observable<Episode[]> {
-    console.log("userId" + userId);
-    console.log("patientId" + patientId);
-    return this.db.collection(`users/${userId}/patients/${patientId}/episodes`)
+  getLastFiveEpisodesByPatient(userId: string, patientId: string,
+                       sortOrder: OrderByDirection): Observable<Episode[]> {
+    return this.db.collection(`users/${userId}/patients/${patientId}/episodes`,
+      ref => ref.orderBy('startTime', sortOrder).limit(5))
       .get()
       .pipe(
         map(snaps => convertSnaps<Episode>(snaps))

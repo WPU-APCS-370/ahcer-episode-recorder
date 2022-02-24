@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
   constructor(private episodeService: EpisodeService) { }
 
   ngOnInit(): void {
-    this.episodeService.getEpisodesByPatient(this.temporaryUserId,
+    this.episodeService.getLastFiveEpisodesByPatient(this.temporaryUserId,
       this.temporaryPatientId, 'desc')
       .pipe(
         finalize(() => this.loading = false)
