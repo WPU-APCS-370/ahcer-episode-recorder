@@ -9,7 +9,7 @@ import {Episode} from "../models/episode";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['startTime', 'endTime'];
+  displayedColumns: string[] = ['startTime', 'endTime', 'id'];
   loading: boolean = false;
   episodes: Episode[];
   temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
