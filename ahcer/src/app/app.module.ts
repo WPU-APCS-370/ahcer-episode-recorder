@@ -28,6 +28,7 @@ import {CdkTableModule} from "@angular/cdk/table";
 import {PatientServices} from "./services/patient.service";
 import { ViewPatientComponent } from './view-patient/view-patient.component';
 import {MatCardModule} from "@angular/material/card";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import {MatCardModule} from "@angular/material/card";
     MatListModule,
     MatTableModule,
     CdkTableModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices
