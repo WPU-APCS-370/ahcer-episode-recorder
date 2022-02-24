@@ -22,12 +22,20 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatInputModule} from "@angular/material/input";
 import {MatNativeDateModule} from "@angular/material/core";
+import { HomeComponent } from './home/home.component';
+import {MatTableModule} from "@angular/material/table";
+import {CdkTableModule} from "@angular/cdk/table";
+import {PatientServices} from "./services/patient-services.service";
+import { ViewPatientComponent } from './view-patient/view-patient.component';
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
-    CreatePatientComponent
+    CreatePatientComponent,
+    HomeComponent,
+    ViewPatientComponent
   ],
   imports: [
     BrowserModule,
@@ -45,10 +53,14 @@ import {MatNativeDateModule} from "@angular/material/core";
     MatSelectModule,
     MatDatepickerModule,
     MatInputModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatListModule,
+    MatTableModule,
+    CdkTableModule,
+    MatCardModule
   ],
   providers: [
-    ScreenTrackingService,UserTrackingService,
+    ScreenTrackingService,UserTrackingService, PatientServices
   ],
   bootstrap: [AppComponent]
 })

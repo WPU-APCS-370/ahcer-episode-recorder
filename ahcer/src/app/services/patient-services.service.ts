@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore/";
 import {Patient} from "../models/patient";
 import {from, map, Observable} from "rxjs";
+import {convertSnaps} from "./data-utils";
 
 @Injectable({
   providedIn: 'root'
@@ -27,4 +28,14 @@ export class PatientServices {
       })
     );
   }
+
+  getPatient(): Observable<Patient[]> {
+    return this.db.collection(`users/${this.userId}/patients`,
+      ref => ref.orderBy('lastName'))
+      .get()
+      .pipe(
+        map(result => convertSnaps<Patient>(result))
+      )
+  }
+
 }
