@@ -25,7 +25,7 @@ import {MatNativeDateModule} from "@angular/material/core";
 import { HomeComponent } from './home/home.component';
 import {MatTableModule} from "@angular/material/table";
 import {CdkTableModule} from "@angular/cdk/table";
-import {PatientServices} from "./services/patient-services.service";
+import {PatientServices} from "./services/patient.service";
 import { ViewPatientComponent } from './view-patient/view-patient.component';
 import {MatCardModule} from "@angular/material/card";
 
