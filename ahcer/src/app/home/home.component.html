@@ -6,8 +6,7 @@
 </div>
 </h2>
 
-
-  <table mat-table [dataSource]="episodes" class="mat-elevation-z8">
+  <table mat-table [dataSource]="episodes" *ngIf="episodes.length > 0" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -33,6 +32,5 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-
-
+  <div *ngIf="episodes.length === 0">No episodes found. Please enter one with the '+' button above.</div>
 </div>

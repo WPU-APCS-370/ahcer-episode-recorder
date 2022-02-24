@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
   loading: boolean = false;
   episodes: Episode[];
   temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
-  temporaryPatientId: string = 'c5fSiohs3Ze5gsP6Ivh8';
+  temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
 
 
   constructor(private episodeService: EpisodeService) { }
