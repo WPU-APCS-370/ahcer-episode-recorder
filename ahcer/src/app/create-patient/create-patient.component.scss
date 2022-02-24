@@ -1,12 +1,12 @@
 .create-patient {
   text-align: left;
   max-width: 350px;
-  margin: 20px auto 0 auto;
-  margin-bottom: 70px; //just to make sure button clears footer for now. We can remove this when we get the footer to be non-sticky
+  margin: 20px auto 20px auto;
+  padding: 0px 20px 0px 20px;
 }
 
 mat-form-field {
-  display:table-row;
+  width: 100%;
 }
 
 button {

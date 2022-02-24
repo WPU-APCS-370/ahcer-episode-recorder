@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
-import {PatientServicesService} from "../services/patient-services.service";
+import {PatientServices} from "../services/patient-services.service";
 import {Router} from "@angular/router";
 import {Patient} from "../models/patient";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import {catchError, tap, throwError} from "rxjs";
-import firestore = firebase.firestore;
 
 @Component({
   selector: 'app-create-patient',
@@ -27,7 +26,7 @@ export class CreatePatientComponent implements OnInit {
   });
 
   constructor(private fb: FormBuilder,
-              private patientService: PatientServicesService,
+              private patientService: PatientServices,
               private router: Router) { }
 
   ngOnInit(): void {

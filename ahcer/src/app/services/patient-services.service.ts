@@ -7,7 +7,7 @@ import {from, map, Observable} from "rxjs";
   providedIn: 'root'
 })
 
-export class PatientServicesService {
+export class PatientServices {
 
   private userId ="7ZA7KNV0fYbo19SXYHkC";
 
