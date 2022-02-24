@@ -1,31 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import {EpisodeService} from "../services/episode.service";
+import {finalize} from "rxjs";
+import {Episode} from "../models/episode";
 
-export interface Episode {
-  time: string;
-  date: string;
-  link: string
-}
-
-const ELEMENT_DATA: Episode[] = [
-  {time: '18:00', date: '12/18/22', link: `detail` },
-  {time: '14:00', date: '12/14/22',link: `detail` },
-  {time: '10:00', date: '12/12/22',link: `detail` },
-  {time: '08:00', date: '12/11/22',link: `detail` },
-  {time: '23:00', date: '12/10/22',link: `detail` }
-];
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['time', 'date'];
-  dataSource = ELEMENT_DATA;
+  displayedColumns: string[] = ['startTime', 'endTime'];
+  loading: boolean = false;
+  episodes: Episode[];
+  temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
+  temporaryPatientId: string = 'c5fSiohs3Ze5gsP6Ivh8';
 
 
-  constructor() { }
+  constructor(private episodeService: EpisodeService) { }
 
   ngOnInit(): void {
+    this.episodeService.getEpisodesByPatient(this.temporaryUserId,
+      this.temporaryPatientId, 'desc')
+      .pipe(
+        finalize(() => this.loading = false)
+      )
+      .subscribe(
+        episodes => this.episodes = episodes
+      );
   }
 
 }
