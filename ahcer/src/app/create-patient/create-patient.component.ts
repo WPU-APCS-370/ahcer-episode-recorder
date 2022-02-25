@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
-import {PatientServices} from "../services/patient-services.service";
+import {PatientServices} from "../services/patient.service";
 import {Router} from "@angular/router";
 import {Patient} from "../models/patient";
 import firebase from "firebase/compat/app";
