@@ -30,6 +30,7 @@ import { ViewPatientComponent } from './view-patient/view-patient.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { EditPatientComponent } from './edit-patient/edit-patient.component';
     MatTableModule,
     CdkTableModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDialogModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices

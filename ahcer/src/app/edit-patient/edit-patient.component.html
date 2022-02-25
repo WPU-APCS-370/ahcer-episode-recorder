@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Edit Patient</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label>First Name</mat-label>
+    <input matInput formControlName="firstName">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Last Name</mat-label>
+    <input matInput formControlName="lastName">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Gender</mat-label>
+    <mat-select formControlName="gender">
+      <mat-option value="male">Male</mat-option>
+      <mat-option value="female">Female</mat-option>
+      <mat-option value="other">Other</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Date of Birth</mat-label>
+    <input matInput [matDatepicker]="DOBDatePicker" formControlName="birthDate" />
+    <mat-datepicker-toggle matSuffix [for]="DOBDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #DOBDatePicker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Date of Diagnosis</mat-label>
+    <input matInput [matDatepicker]="diagnosisDatePicker" formControlName="dateOfDiagnosis" />
+    <mat-datepicker-toggle matSuffix [for]="diagnosisDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #diagnosisDatePicker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Primary Physician Name</mat-label>
+    <input matInput formControlName="primaryPhysicianName">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Primary Physician Phone</mat-label>
+    <input matInput formControlName="primaryPhysicianPhone">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Other Doctor Info</mat-label>
+    <textarea matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="5"
+              formControlName="otherDoctorInfo"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+
+  <button mat-raised-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>
