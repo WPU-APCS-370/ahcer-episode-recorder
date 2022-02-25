@@ -3,6 +3,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
+import firebase from "firebase/compat";
+import Timestamp = firebase.firestore.Timestamp;
 
 @Component({
   selector: 'app-edit-patient',
@@ -16,9 +18,36 @@ export class EditPatientComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<EditPatientComponent>,
               private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) patient: Patient,
-              private patientsService: PatientServices) { }
+              private patientsService: PatientServices) {
+    this.patient = patient;
+    this.form =this.fb.group({
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+      gender: patient.gender,
+      primaryPhysicianName: patient.primaryPhysicianName,
+      primaryPhysicianPhone: patient.primaryPhysicianPhone,
+      otherDoctorInfo: patient.otherDoctorInfo,
+      birthDate: patient.birthDate.toDate(),
+      dateOfDiagnosis: (patient.dateOfDiagnosis)?patient.dateOfDiagnosis.toDate() : null
+    })
+  }
 
   ngOnInit(): void {
   }
 
-}
+  close(): void {
+    this.dialogRef.close()
+  }
+
+  save(): void {
+    this.form.value.birthDate = Timestamp.fromDate(this.form.value.birthDate);
+    if (this.form.value.dateOfDiagnosis)
+      this.form.value.dateOfDiagnosis = Timestamp.fromDate(this.form.value.dateOfDiagnosis);
+    const changes = this.form.value;
+    this.patientsService.updatePatient(this.patient.id, changes).subscribe(() => {
+      this.dialogRef.close(changes);
+    });
+  }
+
+
+  }
