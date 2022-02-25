@@ -22,13 +22,15 @@ import {PatientServices} from "./services/patient.service";
 import { ViewPatientComponent } from './view-patient/view-patient.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { EditPatientComponent } from './edit-patient/edit-patient.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
     HomeComponent,
-    ViewPatientComponent
+    ViewPatientComponent,
+    EditPatientComponent
   ],
   imports: [
     BrowserModule,
