@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {map, Observable} from "rxjs";
+import {from, map, Observable} from "rxjs";
 import {Patient} from "../models/patient";
 import {convertSnaps} from "./data-utils";
 
@@ -22,5 +22,9 @@ export class PatientServices {
         map(result => convertSnaps<Patient>(result))
       )
   }
+  deletePatient(patientId: string): Observable<any> {
+    return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).delete());
+  }
+
 
 }
