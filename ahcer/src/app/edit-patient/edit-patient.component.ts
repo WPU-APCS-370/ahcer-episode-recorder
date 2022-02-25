@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 
 @Component({
@@ -21,13 +21,13 @@ export class EditPatientComponent implements OnInit {
               private patientsService: PatientServices) {
     this.patient = patient;
     this.form =this.fb.group({
-      firstName: patient.firstName,
-      lastName: patient.lastName,
+      firstName: [patient.firstName, Validators.required],
+      lastName: [patient.lastName, Validators.required],
       gender: patient.gender,
       primaryPhysicianName: patient.primaryPhysicianName,
       primaryPhysicianPhone: patient.primaryPhysicianPhone,
       otherDoctorInfo: patient.otherDoctorInfo,
-      birthDate: patient.birthDate.toDate(),
+      birthDate: [patient.birthDate.toDate(),Validators.required],
       dateOfDiagnosis: (patient.dateOfDiagnosis)?patient.dateOfDiagnosis.toDate() : null
     })
   }
