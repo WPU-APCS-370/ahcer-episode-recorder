@@ -37,5 +37,7 @@ export class PatientServices {
         map(result => convertSnaps<Patient>(result))
       )
   }
-
+  updatePatient(patientId: string, changes: Partial<Patient>): Observable<any> {
+    return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).update(changes));
+  }
 }
