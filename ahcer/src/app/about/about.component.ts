@@ -23,9 +23,7 @@ export class AboutComponent implements OnInit {
   }
 
   onReadCollection() {
-    this.db.collection('users/7ZA7KNV0fYbo19SXYHkC/patients',
-      ref => ref.orderBy('lastName')
-    ).get().subscribe(
+    this.db.collection('/users/7ZA7KNV0fYbo19SXYHkC/patients/c5fSiohs3Ze5gsP6Ivh8/episodes').get().subscribe(
       snaps => {
         snaps.forEach(snap => {
           console.log(snap.id);

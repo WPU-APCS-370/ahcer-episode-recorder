@@ -9,5 +9,6 @@ export interface Patient {
   birthDate: Timestamp,
   dateOfDiagnosis?: Timestamp,
   primaryPhysicianName?: string,
-  primaryPhysicianPhone?: string
+  primaryPhysicianPhone?: string,
+  otherDoctorInfo?: string
 }
