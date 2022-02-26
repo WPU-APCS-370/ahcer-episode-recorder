@@ -15,14 +15,19 @@ import {MatListModule} from "@angular/material/list";
 import { AboutComponent } from './about/about.component';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
-import {PatientServices} from "./services/patient-services.service";
+import { HomeComponent } from './home/home.component';
+import {MatTableModule} from "@angular/material/table";
+import {CdkTableModule} from "@angular/cdk/table";
+import {PatientServices} from "./services/patient.service";
 import { ViewPatientComponent } from './view-patient/view-patient.component';
 import {MatCardModule} from "@angular/material/card";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
+    HomeComponent,
     ViewPatientComponent
   ],
   imports: [
@@ -36,7 +41,10 @@ import {MatCardModule} from "@angular/material/card";
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
-    MatCardModule
+    MatTableModule,
+    CdkTableModule,
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices
