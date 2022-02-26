@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {PatientServices} from "../services/patient-services.service";
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {PatientServices} from "../services/patient.service";
+import {catchError, tap, throwError} from "rxjs";
 import {Patient} from "../models/patient";
 
 @Component({
@@ -12,8 +12,7 @@ export class ViewPatientComponent implements OnInit {
 
   patients: Patient[] | undefined
 
-  constructor(private patientService: PatientServices) {
-  }
+  constructor(private patientService: PatientServices) { }
 
   ngOnInit(): void {
     this.loadPatients();
