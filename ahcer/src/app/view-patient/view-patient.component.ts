@@ -26,7 +26,7 @@ export class ViewPatientComponent implements OnInit {
   }
 
   onDeletePatient(patient: Patient) {
-    if (confirm(`Are you sure you want to delete athlete ${patient.firstName} ${patient.lastName}?`) === true) {
+    if (confirm(`Are you sure you want to delete patient ${patient.firstName} ${patient.lastName}?`) === true) {
       this.patientService.deletePatient(patient.id)
         .pipe(
           tap(() => {
