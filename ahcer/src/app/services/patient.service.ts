@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {AngularFirestore} from "@angular/fire/compat/firestore/";
-import {Patient} from "../models/patient";
+import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {from, map, Observable} from "rxjs";
+import {Patient} from "../models/patient";
 import {convertSnaps} from "./data-utils";
 
 @Injectable({
@@ -12,7 +12,7 @@ export class PatientServices {
 
   private userId ="7ZA7KNV0fYbo19SXYHkC";
 
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: AngularFirestore) {}
 
   createPatient(newPatient: Partial<Patient>): Observable<any> {
     let save$: Observable<any>;
@@ -40,4 +40,10 @@ export class PatientServices {
   updatePatient(patientId: string, changes: Partial<Patient>): Observable<any> {
     return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).update(changes));
   }
+
+  deletePatient(patientId: string): Observable<any> {
+    return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).delete());
+  }
+
+
 }
