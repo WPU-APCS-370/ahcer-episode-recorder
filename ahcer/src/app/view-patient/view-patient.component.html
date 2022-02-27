@@ -1,3 +1,8 @@
+<div class="patient-view">
+
+
+
+
 <mat-card *ngFor="let patient of patients" class="patient-card mat-elevation-z10">
 
   <mat-card-header>
@@ -11,10 +16,10 @@
       <p>Gender: {{patient.gender}}</p>
     </div>
     <div>
-      <p>Birthdate: {{patient.birthDate.toDate()}}</p>
+      <p>Birthdate: {{patient.birthDate.toDate() | date: 'MM/dd/yyyy'}}</p>
     </div>
     <div *ngIf="patient.dateOfDiagnosis">
-      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate()}}</p>
+      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
     </div>
     <div *ngIf="patient.primaryPhysicianName">
       <p>Primary Physician Name: {{patient.primaryPhysicianName}}</p>
@@ -23,7 +28,7 @@
       <p>Primary Physician Phone: {{patient.primaryPhysicianPhone}}</p>
     </div>
     <div *ngIf="patient.otherDoctorInfo" class="other-doctor-info">
-      <p>Other Doctors Information</p>
+      <p><b>Other Doctors Information</b></p>
       <p>{{patient.otherDoctorInfo}}</p>
     </div>
   </mat-card-content>
@@ -35,3 +40,7 @@
   </mat-card-actions>
 
 </mat-card>
+  Add New Patient <button mat-mini-fab color="accent" routerLink="/add-patient">
+  <mat-icon class="add-patient-btn">add</mat-icon>
+</button>
+</div>
