@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {PatientServices} from "./services/patient.service";
+import packageJson from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,7 @@ import {PatientServices} from "./services/patient.service";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  public version: string = packageJson.version;
   constructor() {
   }
 }
