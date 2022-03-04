@@ -5,7 +5,7 @@ import {AngularFireAuth} from "@angular/fire/compat/auth";
 import firebase from "firebase/compat/app";
 import EmailAuthProvider = firebase.auth.EmailAuthProvider;
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
-import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {this.afAuth.app.then(app => {
     const uiConfig = {
       signInOptions: [
-        FacebookAuthProvider.PROVIDER_ID,
+
         EmailAuthProvider.PROVIDER_ID,
         GoogleAuthProvider.PROVIDER_ID,
 
