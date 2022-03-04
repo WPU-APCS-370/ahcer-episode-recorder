@@ -31,6 +31,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
@@ -41,6 +42,7 @@ import { LoginComponent } from './login/login.component';
     HomeComponent,
     ViewPatientComponent,
     EditPatientComponent,
+    ViewProfileComponent,
     LoginComponent
   ],
   imports: [
