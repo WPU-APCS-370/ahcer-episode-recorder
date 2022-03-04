@@ -6,6 +6,7 @@ import {AboutComponent} from "./about/about.component";
 import {CreatePatientComponent} from "./create-patient/create-patient.component";
 import {ViewPatientComponent} from "./view-patient/view-patient.component";
 import {HomeComponent} from "./home/home.component";
+import {LoginComponent} from "./login/login.component";
 
 const routes: Routes = [
   {
@@ -24,7 +25,11 @@ const routes: Routes = [
   {
     path: 'patients',
     component: ViewPatientComponent
-  }
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
 ];
 
 @NgModule({
