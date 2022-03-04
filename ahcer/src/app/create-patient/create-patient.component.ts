@@ -49,7 +49,7 @@ export class CreatePatientComponent implements OnInit {
 
     this.patientService.createPatient(newPatient)
       .pipe(
-        tap(() => this.router.navigateByUrl('/')),
+        tap(() => this.router.navigateByUrl('/patients')),
         catchError(err => {
           console.log(err);
           alert('Could not add new patient.');
