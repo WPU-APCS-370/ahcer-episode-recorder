@@ -10,6 +10,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 */
 
 @import '~@angular/material/theming';
+@import"~firebaseui/dist/firebaseui.css";
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
