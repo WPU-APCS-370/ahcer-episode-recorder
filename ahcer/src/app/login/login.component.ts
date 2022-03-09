@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
   userExists(uid: string) {
     return this.db.firestore.doc(`/users/${uid}`).get()
       .then(docSnapshot => {
-        console.log("snapshot exists", docSnapshot.exists);
         return docSnapshot.exists;
       });
   }
