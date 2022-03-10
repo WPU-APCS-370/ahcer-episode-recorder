@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import packageJson from '../../package.json';
+import {UsersService} from "./services/users.service";
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,7 @@ import packageJson from '../../package.json';
 })
 export class AppComponent {
   public version: string = packageJson.version;
-  constructor() {
+  constructor(public user: UsersService) {
   }
+  public uid = this.user.userId$.subscribe((results) => this.uid = results)
 }
