@@ -18,45 +18,39 @@ export class LoginComponent implements OnInit {
               private router: Router,
               private db: AngularFirestore) { }
 
-  ngOnInit(): void {this.afAuth.app.then(app => {
-    const uiConfig = {
-      signInOptions: [
+  ngOnInit(): void {
+    this.afAuth.app.then(app => {
+      const uiConfig = {
+        signInOptions: [
 
-        EmailAuthProvider.PROVIDER_ID,
-        GoogleAuthProvider.PROVIDER_ID,
+          EmailAuthProvider.PROVIDER_ID,
+          GoogleAuthProvider.PROVIDER_ID,
 
-      ],
-      callbacks: {
-        signInSuccessWithAuthResult: this.onLoginSuccessful.bind(this)
-      }
-    };
-    this.ui = new firebaseui.auth.AuthUI(app.auth());
-    this.ui.start('#firebaseui-auth-container', uiConfig);
-
-  })
+        ],
+        callbacks: {
+          signInSuccessWithAuthResult: this.onLoginSuccessful.bind(this)
+        }
+      };
+      this.ui = new firebaseui.auth.AuthUI(app.auth());
+      this.ui.start('#firebaseui-auth-container', uiConfig);
+    })
   }
+
   ngOnDestroy() {
     this.ui.delete();
   }
 
-  userExists(uid: string) {
-    return this.db.firestore.doc(`/users/${uid}`).get()
-      .then(docSnapshot => {
-        return docSnapshot.exists;
-      });
-  }
-
-  onLoginSuccessful(result) {
-    this.afAuth.app.then(async cred => {
+  onLoginSuccessful() {
+    this.afAuth.app.then(cred => {
       let uid = cred.auth().currentUser.uid;
-      if (!(await this.userExists(uid))) {
-        return this.db.collection(`users`).doc(uid)
-          .set({});
-      } else {
-        return null;
-      }
-    })
+      this.db.firestore.doc(`users/${uid}`)
+        .get()
+        .then((doc)=> {
+          return !doc.exists ?
+            this.db.collection(`users`).doc(uid) :
+            null;
+        });
+    });
     this.router.navigateByUrl('/')
   }
-
 }
