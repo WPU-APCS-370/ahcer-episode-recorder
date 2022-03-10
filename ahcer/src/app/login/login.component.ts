@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
         .get()
         .then((doc)=> {
           return !doc.exists ?
-            this.db.collection(`users`).doc(uid) :
+            this.db.collection(`users`).doc(uid).set({}) :
             null;
         });
     });
