@@ -9,6 +9,12 @@
         <mat-icon>home</mat-icon>
         <span> Home</span>
       </a>
+      <a mat-list-item routerLink="login">
+
+        <mat-icon>account_circle</mat-icon>
+
+        <span> Login</span>
+      </a>
 
       <a mat-list-item>
 
@@ -30,6 +36,10 @@
 
         <span> Reports</span>
       </a>
+      <a mat-list-item routerLink="view-profile/7ZA7KNV0fYbo19SXYHkC">
+        <mat-icon>face</mat-icon>
+        <span> user Profile </span>
+      </a>
 
       <a mat-list-item routerLink="about">
         <mat-icon>info</mat-icon>
@@ -50,7 +60,7 @@
     <router-outlet></router-outlet>
   </div>
   <mat-toolbar color="primary" class="footer">
-    <span class="footer-spacer">AHCER-App &copy; 2022</span>
+    <span class="footer-spacer">AHCER-App &copy; 2022 - V {{version}}</span>
   </mat-toolbar>
 </mat-sidenav-container>
 

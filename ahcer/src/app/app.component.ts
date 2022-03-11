@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import {PatientServices} from "./services/patient.service";
+import packageJson from '../../package.json';
+import {UsersService} from "./services/users.service";
 
 @Component({
   selector: 'app-root',
@@ -7,8 +8,8 @@ import {PatientServices} from "./services/patient.service";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ahcer';
-  constructor(private patientservice: PatientServices ) {
-    console.log(patientservice.getPatient());
+  public version: string = packageJson.version;
+  constructor(public user: UsersService) {
   }
+  public uid = this.user.userId$.subscribe((results) => this.uid = results)
 }

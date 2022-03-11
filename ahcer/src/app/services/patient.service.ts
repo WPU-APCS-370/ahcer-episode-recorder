@@ -29,8 +29,8 @@ export class PatientServices {
     );
   }
 
-  getPatient(): Observable<Patient[]> {
-    return this.db.collection(`users/${this.userId}/patients`,
+  getPatient(userId?: string): Observable<Patient[]> {
+    return this.db.collection(`users/${userId}/patients`,
       ref => ref.orderBy('lastName'))
       .get()
       .pipe(
