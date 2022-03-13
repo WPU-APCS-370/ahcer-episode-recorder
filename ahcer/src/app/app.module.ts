@@ -33,6 +33,7 @@ import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
     ViewPatientComponent,
     EditPatientComponent,
     ViewProfileComponent,
-    ViewEpisodeComponent
+    ViewEpisodeComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
