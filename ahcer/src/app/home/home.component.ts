@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {EditPatientComponent} from "../edit-patient/edit-patient.component";
+import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 
 @Component({
   selector: 'app-home',
@@ -17,7 +20,8 @@ export class HomeComponent implements OnInit {
   temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
 
 
-  constructor(private episodeService: EpisodeService) { }
+  constructor(private episodeService: EpisodeService,
+              private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -36,4 +40,23 @@ export class HomeComponent implements OnInit {
 
   }
 
+  onViewDetails(episode:Episode) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    dialogConfig.data = episode;
+    this.dialog
+      .open(ViewEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+         // this.loadPatients()
+        }
+      });
+
+
+  }
 }
