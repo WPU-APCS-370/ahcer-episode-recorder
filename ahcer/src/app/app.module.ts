@@ -32,13 +32,11 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
-<<<<<<< Updated upstream
+import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
-import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
-=======
 import { CreateEpisodeComponent } from './create-episode/create-episode.component';
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
->>>>>>> Stashed changes
+
 
 @NgModule({
   declarations: [
@@ -49,13 +47,10 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
     ViewPatientComponent,
     EditPatientComponent,
     ViewProfileComponent,
-<<<<<<< Updated upstream
+    ViewEpisodeComponent,
     LoginComponent,
-ViewEpisodesComponent
-=======
     CreateEpisodeComponent,
     ViewEpisodesComponent
->>>>>>> Stashed changes
   ],
   imports: [
     BrowserModule,
