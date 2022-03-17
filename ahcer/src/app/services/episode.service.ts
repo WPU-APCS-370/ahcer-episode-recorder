@@ -22,4 +22,14 @@ export class EpisodeService {
         map(snaps => convertSnaps<Episode>(snaps))
       )
   }
+
+  getEpisodesByPatient(userId: string, patientId: string,
+                               sortOrder: OrderByDirection): Observable<Episode[]> {
+    return this.db.collection(`users/${userId}/patients/${patientId}/episodes`,
+      ref => ref.orderBy('startTime', sortOrder))
+      .get()
+      .pipe(
+        map(snaps => convertSnaps<Episode>(snaps))
+      )
+  }
 }
