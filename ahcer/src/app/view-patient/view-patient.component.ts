@@ -22,7 +22,7 @@ export class ViewPatientComponent implements OnInit {
   }
 
   loadPatients() {
-    this.patientService.getPatient('7ZA7KNV0fYbo19SXYHkC')
+    this.patientService.getPatient()
       .subscribe(
         (result) => this.patients = result
       )

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {from, map, Observable} from "rxjs";
+import {from, map, Observable, switchMap} from "rxjs";
 import {Patient} from "../models/patient";
 import {convertSnaps} from "./data-utils";
+import {UsersService} from "./users.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +11,17 @@ import {convertSnaps} from "./data-utils";
 
 export class PatientServices {
 
-  private userId ="7ZA7KNV0fYbo19SXYHkC";
-
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore,
+              private user: UsersService) {  }
 
   createPatient(newPatient: Partial<Patient>): Observable<any> {
     let save$: Observable<any>;
 
-    save$ = from(this.db.collection(`users/${this.userId}/patients/`).add(newPatient));
+    save$ = this.user.userId$.pipe(
+      switchMap(userId =>
+          from(this.db.collection(`users/${userId}/patients/`).add(newPatient))
+      )
+    );
 
     return save$.pipe(
       map(res => {
@@ -30,19 +34,36 @@ export class PatientServices {
   }
 
   getPatient(userId?: string): Observable<Patient[]> {
-    return this.db.collection(`users/${userId}/patients`,
-      ref => ref.orderBy('lastName'))
-      .get()
-      .pipe(
+    if(!userId) {
+      return this.user.userId$.pipe(
+        switchMap(resUserId => this.db.collection(`users/${resUserId}/patients`,
+          ref => ref.orderBy('lastName')).get()),
         map(result => convertSnaps<Patient>(result))
       )
+    }
+    else {
+      return this.db.collection(`users/${userId}/patients`,
+        ref => ref.orderBy('lastName'))
+        .get()
+        .pipe(
+          map(result => convertSnaps<Patient>(result))
+        )
+    }
   }
   updatePatient(patientId: string, changes: Partial<Patient>): Observable<any> {
-    return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).update(changes));
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}/patients/${patientId}`).update(changes))
+      )
+    );
   }
 
   deletePatient(patientId: string): Observable<any> {
-    return from(this.db.doc(`users/${this.userId}/patients/${patientId}`).delete());
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}/patients/${patientId}`).delete())
+      )
+    );
   }
 
 
