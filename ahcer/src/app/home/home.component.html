@@ -35,5 +35,8 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <div *ngIf="episodes_count > 0" class="episode-button-container">
+    <button mat-raised-button color="primary" routerLink="/episodes">View More</button>
+  </div>
   <div *ngIf="episodes_count === 0">No episodes found. Please enter one with the '+' button above.</div>
 </div>

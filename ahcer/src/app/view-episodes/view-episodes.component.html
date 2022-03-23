@@ -1,28 +1,30 @@
-
-<mat-table class="lessons-table mat-elevation-z8"
+<div class="episodes-div">
+  <table mat-table class="mat-elevation-z8"
            [dataSource]="episodes">
 
   <ng-container matColumnDef="startDate">
-    <mat-header-cell *matHeaderCellDef>Meet Name</mat-header-cell>
-    <mat-cell *matCellDef="let result">{{result.startTime?.toDate()| date: 'MM/dd/yyyy'}}</mat-cell>
+    <th mat-header-cell *matHeaderCellDef>Start Date</th>
+    <td mat-cell *matCellDef="let result">{{result.startTime?.toDate()| date: 'MM/dd/yyyy'}}</td>
   </ng-container>
-  <ng-container matColumnDef="endTime">
-    <mat-header-cell *matHeaderCellDef>End Time</mat-header-cell>
-    <mat-cell *matCellDef="let result">{{result.endTime?.toDate()| date: 'MM/dd/yyyy'}}</mat-cell>
+  <ng-container matColumnDef="endDate">
+    <th mat-header-cell *matHeaderCellDef>End Date</th>
+    <td mat-cell *matCellDef="let result">{{result.endTime?.toDate()| date: 'MM/dd/yyyy'}}</td>
   </ng-container>
-  <ng-container matColumnDef="time">
-    <mat-header-cell *matHeaderCellDef>Time</mat-header-cell>
-    <mat-cell *matCellDef="let result">{{calculateDuration(result.startTime, result.endTime)}}</mat-cell>
+  <ng-container matColumnDef="duration">
+    <th mat-header-cell *matHeaderCellDef>Duration</th>
+    <td mat-cell *matCellDef="let result">{{calculateDuration(result.startTime, result.endTime)}}</td>
   </ng-container>
   <ng-container matColumnDef="link">
-    <mat-header-cell *matHeaderCellDef>Place</mat-header-cell>
+    <th mat-header-cell *matHeaderCellDef>Link</th>
     <td mat-cell *matCellDef="let result"> <a href="javascript:void(0)" (click)="onViewDetails(result)">Details</a> </td>
   </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-</mat-table>
-<button class="bottom-toolbar" *ngIf="!completelyLoaded" mat-raised-button color="primary" (click)="load20More()">Load More</button>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+  <div class="episode-button-container">
+    <button *ngIf="!completelyLoaded && !loading" mat-raised-button color="primary" (click)="load20More()">View More</button>
+  </div>
 <div class="spinner-container" *ngIf="loading">
-  <mat-spinner></mat-spinner>
+  <mat-spinner [diameter]="50"></mat-spinner>
+</div>
 </div>

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ViewEpisodesComponent} from "./view-episodes.component";
 
-import { ViewEpisodesComponent } from './view-episodes.component';
+
 
 describe('ViewEpisodesComponent', () => {
   let component: ViewEpisodesComponent;

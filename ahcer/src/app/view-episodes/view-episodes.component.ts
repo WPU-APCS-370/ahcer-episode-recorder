@@ -17,12 +17,13 @@ export class ViewEpisodesComponent implements OnInit {
   episodes: Episode[];
   temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
   temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
+  lastStartTime : Timestamp;
   episodes_count: number;
 
   completelyLoaded: boolean = false;
   loading: boolean = false;
   lastPageLoaded = 0;
-  displayedColumns = ['startDate', 'endTime', 'duration', 'link'];
+  displayedColumns = ['startDate', 'endDate', 'duration', 'link'];
 
   constructor(private dialog: MatDialog,
               private episodeServices: EpisodeService) { }
@@ -40,7 +41,9 @@ export class ViewEpisodesComponent implements OnInit {
       .subscribe(
         episodes => {
           this.episodes = episodes.slice(0,20);
-          this.completelyLoaded = (episodes.length==this.episodes.length);
+          this.completelyLoaded = (episodes.length < 21);
+          if (!this.completelyLoaded)
+            this.lastStartTime = episodes[19].startTime;
         }
       );
   }
@@ -49,7 +52,8 @@ export class ViewEpisodesComponent implements OnInit {
     this.lastPageLoaded++;
     this.loading = true;
 
-    this.episodeServices.getEpisodesByPatient(this.temporaryUserId, this.temporaryPatientId, 'desc')
+    this.episodeServices.getEpisodesByPatient(this.temporaryUserId, this.temporaryPatientId,
+      'desc', this.lastStartTime)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -57,14 +61,58 @@ export class ViewEpisodesComponent implements OnInit {
         })
       )
       .subscribe(episodes => {
-        this.episodes.concat(episodes.slice(20 * this.lastPageLoaded, 20 + 20 * this.lastPageLoaded));
-        this.completelyLoaded = (episodes.length == this.episodes.length);
+        this.episodes = this.episodes.concat(episodes.slice(0,20));
+        this.completelyLoaded = (episodes.length < 21);
+        if(!this.completelyLoaded)
+          this.lastStartTime = episodes[19].startTime;
       });
   }
 
-  calculateDuration(startTime: Timestamp, endTime: Timestamp){
+  calculateDuration(startTime: Timestamp, endTime: Timestamp) {
     if (endTime) {
+      let time = endTime.seconds - startTime.seconds
+      let day = Math.floor(time / (24 * 3600))
+      time = time % (24 * 3600)
+      let hour = Math.floor(time / 3600)
+      time %= 3600
+      let minutes = Math.floor(time / 60)
+      time %= 60
+      let seconds = time
+      if (day > 0) {
+        if (minutes >= 30) {
+          hour += 1
+          if (hour == 24) {
+            day += 1
+            hour = 0
+          }
+        }
+        return `${day} days ${hour} hrs`
+      }
 
+      else if (hour > 0) {
+        if (seconds >= 30) {
+          minutes += 1
+          if (minutes == 60) {
+            hour += 1
+            minutes = 0
+          }
+        }
+        if (hour == 24) {
+          day += 1
+          hour = 0
+          return `${day} days ${hour} hrs`
+        }
+        else {
+          return `${hour} hrs ${minutes} mins`
+        }
+      }
+
+      else if (minutes > 0) {
+        return `${minutes} mins ${seconds} secs`
+      }
+      else {
+        return `${seconds} secs`
+      }
     }
     else {
       return null;

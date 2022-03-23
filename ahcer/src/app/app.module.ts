@@ -34,6 +34,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { LoginComponent } from './login/login.component';
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
+import {ViewEpisodeComponent} from "./veiw-episode/view-episode.component";
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
     EditPatientComponent,
     ViewProfileComponent,
     LoginComponent,
-    ViewEpisodesComponent
+    ViewEpisodesComponent,
+    ViewEpisodeComponent,
   ],
   imports: [
     BrowserModule,
