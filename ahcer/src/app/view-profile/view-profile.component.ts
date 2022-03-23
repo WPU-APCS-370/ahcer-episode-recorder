@@ -23,7 +23,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.patients$ = this.patientService.getPatient(this.userId)
+    this.patients$ = this.patientService.getPatients(this.userId)
   }
 
 }

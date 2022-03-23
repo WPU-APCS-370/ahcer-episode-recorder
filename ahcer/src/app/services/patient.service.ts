@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {from, map, Observable, switchMap} from "rxjs";
+import {first, from, map, Observable, switchMap} from "rxjs";
 import {Patient} from "../models/patient";
 import {convertSnaps} from "./data-utils";
 import {UsersService} from "./users.service";
@@ -20,7 +20,8 @@ export class PatientServices {
     save$ = this.user.userId$.pipe(
       switchMap(userId =>
           from(this.db.collection(`users/${userId}/patients/`).add(newPatient))
-      )
+      ),
+      first()
     );
 
     return save$.pipe(
@@ -33,11 +34,12 @@ export class PatientServices {
     );
   }
 
-  getPatient(userId?: string): Observable<Patient[]> {
+  getPatients(userId?: string): Observable<Patient[]> {
     if(!userId) {
       return this.user.userId$.pipe(
         switchMap(resUserId => this.db.collection(`users/${resUserId}/patients`,
           ref => ref.orderBy('lastName')).get()),
+        first(),
         map(result => convertSnaps<Patient>(result))
       )
     }
@@ -54,7 +56,8 @@ export class PatientServices {
     return this.user.userId$.pipe(
       switchMap(userId =>
         from(this.db.doc(`users/${userId}/patients/${patientId}`).update(changes))
-      )
+      ),
+      first()
     );
   }
 
@@ -62,7 +65,8 @@ export class PatientServices {
     return this.user.userId$.pipe(
       switchMap(userId =>
         from(this.db.doc(`users/${userId}/patients/${patientId}`).delete())
-      )
+      ),
+      first()
     );
   }
 

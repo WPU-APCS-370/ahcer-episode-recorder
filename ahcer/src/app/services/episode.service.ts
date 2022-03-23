@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import firebase from "firebase/compat";
 import OrderByDirection = firebase.firestore.OrderByDirection;
-import {map, Observable, switchMap} from "rxjs";
+import {first, map, Observable, switchMap} from "rxjs";
 import {Episode} from "../models/episode";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {convertSnaps} from "./data-utils";
@@ -22,6 +22,7 @@ export class EpisodeService {
         this.db.collection(`users/${userId}/patients/${patientId}/episodes`,
         ref => ref.orderBy('startTime', sortOrder).limit(5))
         .get()),
+      first(),
       map(snaps => convertSnaps<Episode>(snaps))
     )
   }
