@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Delete Patient</h2>
+
+<mat-dialog-content>
+  <p>Are you sure you want to delete your patient, {{patient.firstName}} {{patient.lastName}}?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Cancel</button>
+
+  <button class="delete" mat-raised-button color="warn" (click)="delete()">Delete</button>
+</mat-dialog-actions>

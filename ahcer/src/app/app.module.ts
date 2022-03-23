@@ -34,6 +34,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
+import { DeletePatientComponent } from './delete-patient/delete-patient.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { LoginComponent } from './login/login.component';
     EditPatientComponent,
     ViewProfileComponent,
     ViewEpisodeComponent,
-    LoginComponent
+    LoginComponent,
+    DeletePatientComponent
   ],
   imports: [
     BrowserModule,
