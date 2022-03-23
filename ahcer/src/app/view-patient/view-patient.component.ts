@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {PatientServices} from "../services/patient.service";
-import {catchError, tap, throwError} from "rxjs";
+import {catchError, finalize, tap, throwError} from "rxjs";
 import {Patient} from "../models/patient";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {EditPatientComponent} from "../edit-patient/edit-patient.component";
@@ -13,6 +13,7 @@ import {EditPatientComponent} from "../edit-patient/edit-patient.component";
 export class ViewPatientComponent implements OnInit {
 
   patients: Patient[] | undefined
+  loading: boolean = false;
 
   constructor(private dialog: MatDialog,
               private patientService: PatientServices) { }
@@ -22,7 +23,14 @@ export class ViewPatientComponent implements OnInit {
   }
 
   loadPatients() {
+    this.loading = true;
+
     this.patientService.getPatient()
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe(
         (result) => this.patients = result
       )
