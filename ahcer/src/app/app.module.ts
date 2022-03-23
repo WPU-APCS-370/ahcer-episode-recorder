@@ -35,6 +35,7 @@ import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
+import { DeleteEpisodeComponent } from './delete-episode/delete-episode.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { DeletePatientComponent } from './delete-patient/delete-patient.componen
     ViewProfileComponent,
     ViewEpisodeComponent,
     LoginComponent,
-    DeletePatientComponent
+    DeletePatientComponent,
+    DeleteEpisodeComponent
   ],
   imports: [
     BrowserModule,
