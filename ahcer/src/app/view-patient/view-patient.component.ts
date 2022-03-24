@@ -26,7 +26,7 @@ export class ViewPatientComponent implements OnInit {
   loadPatients() {
     this.loading = true;
 
-    this.patientService.getPatient('7ZA7KNV0fYbo19SXYHkC')
+    this.patientService.getPatients()
       .pipe(
         finalize(() => {
           this.loading = false;

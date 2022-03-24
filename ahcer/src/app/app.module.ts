@@ -34,6 +34,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
+import {UsersService} from "./services/users.service";
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
 
 @NgModule({
@@ -74,7 +75,7 @@ import { DeletePatientComponent } from './delete-patient/delete-patient.componen
     MatDialogModule
   ],
   providers: [
-    ScreenTrackingService,UserTrackingService, PatientServices
+    ScreenTrackingService,UserTrackingService, PatientServices, UsersService
   ],
   bootstrap: [AppComponent]
 })

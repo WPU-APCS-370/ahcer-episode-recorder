@@ -36,7 +36,7 @@
 
         <span> Reports</span>
       </a>
-      <a mat-list-item routerLink="view-profile/7ZA7KNV0fYbo19SXYHkC">
+      <a mat-list-item [routerLink]="'view-profile/'+(user.userId$ | async)">
         <mat-icon>face</mat-icon>
         <span> user Profile </span>
       </a>
