@@ -32,9 +32,11 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
+import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
+import {UsersService} from "./services/users.service";
+import { DeletePatientComponent } from './delete-patient/delete-patient.component';
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
-import {ViewEpisodeComponent} from "./veiw-episode/view-episode.component";
 
 
 @NgModule({
@@ -49,6 +51,8 @@ import {ViewEpisodeComponent} from "./veiw-episode/view-episode.component";
     LoginComponent,
     ViewEpisodesComponent,
     ViewEpisodeComponent,
+    LoginComponent,
+    DeletePatientComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +79,7 @@ import {ViewEpisodeComponent} from "./veiw-episode/view-episode.component";
     MatDialogModule
   ],
   providers: [
-    ScreenTrackingService,UserTrackingService, PatientServices
+    ScreenTrackingService,UserTrackingService, PatientServices, UsersService
   ],
   bootstrap: [AppComponent]
 })
