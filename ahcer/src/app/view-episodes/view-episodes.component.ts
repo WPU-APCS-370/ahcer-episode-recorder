@@ -15,8 +15,7 @@ import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 })
 export class ViewEpisodesComponent implements OnInit {
   episodes: Episode[];
-  temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
-  temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
+  temporaryPatientId: string = 'JZCoEXypgR4eCpll04Rx';
   lastStartTime : Timestamp;
   episodes_count: number;
 
@@ -31,7 +30,7 @@ export class ViewEpisodesComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
 
-    this.episodeServices.getEpisodesByPatient(this.temporaryUserId, this.temporaryPatientId, 'desc')
+    this.episodeServices.getEpisodesByPatient(this.temporaryPatientId, 'desc')
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -52,7 +51,7 @@ export class ViewEpisodesComponent implements OnInit {
     this.lastPageLoaded++;
     this.loading = true;
 
-    this.episodeServices.getEpisodesByPatient(this.temporaryUserId, this.temporaryPatientId,
+    this.episodeServices.getEpisodesByPatient(this.temporaryPatientId,
       'desc', this.lastStartTime)
       .pipe(
         finalize(() => {
