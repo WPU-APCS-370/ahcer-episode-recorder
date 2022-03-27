@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
   patients: Patient[];
   currentPatient : any;
   episodes_count: number;
-  temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
+  temporaryPatientId: string = 'JZCoEXypgR4eCpll04Rx';
 
 
   constructor(private episodeService: EpisodeService,
