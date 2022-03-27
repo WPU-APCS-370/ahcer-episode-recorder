@@ -1,0 +1,23 @@
+.episodes-div {
+  max-width: 400px;
+  margin: 20px auto 10px auto;
+}
+
+table {
+  width: 100%;
+}
+
+.episode-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.spinner-container mat-spinner {
+  margin: 10px auto 0 auto;
+}
+
+.load-button {
+  margin-top: 10px;
+}
