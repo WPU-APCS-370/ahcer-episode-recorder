@@ -19,10 +19,8 @@ export class HomeComponent implements OnInit {
   loadingPatient: boolean = false;
   episodes: Episode[];
   patients: Patient[];
-  currentPatient : any;
+  currentPatient : Patient;
   episodes_count: number;
-  temporaryPatientId: string = 'JZCoEXypgR4eCpll04Rx';
-
 
   constructor(private episodeService: EpisodeService,
               private dialog: MatDialog,

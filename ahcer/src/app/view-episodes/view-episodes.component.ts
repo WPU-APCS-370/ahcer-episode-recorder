@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {EpisodeService} from "../services/episode.service";
 import {Episode} from "../models/episode";
-import {finalize} from "rxjs";
+import {finalize, first, switchMap} from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
+import {PatientServices} from "../services/patient.service";
+import {UsersService} from "../services/users.service";
 
 
 @Component({
@@ -15,7 +17,7 @@ import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 })
 export class ViewEpisodesComponent implements OnInit {
   episodes: Episode[];
-  temporaryPatientId: string = 'JZCoEXypgR4eCpll04Rx';
+  patientId: string = '';
   lastStartTime : Timestamp;
   episodes_count: number;
 
@@ -25,18 +27,23 @@ export class ViewEpisodesComponent implements OnInit {
   displayedColumns = ['startDate', 'endDate', 'duration', 'link'];
 
   constructor(private dialog: MatDialog,
-              private episodeServices: EpisodeService) { }
+              private episodeServices: EpisodeService,
+              private patientsService: PatientServices,
+              private usersService: UsersService) { }
 
   ngOnInit(): void {
     this.loading = true;
-
-    this.episodeServices.getEpisodesByPatient(this.temporaryPatientId, 'desc')
-      .pipe(
-        finalize(() => {
-          this.loading = false;
-          this.episodes_count = this.episodes.length;
-        })
-      )
+    this.usersService.getLastViewedPatient().pipe(
+      switchMap(patientId => {
+        this.patientId = patientId;
+        return this.episodeServices.getEpisodesByPatient(this.patientId, 'desc')
+      }),
+      first(),
+      finalize(() => {
+        this.loading = false;
+        this.episodes_count = this.episodes.length;
+      })
+    )
       .subscribe(
         episodes => {
           this.episodes = episodes.slice(0,20);
@@ -51,7 +58,7 @@ export class ViewEpisodesComponent implements OnInit {
     this.lastPageLoaded++;
     this.loading = true;
 
-    this.episodeServices.getEpisodesByPatient(this.temporaryPatientId,
+    this.episodeServices.getEpisodesByPatient(this.patientId,
       'desc', this.lastStartTime)
       .pipe(
         finalize(() => {
