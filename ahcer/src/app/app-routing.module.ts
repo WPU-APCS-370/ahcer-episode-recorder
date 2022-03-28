@@ -6,6 +6,7 @@ import {ViewPatientComponent} from "./view-patient/view-patient.component";
 import {HomeComponent} from "./home/home.component";
 import {ViewProfileComponent} from "./view-profile/view-profile.component";
 import {LoginComponent} from "./login/login.component";
+import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
+  {
+    path: 'record-episode',
+    component: CreateEpisodeComponent
+  }
 ];
 
 @NgModule({

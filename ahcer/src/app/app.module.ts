@@ -34,8 +34,12 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { LoginComponent } from './login/login.component';
+import { CreateEpisodeComponent } from './create-episode/create-episode.component';
 import {UsersService} from "./services/users.service";
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
+import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-material-components/datetime-picker";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -47,8 +51,9 @@ import { DeletePatientComponent } from './delete-patient/delete-patient.componen
     EditPatientComponent,
     ViewProfileComponent,
     ViewEpisodeComponent,
+    DeletePatientComponent,
     LoginComponent,
-    DeletePatientComponent
+    CreateEpisodeComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +77,11 @@ import { DeletePatientComponent } from './delete-patient/delete-patient.componen
     CdkTableModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    NgxMatDatetimePickerModule,
+    MatCheckboxModule,
+    NgxMatNativeDateModule,
+    MatSlideToggleModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService
