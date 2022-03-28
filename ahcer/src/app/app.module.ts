@@ -40,6 +40,8 @@ import { DeletePatientComponent } from './delete-patient/delete-patient.componen
 import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-material-components/datetime-picker";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
+
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     ViewPatientComponent,
     EditPatientComponent,
     ViewProfileComponent,
+    LoginComponent,
+    ViewEpisodesComponent,
     ViewEpisodeComponent,
     DeletePatientComponent,
     LoginComponent,

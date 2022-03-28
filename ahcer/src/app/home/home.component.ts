@@ -3,7 +3,6 @@ import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {EditPatientComponent} from "../edit-patient/edit-patient.component";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 
 @Component({
@@ -16,7 +15,7 @@ export class HomeComponent implements OnInit {
   loading: boolean = false;
   episodes: Episode[];
   episodes_count: number;
-  temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
+  temporaryPatientId: string = 'JZCoEXypgR4eCpll04Rx';
 
 
   constructor(private episodeService: EpisodeService,

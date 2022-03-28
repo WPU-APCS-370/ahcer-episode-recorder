@@ -7,6 +7,7 @@ import {HomeComponent} from "./home/home.component";
 import {ViewProfileComponent} from "./view-profile/view-profile.component";
 import {LoginComponent} from "./login/login.component";
 import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
+import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
   {
     path: 'record-episode',
     component: CreateEpisodeComponent
+  },
+  {
+    path: 'episodes',
+    component: ViewEpisodesComponent
   }
 ];
 
