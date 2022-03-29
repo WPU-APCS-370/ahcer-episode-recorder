@@ -4,8 +4,9 @@ import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
-import {PatientServices} from "../services/patient.service";
 import {Patient} from "../models/patient";
+import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
+import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 
 @Component({
@@ -78,6 +79,24 @@ export class HomeComponent implements OnInit {
       });
 
 
+  }
+
+  editEpisode(episode: Episode): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+    dialogConfig.maxWidth = '350px';
+
+    dialogConfig.data = episode;
+
+    this.dialog
+      .open(EditEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+          this.loadEpisodes(this.currentPatient.id)
+      });
   }
 
   changePatient(patientId: string) {

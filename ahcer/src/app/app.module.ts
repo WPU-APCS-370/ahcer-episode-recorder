@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -33,10 +35,13 @@ import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
+import { EditEpisodeComponent } from './edit-episode/edit-episode.component';
 import { LoginComponent } from './login/login.component';
 import {UsersService} from "./services/users.service";
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 @NgModule({
@@ -52,6 +57,7 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
     ViewEpisodesComponent,
     ViewEpisodeComponent,
     LoginComponent,
+    EditEpisodeComponent,
     DeletePatientComponent
   ],
   imports: [
@@ -76,7 +82,11 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
     CdkTableModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    MatSlideToggleModule,
+    MatCheckboxModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService
