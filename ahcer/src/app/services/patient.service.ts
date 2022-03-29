@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {first, from, map, Observable, switchMap} from "rxjs";
 import {Patient} from "../models/patient";
-import {convertSnaps} from "./data-utils";
+import {convertOneSnap, convertSnaps} from "./data-utils";
 import {UsersService} from "./users.service";
 
 @Injectable({
@@ -70,5 +70,14 @@ export class PatientServices {
     );
   }
 
+  getPatientById(patientId: string): Observable<Patient> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.collection(`users/${userId}/patients`).doc(patientId)
+          .get())),
+      first(),
+      map(result => convertOneSnap<Patient>(result))
+    )
+  }
 
 }

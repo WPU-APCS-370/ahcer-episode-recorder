@@ -7,3 +7,11 @@ export function convertSnaps<T>(results) {
     };
   });
 }
+
+export function convertOneSnap<T>(snap) {
+  return <T>{
+      id: snap.id,
+      ...<any> snap.data() as any
+    };
+}
+

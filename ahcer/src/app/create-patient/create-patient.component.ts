@@ -5,7 +5,8 @@ import {Router} from "@angular/router";
 import {Patient} from "../models/patient";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
-import {catchError, tap, throwError} from "rxjs";
+import {catchError, switchMap, tap, throwError} from "rxjs";
+import {UsersService} from "../services/users.service";
 
 @Component({
   selector: 'app-create-patient',
@@ -27,6 +28,7 @@ export class CreatePatientComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private patientService: PatientServices,
+              private usersService: UsersService,
               private router: Router) { }
 
   ngOnInit(): void {
@@ -49,6 +51,7 @@ export class CreatePatientComponent implements OnInit {
 
     this.patientService.createPatient(newPatient)
       .pipe(
+        switchMap((res) => this.usersService.changeLastViewedPatient(res.id)),
         tap(() => this.router.navigateByUrl('/patients')),
         catchError(err => {
           console.log(err);
