@@ -4,10 +4,11 @@ import {PatientServices} from "../services/patient.service";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {catchError, first, Observable, switchMap, tap, throwError} from "rxjs";
 import {EpisodeService} from "../services/episode.service";
 import {Episode} from "../models/episode";
 import {Patient} from "../models/patient";
+import {UsersService} from "../services/users.service";
 
 @Component({
   selector: 'app-create-episode',
@@ -15,7 +16,6 @@ import {Patient} from "../models/patient";
   styleUrls: ['./create-episode.component.scss']
 })
 export class CreateEpisodeComponent implements OnInit{
-  tempPatientId: string ="JZCoEXypgR4eCpll04Rx"
   symptomLabels = ["Left Arm", "Right Arm", "Left Leg", "Right Leg",
                    "Left Hand", "Right Hand", "Eyes"]
   patient$: Observable<Patient>
@@ -84,10 +84,15 @@ export class CreateEpisodeComponent implements OnInit{
   constructor(private fb: FormBuilder,
               private episodeService: EpisodeService,
               private patientService: PatientServices,
-              private router: Router) { }
+              private usersService: UsersService,
+              private router: Router) {
+    this.patient$ = usersService.getLastViewedPatient()
+      .pipe(
+        switchMap(patientId => patientService.getPatientById(patientId))
+      )
+  }
 
   ngOnInit(): void {
-
   }
 
   onCreateEpisode() {
@@ -160,17 +165,16 @@ export class CreateEpisodeComponent implements OnInit{
     if(val.endTime)
       newEpisode.endTime = Timestamp.fromDate(val.endTime);
 
-    console.log(newEpisode)
-    this.episodeService.createEpisode(this.tempPatientId, newEpisode)
-      .pipe(
-        tap(() => this.router.navigateByUrl('/')),
-        catchError(err => {
-          console.log(err);
-          alert('Could not add new episode.');
-          return throwError(err);
-        })
-      )
-      .subscribe();
+    this.usersService.getLastViewedPatient().pipe(
+      switchMap(patientId=> this.episodeService.createEpisode(patientId, newEpisode)),
+      first(),
+      tap(() => this.router.navigateByUrl('/')),
+      catchError(err => {
+        console.log(err);
+        alert('Could not add new episode.');
+        return throwError(err);
+      })
+    ).subscribe();
   }
 
 }

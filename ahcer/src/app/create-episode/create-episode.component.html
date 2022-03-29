@@ -1,5 +1,5 @@
 <div class="create-episode">
-  <h1>Record a New Episode for a b</h1>
+  <h1>Record a New Episode for {{(patient$| async).firstName}} {{(patient$| async).lastName}}</h1>
 
   <form [formGroup]="episodeForm">
     <mat-form-field appearance="outline">
