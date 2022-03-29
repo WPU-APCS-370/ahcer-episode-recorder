@@ -9,6 +9,7 @@ import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
+import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
 
 
 @Component({
@@ -145,6 +146,24 @@ export class ViewEpisodesComponent implements OnInit {
         if (val) {
           // this.loadPatients()
         }
+      });
+  }
+
+  editEpisode(episode: Episode): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+    dialogConfig.maxWidth = '350px';
+
+    dialogConfig.data = episode;
+
+    this.dialog
+      .open(EditEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        this.loadFirst20();
       });
   }
 
