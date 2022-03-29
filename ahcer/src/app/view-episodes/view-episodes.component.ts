@@ -8,6 +8,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
+import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 
 
 @Component({
@@ -32,6 +33,10 @@ export class ViewEpisodesComponent implements OnInit {
               private usersService: UsersService) { }
 
   ngOnInit(): void {
+    this.loadFirst20()
+  }
+
+  loadFirst20() {
     this.loading = true;
     this.usersService.getLastViewedPatient().pipe(
       switchMap(patientId => {
@@ -139,6 +144,24 @@ export class ViewEpisodesComponent implements OnInit {
       .subscribe((val) => {
         if (val) {
           // this.loadPatients()
+        }
+      });
+  }
+
+  deleteEpisode(episode: Episode){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    dialogConfig.data = episode;
+    this.dialog
+      .open(DeleteEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+          this.loadFirst20()
         }
       });
   }

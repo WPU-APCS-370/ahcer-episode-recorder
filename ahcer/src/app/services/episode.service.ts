@@ -7,7 +7,6 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {convertSnaps} from "./data-utils";
 import {UsersService} from "./users.service";
 import Timestamp = firebase.firestore.Timestamp;
-import {Patient} from "../models/patient";
 
 @Injectable({
   providedIn: 'root'
@@ -72,5 +71,15 @@ export class EpisodeService {
           map(snaps => convertSnaps<Episode>(snaps))
         )
     }
+  }
+  deleteEpisode(patientId: string, episodeId: string): Observable<any> {
+    return this.user.userId$.pipe(
+      switchMap(userId => {
+        console.log(userId)
+          return from(this.db.doc(`users/${userId}/patients/${patientId}/episodes/${episodeId}`).delete())
+        }
+      ),
+      first()
+    );
   }
 }
