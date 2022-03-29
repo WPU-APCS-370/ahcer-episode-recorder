@@ -73,4 +73,13 @@ export class EpisodeService {
         )
     }
   }
+
+  updateEpisode(patientId: string, episodeId: string, changes: Partial<Patient>): Observable<any> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}/patients/${patientId}/episodes/${episodeId}`).update(changes))
+      ),
+      first()
+    );
+  }
 }
