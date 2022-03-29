@@ -1,13 +1,23 @@
 <div class="patients-panel">
-<h2 class="header">Sally Smith <div class="button-container">
-  <button mat-fab aria-label="Add an episode">
-    <mat-icon>add</mat-icon>
-  </button>
-</div>
-</h2>
-  <div class="spinner-container" *ngIf="loading">
+  <h2 class="header" *ngIf="!loadingPatient && currentPatient">
+    {{currentPatient.firstName}} {{currentPatient.lastName}}
+    <div class="button-container">
+      <button mat-fab aria-label="Add an episode">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </h2>
+  <p *ngIf="!loadingPatient && !currentPatient">No patients found. Please add one.</p>
+  <div class="spinner-container" *ngIf="loadingPatient || loading">
     <mat-spinner></mat-spinner>
   </div>
+
+  <mat-form-field appearance="fill" *ngIf="patients && patients.length > 1">
+    <mat-label>Choose a different patient</mat-label>
+    <mat-select (selectionChange)="changePatient($event.value)">
+      <mat-option *ngFor="let patient of patients" [value]="patient.id">{{patient.firstName}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <table mat-table [dataSource]="episodes" *ngIf="episodes_count > 0" class="mat-elevation-z8">
 
