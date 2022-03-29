@@ -2,7 +2,7 @@
   <h2 class="header" *ngIf="!loadingPatient && currentPatient">
     {{currentPatient.firstName}} {{currentPatient.lastName}}
     <div class="button-container">
-      <button mat-fab aria-label="Add an episode">
+      <button mat-fab aria-label="Add an episode" routerLink="/record-episode">
         <mat-icon>add</mat-icon>
       </button>
     </div>

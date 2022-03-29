@@ -1,0 +1,43 @@
+.create-episode {
+  text-align: left;
+  max-width: 350px;
+  margin: 20px auto 20px auto;
+  padding: 0 20px 0 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+.symptom-group, .trigger-container, .trigger-checkboxes,
+.medication-container, .medication-checkboxes {
+  display: flex;
+  flex-direction: column;
+}
+
+.trigger-container, .medication-container {
+  margin-top: 10px;
+}
+
+mat-slide-toggle {
+  display: block;
+}
+
+.symptom-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.symptom-container > mat-form-field {
+  width: 65%;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+button {
+  display: block;
+}

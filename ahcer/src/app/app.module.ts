@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
-
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -37,11 +35,13 @@ import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
 import { EditEpisodeComponent } from './edit-episode/edit-episode.component';
 import { LoginComponent } from './login/login.component';
+import { CreateEpisodeComponent } from './create-episode/create-episode.component';
 import {UsersService} from "./services/users.service";
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
-import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-material-components/datetime-picker";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
 
 
 @NgModule({
@@ -58,7 +58,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     ViewEpisodeComponent,
     LoginComponent,
     EditEpisodeComponent,
-    DeletePatientComponent
+    DeletePatientComponent,
+    CreateEpisodeComponent
   ],
   imports: [
     BrowserModule,
@@ -84,9 +85,9 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     MatProgressSpinnerModule,
     MatDialogModule,
     NgxMatDatetimePickerModule,
+    MatCheckboxModule,
     NgxMatNativeDateModule,
-    MatSlideToggleModule,
-    MatCheckboxModule
+    MatSlideToggleModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService

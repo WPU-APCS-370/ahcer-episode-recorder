@@ -29,6 +29,26 @@ export class EpisodeService {
     )
   }
 
+  createEpisode(patientId: string, newEpisode: Partial<Episode>): Observable<any> {
+    let save$: Observable<any>;
+
+    save$ = this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.collection(`users/${userId}/patients/${patientId}/episodes`).add(newEpisode))
+      ),
+      first()
+    );
+
+    return save$.pipe(
+      map(res => {
+        return {
+          id: res.id,
+          ...newEpisode
+        };
+      })
+    );
+  }
+
   getEpisodesByPatient(patientId: string,
                        sortOrder: OrderByDirection,
                        lastStartTime?: Timestamp): Observable<Episode[]> {
