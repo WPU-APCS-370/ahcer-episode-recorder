@@ -23,6 +23,9 @@
       <button mat-icon-button (click)="editEpisode(result)">
         <mat-icon>edit</mat-icon>
       </button>
+      <button mat-icon-button (click)="deleteEpisode(result)" color="warn">
+        <mat-icon>delete</mat-icon>
+      </button>
     </td>
   </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

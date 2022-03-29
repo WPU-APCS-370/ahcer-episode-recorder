@@ -82,4 +82,15 @@ export class EpisodeService {
       first()
     );
   }
+
+  deleteEpisode(patientId: string, episodeId: string): Observable<any> {
+    return this.user.userId$.pipe(
+      switchMap(userId => {
+        console.log(userId)
+          return from(this.db.doc(`users/${userId}/patients/${patientId}/episodes/${episodeId}`).delete())
+        }
+      ),
+      first()
+    );
+  }
 }

@@ -8,6 +8,7 @@ import {Patient} from "../models/patient";
 import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
+import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 
 @Component({
   selector: 'app-home',
@@ -115,5 +116,23 @@ export class HomeComponent implements OnInit {
         this.currentPatient = patient;
         this.loadEpisodes(patientId);
       })
+  }
+
+  deleteEpisode(episode: Episode){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    dialogConfig.data = episode;
+    this.dialog
+      .open(DeleteEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+          this.loadEpisodes(this.currentPatient.id)
+        }
+      });
   }
 }

@@ -38,6 +38,7 @@ import { LoginComponent } from './login/login.component';
 import { CreateEpisodeComponent } from './create-episode/create-episode.component';
 import {UsersService} from "./services/users.service";
 import { DeletePatientComponent } from './delete-patient/delete-patient.component';
+import { DeleteEpisodeComponent } from './delete-episode/delete-episode.component';
 import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-material-components/datetime-picker";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
@@ -53,12 +54,12 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
     ViewPatientComponent,
     EditPatientComponent,
     ViewProfileComponent,
-    LoginComponent,
     ViewEpisodesComponent,
     ViewEpisodeComponent,
     LoginComponent,
-    EditEpisodeComponent,
     DeletePatientComponent,
+    DeleteEpisodeComponent,
+    EditEpisodeComponent,
     CreateEpisodeComponent
   ],
   imports: [

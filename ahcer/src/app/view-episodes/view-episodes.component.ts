@@ -8,6 +8,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
+import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
 
 
@@ -163,6 +164,24 @@ export class ViewEpisodesComponent implements OnInit {
       .afterClosed()
       .subscribe((val) => {
         this.loadFirst20();
+      });
+  }
+
+  deleteEpisode(episode: Episode){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    dialogConfig.data = episode;
+    this.dialog
+      .open(DeleteEpisodeComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+          this.loadFirst20()
+        }
       });
   }
 }
