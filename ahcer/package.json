@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-material-components/datetime-picker": "^7.0.1",
     "@angular/animations": "~13.2.4",
     "@angular/cdk": "~13.2.4",
     "@angular/common": "~13.2.4",
@@ -23,9 +24,9 @@
     "@angular/platform-browser-dynamic": "~13.2.4",
     "@angular/router": "~13.2.4",
     "firebase": "^9.6.7",
+    "firebaseui": "^6.0.1",
     "rxfire": "~6.0.3",
     "rxjs": "~7.5.4",
-    "firebaseui": "^6.0.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

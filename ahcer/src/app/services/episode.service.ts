@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import firebase from "firebase/compat";
 import OrderByDirection = firebase.firestore.OrderByDirection;
-import {first, map, Observable, switchMap} from "rxjs";
+import {first, from, map, Observable, switchMap} from "rxjs";
 import {Episode} from "../models/episode";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {convertSnaps} from "./data-utils";
 import {UsersService} from "./users.service";
 import Timestamp = firebase.firestore.Timestamp;
+import {Patient} from "../models/patient";
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,26 @@ export class EpisodeService {
       first(),
       map(snaps => convertSnaps<Episode>(snaps))
     )
+  }
+
+  createEpisode(patientId: string, newEpisode: Partial<Episode>): Observable<any> {
+    let save$: Observable<any>;
+
+    save$ = this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.collection(`users/${userId}/patients/${patientId}/episodes`).add(newEpisode))
+      ),
+      first()
+    );
+
+    return save$.pipe(
+      map(res => {
+        return {
+          id: res.id,
+          ...newEpisode
+        };
+      })
+    );
   }
 
   getEpisodesByPatient(patientId: string,
