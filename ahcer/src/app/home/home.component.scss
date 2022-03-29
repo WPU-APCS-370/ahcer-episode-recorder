@@ -1,6 +1,6 @@
 .patients-panel {
   max-width: 400px;
-  margin: 20px auto 0 auto;
+  margin: 20px auto 10px auto;
 }
 
 .header {
@@ -9,6 +9,12 @@
   align-items: center;
 }
 
+.episode-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
 
 .button-container{
   margin-left: 10px;

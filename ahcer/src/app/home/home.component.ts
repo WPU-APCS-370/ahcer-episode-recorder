@@ -3,8 +3,10 @@ import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {EditPatientComponent} from "../edit-patient/edit-patient.component";
 import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
+import {PatientServices} from "../services/patient.service";
+import {Patient} from "../models/patient";
+import {UsersService} from "../services/users.service";
 
 @Component({
   selector: 'app-home',
@@ -14,19 +16,39 @@ import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
 export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['startTime', 'endTime', 'id'];
   loading: boolean = false;
+  loadingPatient: boolean = false;
   episodes: Episode[];
+  patients: Patient[];
+  currentPatient : Patient;
   episodes_count: number;
-  temporaryUserId: string = '7ZA7KNV0fYbo19SXYHkC';
-  temporaryPatientId: string = 'UJPtfS0RLVDU5o8zD2jq';
-
 
   constructor(private episodeService: EpisodeService,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              private patientsService: PatientServices,
+              private usersService: UsersService) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.episodeService.getLastFiveEpisodesByPatient(this.temporaryUserId,
-      this.temporaryPatientId, 'desc')
+    this.loadingPatient = true;
+
+    this.patientsService.getPatients().subscribe(
+      patients => {this.patients = patients}
+    )
+    this.usersService.getLastViewedPatient().subscribe(
+      (patientId)  => {
+        if(patientId) {
+          this.loading = true;
+          this.loadPatient(patientId);
+          this.loadEpisodes(patientId);
+        }
+        else {
+          this.loadingPatient = false;
+        }
+      })
+
+  }
+
+  loadEpisodes(patientId: string) {
+    this.episodeService.getLastFiveEpisodesByPatient(patientId, 'desc')
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -36,8 +58,6 @@ export class HomeComponent implements OnInit {
       .subscribe(
         episodes => {this.episodes = episodes}
       );
-
-
   }
 
   onViewDetails(episode:Episode) {
@@ -58,5 +78,23 @@ export class HomeComponent implements OnInit {
       });
 
 
+  }
+
+  changePatient(patientId: string) {
+    this.usersService.changeLastViewedPatient(patientId)
+      .subscribe(()=> {
+        this.loadPatient(patientId)
+      })
+  }
+
+  loadPatient(patientId: string) {
+    this.patientsService.getPatientById(patientId)
+      .pipe(
+        finalize(()=> this.loadingPatient = false)
+      )
+      .subscribe(patient => {
+        this.currentPatient = patient;
+        this.loadEpisodes(patientId);
+      })
   }
 }

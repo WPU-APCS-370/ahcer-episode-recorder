@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import {map, Observable} from "rxjs";
+import {first, from, map, Observable, switchMap} from "rxjs";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
+import {convertOneSnap} from "./data-utils";
+import {User} from "../models/user";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,23 @@ export class UsersService {
 
   getUserById(userId: string): Observable<any> {
     return this.db.doc(`users/${userId}`).valueChanges();
+  }
+
+  changeLastViewedPatient(patientId: string): Observable<any> {
+    return this.userId$.pipe(
+      switchMap(userId =>
+    from(this.db.doc(`users/${userId}`).update({lastPatientViewed: patientId}))),
+      first()
+    )
+  }
+  getLastViewedPatient(): Observable<string> {
+    return this.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}`).get())
+      ),
+      first(),
+      map(result => convertOneSnap<User>(result).lastPatientViewed)
+    )
   }
 
 }

@@ -1,0 +1,78 @@
+<div class="create-episode">
+  <h1>Record a New Episode for {{(patient$| async).firstName}} {{(patient$| async).lastName}}</h1>
+
+  <form [formGroup]="episodeForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Start Time</mat-label>
+      <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
+      <mat-datepicker-toggle matSuffix [for]="StartTimePicker"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>End Time</mat-label>
+      <input matInput [ngxMatDatetimePicker]="EndTimePicker" formControlName="endTime" />
+      <mat-datepicker-toggle matSuffix [for]="EndTimePicker"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+    </mat-form-field>
+    <mat-label>Symptoms:</mat-label>
+    <div class="symptom-group" formGroupName="symptomGroup">
+      <div class="symptom-container" *ngFor="let symptom of symptomLabels">
+        <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'">
+          {{symptom}}
+        </mat-checkbox>
+        <mat-form-field [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
+          <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
+          <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'">
+            <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
+            <mat-option value="rigid">Rigid (Dystonia)</mat-option>
+          </mat-select>
+          <mat-label *ngIf="symptom=='Eyes'">Abnormalities</mat-label>
+          <mat-select *ngIf="symptom=='Eyes'" [formControlName]="symptom+' Dropdown'">
+            <mat-option value="nystagmus">Nystagmus</mat-option>
+            <mat-option value="outward">Outward (Exotropia)</mat-option>
+            <mat-option value="inward">Inward (Esotropia)</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-slide-toggle #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
+    <div class="trigger-container" *ngIf="trigger.checked" formGroupName="triggerGroup">
+      <div class="trigger-checkboxes">
+        <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="light">Light</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="anxiety">Anxiety</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="medication">Medication</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="stress">Stressful Situation</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="excitement">Over Excitement</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="menstruation">Menstruation</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="temperature">Temperature Change</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="water">Water (Swimming, Bathing, Showering)</mat-checkbox>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Additional Triggers</mat-label>
+        <textarea matInput
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="2"
+                  formControlName="additionalTriggers"></textarea>
+      </mat-form-field>
+    </div>
+    <mat-slide-toggle #medication formControlName="medication" color="primary">Rescue Medication?</mat-slide-toggle>
+    <div class="medication-container" *ngIf="medication.checked" formGroupName="medicationGroup">
+      <div class="medication-checkboxes">
+        <mat-checkbox color="primary" formControlName="vallumOral">Vallum (Oral)</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="vallumOther">Vallum (Other)</mat-checkbox>
+        <mat-checkbox color="primary" formControlName="midezolom">Midezolom/Versed (Oral)</mat-checkbox>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Additional Medications</mat-label>
+        <textarea matInput
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="2"
+                  formControlName="additionalMedication"></textarea>
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" [disabled]="!episodeForm.valid" (click)="onCreateEpisode()">
+      Record Episode
+    </button>
+  </form>
+</div>
