@@ -44,6 +44,12 @@ export class ViewMedicationComponent implements OnInit {
     this.medications_count = 0;
     this.loading = true;
     this.usersService.getLastViewedPatient().pipe(
+      tap(patientId => {
+        if(!patientId) {
+          this.loadingPatient=false;
+          this.loading = false;
+        }
+    }),
       switchMap(patientId => this.patientsService.getPatientById(patientId)),
       first(),
       tap(patient => {
