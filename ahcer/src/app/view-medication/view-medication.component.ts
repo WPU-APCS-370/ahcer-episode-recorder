@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Episode} from "../models/episode";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {EpisodeService} from "../services/episode.service";
+import {MatDialog} from "@angular/material/dialog";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 import {finalize, first, switchMap, tap} from "rxjs";
-import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
-import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
-import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 import {Medication} from "../models/medication";
 import {MedicationService} from "../services/medication.service";
 import {Patient} from "../models/patient";
@@ -45,6 +40,8 @@ export class ViewMedicationComponent implements OnInit {
   }
 
   load() {
+    this.medications=[];
+    this.medications_count = 0;
     this.loading = true;
     this.usersService.getLastViewedPatient().pipe(
       switchMap(patientId => this.patientsService.getPatientById(patientId)),
