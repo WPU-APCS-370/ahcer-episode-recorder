@@ -101,7 +101,7 @@ export class EditEpisodeComponent implements OnInit {
     let medicationGroup = {
       vallumOral: false,
       vallumOther: false,
-      midezalam: false,
+      midazolam: false,
       additionalMedication: ""
     }
 
