@@ -1,10 +1,21 @@
 .episodes-div {
-  max-width: 400px;  //clean this up for mobile devices
+  max-width: 400px;
   margin: 20px auto 10px auto;
 }
 
 table {
   width: 100%;
+}
+
+@media only screen and (max-width:400px) {
+  .episodes-div {
+    overflow-x: scroll;
+    margin: 20px 0 10px 0;
+  }
+
+  table {
+    width: 400px;
+  }
 }
 
 .episode-button-container{
