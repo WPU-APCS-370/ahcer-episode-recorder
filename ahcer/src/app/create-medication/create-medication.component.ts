@@ -1,7 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MatDialogRef} from "@angular/material/dialog";
-import {PatientServices} from "../services/patient.service";
+import {Medication} from "../models/medication";
+import {catchError, first, switchMap, tap, throwError} from "rxjs";
+import {UsersService} from "../services/users.service";
+import {MedicationService} from "../services/medication.service";
 
 @Component({
   selector: 'app-create-medication',
@@ -14,7 +17,8 @@ export class CreateMedicationComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<CreateMedicationComponent>,
               private fb: FormBuilder,
-              private patientsService: PatientServices) {
+              private usersService: UsersService,
+              private medicationService: MedicationService) {
     this.medicationForm =this.fb.group({
       name: ["", Validators.required],
       dose: ["", Validators.required],
@@ -31,6 +35,26 @@ export class CreateMedicationComponent implements OnInit {
   }
 
   add(): void {
+    const val = this.medicationForm.value;
+    const newMedication: Partial<Medication> = {
+      name: val.name,
+      dose: val.dose,
+      type: val.type
+    };
 
+    if (val.type=="Daily") {
+      newMedication["active"] = val.active;
+    }
+
+    this.usersService.getLastViewedPatient().pipe(
+      switchMap(patientId=> this.medicationService.createMedication(patientId, newMedication)),
+      first(),
+      tap((res) => this.dialogRef.close(res)),
+      catchError(err => {
+        console.log(err);
+        alert('Could not add new episode.');
+        return throwError(err);
+      })
+    ).subscribe();
   }
 }

@@ -1,4 +1,4 @@
-export interface medication {
+export interface Medication {
   name: string,
   type: string,
   dose: string,
