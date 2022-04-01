@@ -8,6 +8,7 @@ import {ViewProfileComponent} from "./view-profile/view-profile.component";
 import {LoginComponent} from "./login/login.component";
 import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
 import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
+import {ViewMedicationComponent} from "./view-medication/view-medication.component";
 
 const routes: Routes = [
   {
@@ -42,6 +43,10 @@ const routes: Routes = [
   {
     path: 'episodes',
     component: ViewEpisodesComponent
+  },
+  {
+    path: 'medications',
+    component: ViewMedicationComponent
   }
 ];
 
