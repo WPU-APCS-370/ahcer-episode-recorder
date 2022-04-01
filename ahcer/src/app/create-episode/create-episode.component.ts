@@ -41,7 +41,7 @@ export class CreateEpisodeComponent implements OnInit{
     medicationGroup: this.fb.group({
       vallumOral: false,
       vallumOther: false,
-      midezolam: false,
+      midazalam: false,
       additionalMedication: ""
     })
   });
