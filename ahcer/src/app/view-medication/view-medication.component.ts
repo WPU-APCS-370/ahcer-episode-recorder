@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 import {finalize, first, switchMap, tap} from "rxjs";
 import {Medication} from "../models/medication";
 import {MedicationService} from "../services/medication.service";
 import {Patient} from "../models/patient";
+import {CreateMedicationComponent} from "../create-medication/create-medication.component";
 
 @Component({
   selector: 'app-view-medication',
@@ -78,5 +79,22 @@ export class ViewMedicationComponent implements OnInit {
       .subscribe(()=> {
         this.load()
       })
+  }
+
+  addMedication(): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    this.dialog
+      .open(CreateMedicationComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+          this.load()
+        }
+      });
   }
 }
