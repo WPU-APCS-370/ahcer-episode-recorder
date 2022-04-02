@@ -5,6 +5,7 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
 import {Episode} from "../models/episode";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,5 +31,16 @@ export class MedicationService {
         };
       })
     );
+  }
+
+  getMedicationsByPatient(patientId: string): Observable<Medication[]> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        this.db.collection(`users/${userId}/patients/${patientId}/medications`,
+          ref => ref.orderBy('name'))
+          .get()),
+      first(),
+      map(snaps => convertSnaps<Medication>(snaps))
+    )
   }
 }
