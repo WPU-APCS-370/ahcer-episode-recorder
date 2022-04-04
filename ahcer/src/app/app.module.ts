@@ -44,6 +44,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
+import { CreateMedicationComponent } from './create-medication/create-medication.component';
+
 
 @NgModule({
   declarations: [
@@ -61,8 +63,8 @@ import { ViewMedicationComponent } from './view-medication/view-medication.compo
     DeleteEpisodeComponent,
     EditEpisodeComponent,
     CreateEpisodeComponent,
-    DeletePatientComponent,
-    ViewMedicationComponent
+    ViewMedicationComponent,
+    CreateMedicationComponent
   ],
   imports: [
     BrowserModule,

@@ -5,9 +5,16 @@
 
 table {
   width: 100%;
+  margin-bottom: 10px;
 }
 
 .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-button-container{
   display: flex;
   justify-content: center;
   align-items: center;
