@@ -20,7 +20,8 @@
         <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'">
           {{symptom}}
         </mat-checkbox>
-        <mat-form-field [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
+        <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure'"
+                         [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
           <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
           <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'">
             <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
@@ -32,6 +33,10 @@
             <mat-option value="outward">Outward (Exotropia)</mat-option>
             <mat-option value="inward">Inward (Esotropia)</mat-option>
           </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
+          class="invisible">
+          <input matInput>
         </mat-form-field>
       </div>
     </div>
