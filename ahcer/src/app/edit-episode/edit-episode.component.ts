@@ -159,7 +159,7 @@ export class EditEpisodeComponent implements OnInit {
     }
 
     for (var index in this.symptomKeys) {
-      if(this.symptomKeys[index]!='lossOfconsciousness' && this.symptomKeys[index]!='seizure') {
+      if(this.symptomKeys[index]!='lossOfConsciousness' && this.symptomKeys[index]!='seizure') {
         if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
           symptoms[this.symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
           +' Dropdown']
