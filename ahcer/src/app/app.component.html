@@ -64,7 +64,8 @@
       <a [routerLink]="'view-profile/'+(user.userId$ | async)">
         <img alt="View Profile"
              [src]="(user.pictureUrl$ | async)?
-             (user.pictureUrl$ | async) : '../assets/img/default%20profile%20pic.jpg'"/>
+                    (user.pictureUrl$ | async) :
+                    '../assets/img/default%20profile%20pic.jpg'"/>
       </a>
     </div>
   </mat-toolbar>
