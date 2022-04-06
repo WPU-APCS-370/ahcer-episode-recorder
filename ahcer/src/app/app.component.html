@@ -43,14 +43,14 @@
 
         <span> Reports</span>
       </a>
-      <a mat-list-item [routerLink]="'view-profile/'+(user.userId$ | async)">
-        <mat-icon>face</mat-icon>
-        <span> user Profile </span>
-      </a>
 
       <a mat-list-item routerLink="about">
         <mat-icon>info</mat-icon>
         <span> About</span>
+      </a>
+      <a mat-list-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span> Log Out</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
@@ -60,8 +60,13 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span>AHC Episodic Recording</span>
-
-
+    <div class="user-icon" *ngIf="user.isLoggedIn$ | async">
+      <a [routerLink]="'view-profile/'+(user.userId$ | async)">
+        <img alt="View Profile"
+             [src]="(user.pictureUrl$ | async)?
+             (user.pictureUrl$ | async) : '../assets/img/default%20profile%20pic.jpg'"/>
+      </a>
+    </div>
   </mat-toolbar>
   <div class="container">
     <router-outlet></router-outlet>
