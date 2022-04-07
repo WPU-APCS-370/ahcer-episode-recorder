@@ -1,0 +1,31 @@
+.medications-div {
+  max-width: 400px;
+  margin: 20px auto 10px auto;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-container {
+  height: 360px;
+  width: 390px;
+  position: fixed;
+}
+
+.spinner-container mat-spinner {
+  margin: 130px auto 0 auto;
+}

@@ -8,8 +8,7 @@ import {ViewProfileComponent} from "./view-profile/view-profile.component";
 import {LoginComponent} from "./login/login.component";
 import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
 import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
-import { AngularFireAuthGuard } from '@angular/fire/compat/auth-guard';
-import {AppComponent} from "./app.component";
+import {ViewMedicationComponent} from "./view-medication/view-medication.component";
 import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 
@@ -21,7 +20,7 @@ const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const routes: Routes = [
 
   { path: '',
-    component: AppComponent,
+    component: HomeComponent,
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
@@ -76,6 +75,12 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
 
+
+  {
+    path: 'medications',
+    component: ViewMedicationComponent,
+   ...canActivate(redirectUnauthorizedToLogin)
+  }
 ];
 
 @NgModule({
