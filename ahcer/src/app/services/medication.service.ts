@@ -4,7 +4,7 @@ import {convertSnaps} from "./data-utils";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
-import {Episode} from "../models/episode";
+import {Patient} from "../models/patient";
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +42,14 @@ export class MedicationService {
       first(),
       map(snaps => convertSnaps<Medication>(snaps))
     )
+  }
+
+  updateMedication(patientId: string, medicationId: string, changes: Partial<Patient>): Observable<any> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}/patients/${patientId}/medications/${medicationId}`).update(changes))
+      ),
+      first()
+    );
   }
 }
