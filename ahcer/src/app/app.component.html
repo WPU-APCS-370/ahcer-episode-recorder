@@ -59,13 +59,13 @@
     <button mat-icon-button (click)="start.open('mouse')">
       <mat-icon>menu</mat-icon>
     </button>
-    <span>AHC Episodic Recording</span>
+    <img src="/assets/img/large_e.png" class="menu-logo" alt="E Logo"><span>AHC Episodic Recording</span>
     <div class="user-icon" *ngIf="user.isLoggedIn$ | async">
       <a [routerLink]="'view-profile/'+(user.userId$ | async)">
         <img alt="View Profile"
              [src]="(user.pictureUrl$ | async)?
                     (user.pictureUrl$ | async) :
-                    '../assets/img/default%20profile%20pic.jpg'"/>
+                    '../assets/img/default-profile-pic.jpg'"/>
       </a>
     </div>
   </mat-toolbar>
