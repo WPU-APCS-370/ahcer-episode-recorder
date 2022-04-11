@@ -59,7 +59,7 @@
     <button mat-icon-button (click)="start.open('mouse')">
       <mat-icon>menu</mat-icon>
     </button>
-    <img src="/assets/img/large_e.png" class="menu-logo" alt="E Logo"><span>AHC Episodic Recording</span>
+    <img src="/assets/img/large_e.png" class="menu-logo" alt="E Logo"><span>AHC Episode App</span>
     <div class="user-icon" *ngIf="user.isLoggedIn$ | async">
       <a [routerLink]="'view-profile/'+(user.userId$ | async)">
         <img alt="View Profile"
