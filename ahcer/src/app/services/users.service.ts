@@ -4,6 +4,7 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {convertOneSnap} from "./data-utils";
 import {User} from "../models/user";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class UsersService {
   userId$: Observable<string>;
 
   constructor(private db: AngularFirestore,
-              private afAuth: AngularFireAuth) {
+              private afAuth: AngularFireAuth,
+              private router: Router) {
     this.isLoggedIn$ = afAuth.authState.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
     this.pictureUrl$ = afAuth.authState.pipe(map(user => user? user.photoURL : null));
@@ -41,6 +43,11 @@ export class UsersService {
       first(),
       map(result => convertOneSnap<User>(result).lastPatientViewed)
     )
+  }
+
+  logout() {
+    this.afAuth.signOut();
+    this.router.navigateByUrl('/login');
   }
 
 }

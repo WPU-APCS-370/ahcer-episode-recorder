@@ -26,4 +26,7 @@ export class ViewProfileComponent implements OnInit {
     this.patients$ = this.patientService.getPatients(this.userId)
   }
 
+  logout() {
+    this.usersService.logout();
+  }
 }

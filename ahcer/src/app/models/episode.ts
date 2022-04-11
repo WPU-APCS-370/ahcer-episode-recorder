@@ -2,6 +2,9 @@ import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 export interface Episode {
   symptoms?: {
+    seizure:boolean,
+    lossOfConsciousness:boolean,
+    fullBody:string,
     eyes: string,
     leftArm: string,
     leftHand: string,

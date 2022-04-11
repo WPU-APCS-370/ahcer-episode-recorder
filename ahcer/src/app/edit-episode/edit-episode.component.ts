@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
 import firebase from "firebase/compat/app";
@@ -20,10 +20,10 @@ import {first, switchMap} from "rxjs";
 export class EditEpisodeComponent implements OnInit {
   tempPatientId: string ="JZCoEXypgR4eCpll04Rx"
   episode : Episode;
-  symptomLabels = ["Left Arm", "Right Arm", "Left Leg", "Right Leg",
-    "Left Hand", "Right Hand", "Eyes"]
-  symptomKeys = ["leftArm", "rightArm", "leftLeg", "rightLeg",
-    "leftHand", "rightHand", "eyes"]
+  symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
+    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"]
+  symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
+    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"]
 
   episodeForm : FormGroup;
 
@@ -33,11 +33,13 @@ export class EditEpisodeComponent implements OnInit {
       let label = this.symptomLabels[index];
       if(episode.symptoms && episode.symptoms[this.symptomKeys[index]]) {
         controls[label + ' Checkbox'] = true;
-        controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]];
+        if(label!="Loss of Consciousness" && label!="Seizure")
+          controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]];
       }
       else {
         controls[label + ' Checkbox'] = false;
-        controls[label + ' Dropdown'] = [''];
+        if(label!="Loss of Consciousness" && label!="Seizure")
+          controls[label + ' Dropdown'] = [''];
       }
     }
     let options = {
@@ -45,9 +47,13 @@ export class EditEpisodeComponent implements OnInit {
         let checked = 0;
         for (let label of this.symptomLabels) {
           let checkbox = formGroup.controls[label+' Checkbox']
-          let dropdown = formGroup.controls[label+' Dropdown']
+          let dropdown: AbstractControl = null
+          if(label!="Loss of Consciousness" && label!="Seizure")
+            dropdown = formGroup.controls[label+' Dropdown']
           let checkboxChecked = (checkbox.value === true)
-          let dropdownValueEmpty = (dropdown.value==='')
+          let dropdownValueEmpty = false
+          if (dropdown)
+            dropdownValueEmpty = (dropdown.value==='')
           if(checkboxChecked && !dropdownValueEmpty) {
             checked++;
           }
@@ -140,6 +146,9 @@ export class EditEpisodeComponent implements OnInit {
 
     const val = this.episodeForm.value;
     let symptoms = {
+      seizure: false,
+      lossOfConsciousness:false,
+      fullBody:'',
       eyes: '',
       leftArm: '',
       leftHand: '',
@@ -150,12 +159,17 @@ export class EditEpisodeComponent implements OnInit {
     }
 
     for (var index in this.symptomKeys) {
-      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-        symptoms[this.symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
-        +' Dropdown']
+      if(this.symptomKeys[index]!='lossOfConsciousness' && this.symptomKeys[index]!='seizure') {
+        if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
+          symptoms[this.symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
+          +' Dropdown']
+        }
+        else {
+          symptoms[this.symptomKeys[index]] = ""
+        }
       }
       else {
-        symptoms[this.symptomKeys[index]] = ""
+        symptoms[this.symptomKeys[index]]=val.symptomGroup[this.symptomLabels[index]+' Checkbox']
       }
     }
 

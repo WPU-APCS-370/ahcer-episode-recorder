@@ -16,8 +16,8 @@ import {UsersService} from "../services/users.service";
   styleUrls: ['./create-episode.component.scss']
 })
 export class CreateEpisodeComponent implements OnInit{
-  symptomLabels = ["Left Arm", "Right Arm", "Left Leg", "Right Leg",
-                   "Left Hand", "Right Hand", "Eyes"]
+  symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
+                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"]
   patient$: Observable<Patient>
 
   episodeForm =this.fb.group({
@@ -50,16 +50,20 @@ export class CreateEpisodeComponent implements OnInit{
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
-      controls[label+' Dropdown'] = ['']
+      if (label!="Seizure" && label!="Loss of Consciousness")
+        controls[label+' Dropdown'] = ['']
     }
     let options = {
       validators: (formGroup: FormGroup) => {
         let checked = 0;
         for (let label of this.symptomLabels) {
           let checkbox = formGroup.controls[label+' Checkbox']
-          let dropdown = formGroup.controls[label+' Dropdown']
           let checkboxChecked = (checkbox.value === true)
-          let dropdownValueEmpty = (dropdown.value==='')
+          let dropdownValueEmpty = false;
+          if (label!="Seizure" && label!="Loss of Consciousness") {
+            let dropdown = formGroup.controls[label + ' Dropdown']
+            dropdownValueEmpty = (dropdown.value === '')
+          }
           if(checkboxChecked && !dropdownValueEmpty) {
             checked++;
           }
@@ -97,9 +101,12 @@ export class CreateEpisodeComponent implements OnInit{
 
   onCreateEpisode() {
     const val = this.episodeForm.value;
-    let symptomKeys = ["leftArm", "rightArm", "leftLeg", "rightLeg",
-                       "leftHand", "rightHand", "eyes"]
+    let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
+                       "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness"]
     let symptoms = {
+      seizure:false,
+      lossOfConsciousness:false,
+      fullBody: '',
       eyes: '',
       leftArm: '',
       leftHand: '',
@@ -110,12 +117,17 @@ export class CreateEpisodeComponent implements OnInit{
     }
 
     for (var index in symptomKeys) {
-      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-        symptoms[symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
-                                                        +' Dropdown']
+      if(symptomKeys[index]!='seizure' && symptomKeys[index]!='lossOfConsciousness') {
+        if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
+          symptoms[symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
+                                                          +' Dropdown']
+        }
+        else {
+          symptoms[symptomKeys[index]] = ""
+        }
       }
       else {
-        symptoms[symptomKeys[index]] = ""
+        symptoms[symptomKeys[index]]=val.symptomGroup[this.symptomLabels[index]+' Checkbox']
       }
     }
 

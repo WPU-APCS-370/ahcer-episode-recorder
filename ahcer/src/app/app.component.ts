@@ -12,4 +12,8 @@ export class AppComponent {
   constructor(public user: UsersService) {
   }
   public uid = this.user.userId$.subscribe((results) => this.uid = results)
+
+  logout() {
+    this.user.logout();
+  }
 }
