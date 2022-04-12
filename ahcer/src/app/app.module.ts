@@ -46,6 +46,7 @@ import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
 import {DeleteMedicationComponent} from "./delete-medication/delete-medication.component";
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
+import { EditMedicationComponent } from './edit-medication/edit-medication.component';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { CreateMedicationComponent } from './create-medication/create-medication
     CreateEpisodeComponent,
     DeleteMedicationComponent,
     ViewMedicationComponent,
-    CreateMedicationComponent
+    CreateMedicationComponent,
+    EditMedicationComponent
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,7 @@ import {CreateMedicationComponent} from "../create-medication/create-medication.
 import {Episode} from "../models/episode";
 import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 import {DeleteMedicationComponent} from "../delete-medication/delete-medication.component";
+import {EditMedicationComponent} from "../edit-medication/edit-medication.component";
 
 @Component({
   selector: 'app-view-medication',
@@ -93,24 +94,6 @@ export class ViewMedicationComponent implements OnInit {
 
     this.dialog
       .open(CreateMedicationComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((val) => {
-        if (val) {
-          this.load()
-        }
-      });
-  }
-
-  deleteMedication(medication: Medication){
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-
-    dialogConfig.data = medication;
-    this.dialog
-      .open(DeleteMedicationComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
         if (val) {

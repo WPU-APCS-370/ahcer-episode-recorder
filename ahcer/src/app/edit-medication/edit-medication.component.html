@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Edit Medication</h2>
+
+<mat-dialog-content [formGroup]="medicationForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Dose</mat-label>
+    <input matInput formControlName="dose">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Type</mat-label>
+    <mat-select #medicationType formControlName="type">
+      <mat-option value="Daily">Daily</mat-option>
+      <mat-option value="Rescue">Rescue</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div [class]="'checkbox-container' + ((medicationType.value!='Daily')? ' invisible':'')">
+    <mat-label>Is this medication active currently?</mat-label>
+    <mat-checkbox formControlName="active" color="primary">
+    </mat-checkbox>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+
+  <button mat-raised-button color="primary" [disabled]="!medicationForm.valid" (click)="save()">Save</button>
+</mat-dialog-actions>
