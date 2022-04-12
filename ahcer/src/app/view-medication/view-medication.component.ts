@@ -7,6 +7,9 @@ import {Medication} from "../models/medication";
 import {MedicationService} from "../services/medication.service";
 import {Patient} from "../models/patient";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
+import {Episode} from "../models/episode";
+import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
+import {DeleteMedicationComponent} from "../delete-medication/delete-medication.component";
 import {EditMedicationComponent} from "../edit-medication/edit-medication.component";
 
 @Component({
@@ -96,25 +99,6 @@ export class ViewMedicationComponent implements OnInit {
         if (val) {
           this.load()
         }
-      });
-  }
-
-  editMedication(medication: Medication): void {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-    dialogConfig.maxWidth = '350px';
-
-    dialogConfig.data = medication;
-
-    this.dialog
-      .open(EditMedicationComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((val) => {
-        if(val)
-          this.load();
       });
   }
 }

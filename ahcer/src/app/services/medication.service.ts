@@ -52,4 +52,15 @@ export class MedicationService {
       first()
     );
   }
+
+  deleteMedication(patientId: string, medicationId: string): Observable<any> {
+    return this.user.userId$.pipe(
+      switchMap(userId => {
+          console.log(userId)
+          return from(this.db.doc(`users/${userId}/patients/${patientId}/medications/${medicationId}`).delete())
+        }
+      ),
+      first()
+    );
+  }
 }

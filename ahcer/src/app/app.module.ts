@@ -43,6 +43,7 @@ import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-mater
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ViewEpisodesComponent } from './view-episodes/view-episodes.component';
+import {DeleteMedicationComponent} from "./delete-medication/delete-medication.component";
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
@@ -64,6 +65,7 @@ import { EditMedicationComponent } from './edit-medication/edit-medication.compo
     DeleteEpisodeComponent,
     EditEpisodeComponent,
     CreateEpisodeComponent,
+    DeleteMedicationComponent,
     ViewMedicationComponent,
     CreateMedicationComponent,
     EditMedicationComponent
