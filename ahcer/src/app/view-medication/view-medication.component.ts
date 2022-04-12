@@ -101,4 +101,41 @@ export class ViewMedicationComponent implements OnInit {
         }
       });
   }
+
+  editMedication(medication: Medication): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+    dialogConfig.maxWidth = '350px';
+
+    dialogConfig.data = medication;
+
+    this.dialog
+      .open(EditMedicationComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if(val)
+          this.load();
+      });
+  }
+
+  deleteMedication(medication: Medication){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '350px';
+
+    dialogConfig.data = medication;
+    this.dialog
+      .open(DeleteMedicationComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val) {
+          this.load()
+        }
+      });
+  }
 }
