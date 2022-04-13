@@ -5,10 +5,23 @@
     <mat-label>Name</mat-label>
     <input matInput formControlName="name">
   </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Dose</mat-label>
-    <input matInput formControlName="dose">
-  </mat-form-field>
+  <div class="dose-container">
+    <mat-form-field appearance="fill" class="dose-amount">
+      <mat-label>Dose Amount</mat-label>
+      <input matInput type="number" formControlName="doseAmount">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="dose-unit">
+      <mat-label>Unit</mat-label>
+      <mat-select formControlName="doseUnit">
+        <mat-option value="ng">ng</mat-option>
+        <mat-option value="μg">μg</mat-option>
+        <mat-option value="mg">mg</mat-option>
+        <mat-option value="g">g</mat-option>
+        <mat-option value="ml">ml</mat-option>
+        <mat-option value="caps">caps</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
   <mat-form-field appearance="fill">
     <mat-label>Type</mat-label>
     <mat-select #medicationType formControlName="type">

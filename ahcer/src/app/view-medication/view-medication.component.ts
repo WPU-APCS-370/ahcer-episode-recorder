@@ -7,8 +7,6 @@ import {Medication} from "../models/medication";
 import {MedicationService} from "../services/medication.service";
 import {Patient} from "../models/patient";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
-import {Episode} from "../models/episode";
-import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 import {DeleteMedicationComponent} from "../delete-medication/delete-medication.component";
 import {EditMedicationComponent} from "../edit-medication/edit-medication.component";
 
@@ -90,7 +88,7 @@ export class ViewMedicationComponent implements OnInit {
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
+    dialogConfig.width = '350px';
 
     this.dialog
       .open(CreateMedicationComponent, dialogConfig)
@@ -107,8 +105,7 @@ export class ViewMedicationComponent implements OnInit {
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-    dialogConfig.maxWidth = '350px';
+    dialogConfig.width = '350px';
 
     dialogConfig.data = medication;
 
