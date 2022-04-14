@@ -19,7 +19,7 @@
     </ng-container>
     <ng-container matColumnDef="dose">
       <th mat-header-cell *matHeaderCellDef>Dose</th>
-      <td mat-cell *matCellDef="let result">{{result.dose}}</td>
+      <td mat-cell *matCellDef="let result">{{result.doseInfo?.amount}} {{result.doseInfo?.unit}}</td>
     </ng-container>
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Type</th>

@@ -25,7 +25,8 @@ export class EditMedicationComponent implements OnInit {
     this.medication = medication;
     this.medicationForm =this.fb.group({
       name: [medication.name, Validators.required],
-      dose: [medication.dose, Validators.required],
+      doseAmount: [medication.doseInfo?.amount, Validators.required],
+      doseUnit: [medication.doseInfo?.unit, Validators.required],
       type: [medication.type, Validators.required],
       active: (medication.type=="Daily")? medication.active : false
     })
@@ -42,7 +43,10 @@ export class EditMedicationComponent implements OnInit {
     const val = this.medicationForm.value;
     const updatedMedication: Partial<Medication> = {
       name: val.name,
-      dose: val.dose,
+      doseInfo: {
+        amount: val.doseAmount,
+        unit: val.doseUnit
+      },
       type: val.type
     };
 

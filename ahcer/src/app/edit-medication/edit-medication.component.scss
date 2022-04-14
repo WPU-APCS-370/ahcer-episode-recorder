@@ -11,9 +11,22 @@ mat-dialog-actions {
   visibility: hidden;
 }
 
+.dose-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.dose-amount {
+  width: calc(65% - 10px);
+}
+
+.dose-unit {
+  width: 35%;
+}
+
 .checkbox-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-

@@ -21,7 +21,8 @@ export class CreateMedicationComponent implements OnInit {
               private medicationService: MedicationService) {
     this.medicationForm =this.fb.group({
       name: ["", Validators.required],
-      dose: ["", Validators.required],
+      doseAmount: ["", Validators.required],
+      doseUnit:["", Validators.required],
       type: ["", Validators.required],
       active: false
     })
@@ -38,7 +39,10 @@ export class CreateMedicationComponent implements OnInit {
     const val = this.medicationForm.value;
     const newMedication: Partial<Medication> = {
       name: val.name,
-      dose: val.dose,
+      doseInfo: {
+        amount: val.doseAmount,
+        unit: val.doseUnit
+      },
       type: val.type
     };
 

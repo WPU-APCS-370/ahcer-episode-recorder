@@ -1,7 +1,10 @@
 export interface Medication {
   name: string,
   type: string,
-  dose: string,
+  doseInfo: {
+    amount: number,
+    unit: string
+  },
   id: string,
   active?: boolean
 }
