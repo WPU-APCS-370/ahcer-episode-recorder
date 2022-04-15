@@ -46,7 +46,7 @@ export class CreateMedicationComponent implements OnInit {
       type: val.type
     };
 
-    if (val.type=="Daily") {
+    if (val.type!="Rescue") {
       newMedication["active"] = val.active;
     }
 

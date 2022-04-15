@@ -27,9 +27,10 @@
     <mat-select #medicationType formControlName="type">
       <mat-option value="Daily">Daily</mat-option>
       <mat-option value="Rescue">Rescue</mat-option>
+      <mat-option value="Alternative">Alternative</mat-option>
     </mat-select>
   </mat-form-field>
-  <div [class]="'checkbox-container' + ((medicationType.value!='Daily')? ' invisible':'')">
+  <div [class]="'checkbox-container' + ((medicationType.value=='Rescue')? ' invisible':'')">
     <mat-label>Is this medication active currently?</mat-label>
     <mat-checkbox formControlName="active" color="primary">
     </mat-checkbox>

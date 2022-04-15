@@ -28,7 +28,7 @@ export class EditMedicationComponent implements OnInit {
       doseAmount: [medication.doseInfo?.amount, Validators.required],
       doseUnit: [medication.doseInfo?.unit, Validators.required],
       type: [medication.type, Validators.required],
-      active: (medication.type=="Daily")? medication.active : false
+      active: (medication.type!="Rescue")? medication.active : false
     })
   }
 
@@ -50,7 +50,7 @@ export class EditMedicationComponent implements OnInit {
       type: val.type
     };
 
-    if (val.type=="Daily") {
+    if (val.type!="Rescue") {
       updatedMedication["active"] = val.active;
     }
 
