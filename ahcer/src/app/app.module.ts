@@ -47,6 +47,7 @@ import {DeleteMedicationComponent} from "./delete-medication/delete-medication.c
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
+import {NgxMaskModule} from "ngx-mask";
 
 
 @NgModule({
@@ -96,7 +97,8 @@ import { EditMedicationComponent } from './edit-medication/edit-medication.compo
     NgxMatDatetimePickerModule,
     MatCheckboxModule,
     NgxMatNativeDateModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    NgxMaskModule.forRoot()
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService

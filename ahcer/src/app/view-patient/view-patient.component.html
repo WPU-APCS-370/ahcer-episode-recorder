@@ -28,7 +28,7 @@
       <p>Primary Physician Name: {{patient.primaryPhysicianName}}</p>
     </div>
     <div *ngIf="patient.primaryPhysicianPhone">
-      <p>Primary Physician Phone: {{patient.primaryPhysicianPhone}}</p>
+      <p>Primary Physician Phone: <a [href]="'tel:' + patient.primaryPhysicianPhone">{{patient.primaryPhysicianPhone| mask: '(000) 000-0000'}}</a></p>
     </div>
     <div *ngIf="patient.otherDoctorInfo" class="other-doctor-info">
       <p><b>Other Doctors Information</b></p>
