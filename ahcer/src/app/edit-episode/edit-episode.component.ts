@@ -1,15 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import {Episode} from "../models/episode";
 import {EpisodeService} from "../services/episode.service";
 import {UsersService} from "../services/users.service";
-import {trigger} from "@angular/animations";
-import {update} from "@angular/fire/database";
 import {first, switchMap} from "rxjs";
 
 @Component({
@@ -18,7 +15,6 @@ import {first, switchMap} from "rxjs";
   styleUrls: ['./edit-episode.component.scss']
 })
 export class EditEpisodeComponent implements OnInit {
-  tempPatientId: string ="JZCoEXypgR4eCpll04Rx"
   episode : Episode;
   symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
     "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"]
@@ -129,7 +125,8 @@ export class EditEpisodeComponent implements OnInit {
       triggerGroup: this.fb.group(triggerGroup),
       medication: Boolean((episode.rescueMedication && episode.rescueMedication[0]) ||
         episode.otherMedication),
-      medicationGroup: this.fb.group(medicationGroup)
+      medicationGroup: this.fb.group(medicationGroup),
+      behavior: episode.behavior? episode.behavior: ""
     });
 
     console.log(triggerGroup)
@@ -212,7 +209,8 @@ export class EditEpisodeComponent implements OnInit {
       otherMedication: (val.medication)? val.medicationGroup.additionalMedication : "",
       otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,
-      rescueMedication: medications
+      rescueMedication: medications,
+      behavior: val.behavior? val.behavior : ""
     };
 
     updateEpisode.startTime = Timestamp.fromDate(val.startTime);
