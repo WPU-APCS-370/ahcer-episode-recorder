@@ -48,6 +48,7 @@ import { ViewMedicationComponent } from './view-medication/view-medication.compo
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
 import {NgxMaskModule} from "ngx-mask";
+import { QuillModule } from 'ngx-quill';
 
 
 @NgModule({
@@ -98,6 +99,7 @@ import {NgxMaskModule} from "ngx-mask";
     MatCheckboxModule,
     NgxMatNativeDateModule,
     MatSlideToggleModule,
+    QuillModule,
     NgxMaskModule.forRoot()
   ],
   providers: [

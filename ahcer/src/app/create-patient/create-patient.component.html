@@ -38,14 +38,16 @@
       <mat-label>Primary Physician Phone</mat-label>
       <input matInput formControlName="primaryPhysicianPhone" placeholder="(XXX) XXX-XXXX" mask="(000) 000-0000">
     </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Other Doctor Info</mat-label>
-      <textarea matInput
-                cdkTextareaAutosize
-                cdkAutosizeMinRows="5"
-                formControlName="otherDoctorInfo"></textarea>
-    </mat-form-field>
+    <quill-editor formControlName="otherDoctorInfo">
+      <div quill-editor-toolbar>
+      <span class="ql-formats">
+        <button class="ql-bold"></button>
+        <button class="ql-italic"></button>
+        <button class="ql-underline"></button>
+        <button class="ql-strike"></button>
+      </span>
+      </div>
+    </quill-editor>
     <button mat-raised-button color="primary" [disabled]="!patientForm.valid" (click)="onCreatePatient()">
       Add Patient
     </button>
