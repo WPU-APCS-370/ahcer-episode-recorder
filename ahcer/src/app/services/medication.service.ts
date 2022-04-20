@@ -44,6 +44,30 @@ export class MedicationService {
     )
   }
 
+  getMedicationsByType(patientId: string, isRescue: boolean): Observable<Medication[]> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+      this.db.collection(`users/${userId}/patients/${patientId}/medications`,
+        ref => ref.where("type", (isRescue)? "==": "!=", "Rescue")
+          .orderBy('name'))
+        .get()),
+      first(),
+      map(snaps => convertSnaps<Medication>(snaps))
+    )
+  }
+
+  getMedicationsByIds(patientId: string, idArray: [string]): Observable<Medication[]> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        this.db.collection(`users/${userId}/patients/${patientId}/medications`,
+          ref => ref.where("id", "in", idArray)
+            .orderBy('name'))
+          .get()),
+      first(),
+      map(snaps => convertSnaps<Medication>(snaps))
+    )
+  }
+
   updateMedication(patientId: string, medicationId: string, changes: Partial<Patient>): Observable<any> {
     return this.user.userId$.pipe(
       switchMap(userId =>
