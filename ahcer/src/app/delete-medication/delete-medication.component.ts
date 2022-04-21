@@ -1,8 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {catchError, switchMap, tap, throwError} from "rxjs";
-import {Episode} from "../models/episode";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {EpisodeService} from "../services/episode.service";
 import {UsersService} from "../services/users.service";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
@@ -32,7 +30,7 @@ export class DeleteMedicationComponent implements OnInit {
 
   delete(): void {
     this.userService.getLastViewedPatient().pipe(
-      switchMap((patientId) => this.medicationService.deleteMedication(patientId, this.medication.id)),
+      switchMap((patientId) => this.medicationService.archiveMedication(patientId, this.medication.id)),
       tap(() => {
         console.log("Deleted medication for: " + this.medication);
         this.dialogRef.close(this.medication);

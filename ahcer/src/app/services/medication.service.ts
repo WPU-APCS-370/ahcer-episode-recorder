@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import {first, from, map, Observable, switchMap} from "rxjs";
+import {endWith, first, from, map, Observable, switchMap, takeWhile} from "rxjs";
 import {convertSnaps} from "./data-utils";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
 import {Patient} from "../models/patient";
+import firebase from "firebase/compat/app";
+import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +39,8 @@ export class MedicationService {
     return this.user.userId$.pipe(
       switchMap(userId =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.orderBy('name'))
+          ref => ref.where('archive', '==', false)
+          .orderBy('name'))
           .get()),
       first(),
       map(snaps => convertSnaps<Medication>(snaps))
@@ -48,22 +51,31 @@ export class MedicationService {
     return this.user.userId$.pipe(
       switchMap(userId =>
       this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-        ref => ref.where("type", (isRescue)? "==": "!=", "Rescue")
-          .orderBy('name'))
+        ref => ref.where("archive", "==", false)
+          .where("type", (isRescue)? "==": "!=", "Rescue"))
         .get()),
       first(),
-      map(snaps => convertSnaps<Medication>(snaps))
+      map(snaps => convertSnaps<Medication>(snaps)),
+      map(medications => medications.sort((a, b) => ((a.name < b.name)? -1 : 1)))
     )
   }
 
-  getMedicationsByIds(patientId: string, idArray: [string]): Observable<Medication[]> {
+  getMedicationsByIds(patientId: string, medicationsIdArray: [string]): Observable<Medication[]> {
+    let idChunks : string[][] = []
+    for(let i=0; i<medicationsIdArray.length; i+=10) {
+      idChunks.push(medicationsIdArray.slice(i, i+10));
+    }
     return this.user.userId$.pipe(
-      switchMap(userId =>
+      switchMap(userId => from(idChunks).pipe(
+        map(medIds=> [userId, medIds]),
+        endWith(null)
+      )),
+      takeWhile((x) => x != null),
+      switchMap(([userId, medIds]) =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.where("id", "in", idArray)
-            .orderBy('name'))
+          ref => ref.where("id", "in", medIds))
+            //in clause supports only up to 10 elements in the array.
           .get()),
-      first(),
       map(snaps => convertSnaps<Medication>(snaps))
     )
   }
@@ -77,11 +89,15 @@ export class MedicationService {
     );
   }
 
-  deleteMedication(patientId: string, medicationId: string): Observable<any> {
+  archiveMedication(patientId: string, medicationId: string): Observable<any> {
     return this.user.userId$.pipe(
       switchMap(userId => {
-          console.log(userId)
-          return from(this.db.doc(`users/${userId}/patients/${patientId}/medications/${medicationId}`).delete())
+          return from(this.db.collection(`users/${userId}/patients/${patientId}/medications`)
+            .doc(medicationId)
+            .update({
+              archive: true,
+              archiveDate: Timestamp.fromDate(new Date())
+            }))
         }
       ),
       first()
