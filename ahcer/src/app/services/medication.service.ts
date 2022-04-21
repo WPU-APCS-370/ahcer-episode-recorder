@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {endWith, first, from, map, Observable, switchMap, takeWhile} from "rxjs";
 import {convertSnaps} from "./data-utils";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
+import {AngularFirestore, QueryFn} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
 import {Patient} from "../models/patient";
@@ -47,12 +47,24 @@ export class MedicationService {
     )
   }
 
-  getMedicationsByType(patientId: string, isRescue: boolean): Observable<Medication[]> {
+  getMedicationsByType(patientId: string, isRescue: boolean,
+                       onlyActiveMeds: boolean = false): Observable<Medication[]> {
+    if(isRescue && onlyActiveMeds) {
+      throw new Error("onlyActiveMeds can only be true when isRescue is false.")
+    }
+    let dbQueryFn : QueryFn<firebase.firestore.DocumentData> = ref => {
+      if (onlyActiveMeds)
+        return ref.where("archive", "==", false)
+          .where("type", "!=", "Rescue")
+          .where("active", "==", true)
+      else
+        return ref.where("archive", "==", false)
+          .where("type", (isRescue)? "==": "!=", "Rescue")
+    }
     return this.user.userId$.pipe(
       switchMap(userId =>
       this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-        ref => ref.where("archive", "==", false)
-          .where("type", (isRescue)? "==": "!=", "Rescue"))
+          dbQueryFn)
         .get()),
       first(),
       map(snaps => convertSnaps<Medication>(snaps)),
