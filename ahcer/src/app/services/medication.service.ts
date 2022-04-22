@@ -72,7 +72,7 @@ export class MedicationService {
     )
   }
 
-  getMedicationsByIds(patientId: string, medicationsIdArray: [string]): Observable<Medication[]> {
+  getMedicationsByIds(patientId: string, medicationsIdArray: string[]): Observable<Medication[]> {
     let idChunks : string[][] = []
     for(let i=0; i<medicationsIdArray.length; i+=10) {
       idChunks.push(medicationsIdArray.slice(i, i+10));
@@ -85,7 +85,7 @@ export class MedicationService {
       takeWhile((x) => x != null),
       switchMap(([userId, medIds]) =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.where("id", "in", medIds))
+          ref => ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds))
             //in clause supports only up to 10 elements in the array.
           .get()),
       map(snaps => convertSnaps<Medication>(snaps))
