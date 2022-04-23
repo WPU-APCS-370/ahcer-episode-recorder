@@ -10,6 +10,6 @@ export interface Medication {
   },
   id: string,
   active?: boolean,
-  archive?: boolean,
+  archived?: boolean,
   archiveDate?: Timestamp
 }

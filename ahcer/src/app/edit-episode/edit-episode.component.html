@@ -84,7 +84,7 @@
       </mat-form-field>
     </div>
     <div class="medication-container archived-med"
-               *ngFor="let rescueMed of archivedrescueMeds; index as i">
+               *ngFor="let rescueMed of archivedRescueMeds; index as i">
       <mat-checkbox color="primary"
                     [formControlName]="'med-'+(i+rescueMedications.length)+'-checkbox'">
         {{rescueMed.name}}

@@ -39,7 +39,7 @@ export class MedicationService {
     return this.user.userId$.pipe(
       switchMap(userId =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.where('archive', '==', false)
+          ref => ref.where('archived', '==', false)
           .orderBy('name'))
           .get()),
       first(),
@@ -54,11 +54,11 @@ export class MedicationService {
     }
     let dbQueryFn : QueryFn<firebase.firestore.DocumentData> = ref => {
       if (onlyActiveMeds)
-        return ref.where("archive", "==", false)
+        return ref.where("archived", "==", false)
           .where("type", "!=", "Rescue")
           .where("active", "==", true)
       else
-        return ref.where("archive", "==", false)
+        return ref.where("archived", "==", false)
           .where("type", (isRescue)? "==": "!=", "Rescue")
     }
     return this.user.userId$.pipe(
@@ -83,7 +83,7 @@ export class MedicationService {
       let dbQueryFn: QueryFn<firebase.firestore.DocumentData> = ref => {
         if (onlyArchived)
           return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
-            .where("archive", "==", true)
+            .where("archived", "==", true)
         else
           return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
       }
@@ -118,7 +118,7 @@ export class MedicationService {
           return from(this.db.collection(`users/${userId}/patients/${patientId}/medications`)
             .doc(medicationId)
             .update({
-              archive: true,
+              archived: true,
               archiveDate: Timestamp.fromDate(new Date())
             }))
         }

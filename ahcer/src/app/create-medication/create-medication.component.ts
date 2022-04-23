@@ -45,7 +45,7 @@ export class CreateMedicationComponent implements OnInit {
         unit: val.doseUnit
       },
       type: val.type,
-      archive: false
+      archived: false
     };
 
     if (val.type!="Rescue") {

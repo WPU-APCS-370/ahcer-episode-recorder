@@ -3,13 +3,13 @@ const admin = require('firebase-admin');
 const serviceAccountPath = process.argv[2];
 
 console.log(`Using service account ${serviceAccountPath}.`);
-console.log("Populating all medication documents with archive field.")
+console.log("Populating all medication documents with archived field.")
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountPath)
 })
 
-async function addArchiveFieldToMedications() {
+async function addArchivedFieldToMedications() {
   let db = admin.firestore();
   let userDocs = (await db.collection('users').get()).docs;
   for (let userDoc of userDocs) {
@@ -24,11 +24,11 @@ async function addArchiveFieldToMedications() {
         if(!medicationsSnapshot.empty) {
           let medicationDocs = medicationsSnapshot.docs;
           for (let medicationDoc of medicationDocs) {
-            if((typeof medicationDoc.data().archive)=== 'undefined') {
+            if((typeof medicationDoc.data().archived) === 'undefined') {
               await db.collection(`users/${userDoc.id}/patients/${patientDoc.id}/medications`)
                 .doc(medicationDoc.id)
                 .update({
-                  archive: false
+                  archived: false
                 })
             }
           }
@@ -38,8 +38,8 @@ async function addArchiveFieldToMedications() {
   }
 }
 
-addArchiveFieldToMedications()
+addArchivedFieldToMedications()
   .then(()=> {
-    console.log("Exiting...");
+    console.log("Job complete! Exiting...");
     process.exit();
   })

@@ -20,7 +20,7 @@ export class EditEpisodeComponent implements OnInit {
 
   rescueMedications: Medication[] = [];
   prescriptionMeds: any[] = [];
-  archivedrescueMeds: Medication[] = [];
+  archivedRescueMeds: Medication[] = [];
   loadingRescueMeds: boolean = false;
   loadingArchivedMeds: boolean = false;
 
@@ -103,8 +103,8 @@ export class EditEpisodeComponent implements OnInit {
         controls['med-' + i + '-dose-unit'] = [medication.doseInfo.unit];
       }
     }
-    for(let i=0; i < this.archivedrescueMeds.length; i++) {
-      let medication = this.archivedrescueMeds[i];
+    for(let i=0; i < this.archivedRescueMeds.length; i++) {
+      let medication = this.archivedRescueMeds[i];
       let controlIndex = i + this.rescueMedications.length;
       controls['med-'+controlIndex+'-checkbox'] = true;
       controls['med-'+controlIndex+'-dose-amount'] = [rescueMedDoses[medication.id].amount];
@@ -122,7 +122,7 @@ export class EditEpisodeComponent implements OnInit {
     {
       let checked = 0;
       for (let i=0;
-           i < this.rescueMedications.length + this.archivedrescueMeds.length;
+           i < this.rescueMedications.length + this.archivedRescueMeds.length;
            i++) {
         let checkbox = formGroup.controls['med-' + i + '-checkbox']
         let checkboxChecked = (checkbox?.value === true)
@@ -267,10 +267,10 @@ export class EditEpisodeComponent implements OnInit {
           true)
           .subscribe({
             next: (archivedMeds)=> {
-              this.archivedrescueMeds = this.archivedrescueMeds.concat(archivedMeds)
+              this.archivedRescueMeds = this.archivedRescueMeds.concat(archivedMeds)
             },
             complete: () => {
-              this.archivedrescueMeds.sort((a, b) => ((a.name < b.name)? -1 : 1));
+              this.archivedRescueMeds.sort((a, b) => ((a.name < b.name)? -1 : 1));
               this.episodeForm.removeControl("rescueMedGroup");
               this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup(this.episode));
               let medicationToggleInitiated: boolean =
