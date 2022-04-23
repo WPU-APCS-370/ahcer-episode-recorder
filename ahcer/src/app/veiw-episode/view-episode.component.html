@@ -34,8 +34,9 @@
     <div *ngIf="!loadingMeds && rescueMeds.length > 0">
       <h4>Rescue Medications</h4>
       <ol>
-        <li *ngFor="let rescueMed of rescueMeds">
+        <li *ngFor="let rescueMed of rescueMeds" [class]="(rescueMed.archived)? 'archived-med' : ''">
           {{rescueMed.name}}, {{rescueMedsDoses[rescueMed.id].amount}} {{rescueMedsDoses[rescueMed.id].unit}}
+          {{(rescueMed.archived)? "(Archived)" : ""}}
         </li>
       </ol>
     </div>
