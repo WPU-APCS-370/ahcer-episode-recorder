@@ -230,7 +230,7 @@ export class EditEpisodeComponent implements OnInit {
       rescueMedToggle: Boolean(this.episode.medications?.rescueMeds),
       rescueMedGroup: this.rescueMedGroup(this.episode),
       prescriptionMedGroup: this.prescriptionMedGroup(),
-      behavior: episode.behavior? this.episode.behavior: ""
+      behavior: this.episode.behavior? this.episode.behavior: ""
     });
 
     this.loadRescueMeds();
