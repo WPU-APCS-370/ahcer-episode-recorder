@@ -141,6 +141,13 @@
       </button>
     </div>
   </div>
+  <mat-form-field appearance="outline">
+    <mat-label>Other Behaviors</mat-label>
+    <textarea matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="2"
+              formControlName="behavior"></textarea>
+  </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button (click)="close()">Close</button>

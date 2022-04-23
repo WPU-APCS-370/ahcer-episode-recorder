@@ -20,7 +20,6 @@ export interface Episode {
   otherTrigger?: string,
   knownTriggers?: [string],
   notes?: string,
-  rescueMedication?:[string],
   medications?: {
     rescueMeds?: {
       id: string,
@@ -36,5 +35,6 @@ export interface Episode {
         unit: string
       }
     }[]
-  }
+  },
+  behavior?: string
 }

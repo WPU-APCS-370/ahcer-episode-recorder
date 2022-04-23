@@ -13,7 +13,6 @@
     <mat-card-title>{{patient.firstName}} {{patient.lastName}}</mat-card-title>
 
   </mat-card-header>
-
   <mat-card-content>
     <div *ngIf="patient.gender">
       <p>Gender: {{patient.gender}}</p>
@@ -31,8 +30,8 @@
       <p>Primary Physician Phone: <a [href]="'tel:' + patient.primaryPhysicianPhone">{{patient.primaryPhysicianPhone| mask: '(000) 000-0000'}}</a></p>
     </div>
     <div *ngIf="patient.otherDoctorInfo" class="other-doctor-info">
-      <p><b>Other Doctors Information</b></p>
-      <p>{{patient.otherDoctorInfo}}</p>
+      <h3>Other Doctors Information</h3>
+      <p [innerHTML]="patient.otherDoctorInfo"></p>
     </div>
   </mat-card-content>
 

@@ -47,7 +47,8 @@ export class CreateEpisodeComponent implements OnInit{
       additionalTriggers: ""
     }),
     rescueMedToggle: false,
-    rescueMedGroup: this.rescueMedGroup()
+    rescueMedGroup: this.rescueMedGroup(),
+    behavior: ""
   });
 
   symptomGroup(): FormGroup {
@@ -305,7 +306,8 @@ export class CreateEpisodeComponent implements OnInit{
     const newEpisode: Partial<Episode> = {
       symptoms: symptoms,
       otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
-      knownTriggers: triggers
+      knownTriggers: triggers,
+      behavior: val.behavior
     };
 
     newEpisode.startTime = Timestamp.fromDate(val.startTime);

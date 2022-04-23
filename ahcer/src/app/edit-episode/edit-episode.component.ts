@@ -229,7 +229,8 @@ export class EditEpisodeComponent implements OnInit {
       triggerGroup: this.fb.group(triggerGroup),
       rescueMedToggle: Boolean(this.episode.medications?.rescueMeds),
       rescueMedGroup: this.rescueMedGroup(this.episode),
-      prescriptionMedGroup: this.prescriptionMedGroup()
+      prescriptionMedGroup: this.prescriptionMedGroup(),
+      behavior: episode.behavior? this.episode.behavior: ""
     });
 
     this.loadRescueMeds();
@@ -402,7 +403,8 @@ export class EditEpisodeComponent implements OnInit {
       otherMedication: (val.medication)? val.medicationGroup.additionalMedication : "",
       otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,
-      medications: medications
+      medications: medications,
+      behavior: val.behavior? val.behavior : ""
     };
 
     updateEpisode.startTime = Timestamp.fromDate(val.startTime);
