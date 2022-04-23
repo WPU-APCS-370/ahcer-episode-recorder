@@ -47,7 +47,7 @@ export class CreateEpisodeComponent implements OnInit{
       additionalTriggers: ""
     }),
     rescueMedToggle: false,
-    medicationGroup: this.medicationGroup()
+    rescueMedGroup: this.rescueMedGroup()
   });
 
   symptomGroup(): FormGroup {
@@ -89,7 +89,7 @@ export class CreateEpisodeComponent implements OnInit{
     return this.fb.group(controls, options);
   }
 
-  medicationGroup(): FormGroup {
+  rescueMedGroup(): FormGroup {
     let controls = {}
     for(let i=0; i < this.rescueMedications.length; i++) {
       let medication = this.rescueMedications[i];
@@ -117,7 +117,7 @@ export class CreateEpisodeComponent implements OnInit{
            checked++;
          } else if (checkboxChecked && doseEmpty) {
            return {
-             requireDropdownToBeSelected: true
+             requireDoseToBeFilled: true
            };
          }
        }
@@ -154,12 +154,12 @@ export class CreateEpisodeComponent implements OnInit{
 
   onMedToggleChange(value: boolean) {
     if(!value) {
-      this.episodeForm.get('medicationGroup').clearValidators();
-      this.episodeForm.get('medicationGroup').updateValueAndValidity();
+      this.episodeForm.get('rescueMedGroup').clearValidators();
+      this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
     else {
-      this.episodeForm.get('medicationGroup').setValidators(this.medicationValidator());
-      this.episodeForm.get('medicationGroup').updateValueAndValidity();
+      this.episodeForm.get('rescueMedGroup').setValidators(this.medicationValidator());
+      this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
   }
 
@@ -176,8 +176,8 @@ export class CreateEpisodeComponent implements OnInit{
     ).subscribe(
       medications => {
         this.rescueMedications = medications;
-        this.episodeForm.removeControl("medicationGroup");
-        this.episodeForm.addControl("medicationGroup", this.medicationGroup())
+        this.episodeForm.removeControl("rescueMedGroup");
+        this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup())
         this.onMedToggleChange(this.episodeForm.value.medicationToggle)
         this.loadingRescueMeds = false;
       }
@@ -282,13 +282,13 @@ export class CreateEpisodeComponent implements OnInit{
 
     if (val.rescueMedToggle === true) {
       for (let i=0; i < this.rescueMedications.length; i++) {
-        if(val.medicationGroup['med-'+i+'-checkbox']===true) {
+        if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
           let medication = this.rescueMedications[i];
           rescueMeds.push({
             id: medication.id,
             doseInfo: {
-              amount: val.medicationGroup['med-' + i + '-dose-amount'],
-              unit: val.medicationGroup['med-' + i + '-dose-unit']
+              amount: val.rescueMedGroup['med-' + i + '-dose-amount'],
+              unit: val.rescueMedGroup['med-' + i + '-dose-unit']
             }
           })
         }

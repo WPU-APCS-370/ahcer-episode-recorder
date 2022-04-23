@@ -72,10 +72,22 @@ export class MedicationService {
     )
   }
 
-  getMedicationsByIds(patientId: string, medicationsIdArray: string[]): Observable<Medication[]> {
+  getMedicationsByIds(patientId: string, medicationsIdArray: string[],
+                      onlyArchived: boolean = false): Observable<Medication[]> {
     let idChunks : string[][] = []
+    //in clause supports only up to 10 elements in the array. Thus, the following for loop.
     for(let i=0; i<medicationsIdArray.length; i+=10) {
       idChunks.push(medicationsIdArray.slice(i, i+10));
+    }
+    let queryFunction = (medIds) => {
+      let dbQueryFn: QueryFn<firebase.firestore.DocumentData> = ref => {
+        if (onlyArchived)
+          return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
+            .where("archive", "==", true)
+        else
+          return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
+      }
+      return dbQueryFn
     }
     return this.user.userId$.pipe(
       switchMap(userId => from(idChunks).pipe(
@@ -85,8 +97,7 @@ export class MedicationService {
       takeWhile((x) => x != null),
       switchMap(([userId, medIds]) =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds))
-            //in clause supports only up to 10 elements in the array.
+          queryFunction(medIds))
           .get()),
       map(snaps => convertSnaps<Medication>(snaps))
     )

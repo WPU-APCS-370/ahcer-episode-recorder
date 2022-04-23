@@ -67,7 +67,7 @@
                                     (change)="onMedToggleChange($event.checked)">
         Rescue Medication?
       </mat-slide-toggle>
-      <div class="medication-group" *ngIf="rescueMedToggle.checked && !loadingRescueMeds" formGroupName="medicationGroup">
+      <div class="medication-group" *ngIf="rescueMedToggle.checked && !loadingRescueMeds" formGroupName="rescueMedGroup">
         <div class="medication-container" *ngFor="let rescueMed of rescueMedications; index as i">
           <mat-checkbox color="primary" [formControlName]="'med-'+i+'-checkbox'">{{rescueMed.name}}</mat-checkbox>
           <mat-form-field appearance="outline">

@@ -157,7 +157,7 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.minWidth = '350px';
     dialogConfig.maxWidth = '350px';
 
-    dialogConfig.data = episode;
+    dialogConfig.data = [episode, this.patientId];
 
     this.dialog
       .open(EditEpisodeComponent, dialogConfig)
