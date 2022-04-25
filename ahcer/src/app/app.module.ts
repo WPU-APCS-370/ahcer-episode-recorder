@@ -48,8 +48,8 @@ import { ViewMedicationComponent } from './view-medication/view-medication.compo
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
 import {NgxMaskModule} from "ngx-mask";
+import { HelpComponent } from './help/help.component';
 import { QuillModule } from 'ngx-quill';
-
 
 @NgModule({
   declarations: [
@@ -70,7 +70,8 @@ import { QuillModule } from 'ngx-quill';
     DeleteMedicationComponent,
     ViewMedicationComponent,
     CreateMedicationComponent,
-    EditMedicationComponent
+    EditMedicationComponent,
+    HelpComponent
   ],
   imports: [
     BrowserModule,

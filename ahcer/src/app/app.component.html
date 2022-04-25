@@ -44,10 +44,16 @@
         <span> Reports</span>
       </a>
 
+      <a mat-list-item routerLink="help" *ngIf="user.isLoggedIn$ | async">
+        <mat-icon>help</mat-icon>
+        <span> Help</span>
+      </a>
+
       <a mat-list-item routerLink="about">
         <mat-icon>info</mat-icon>
         <span> About</span>
       </a>
+
       <a mat-list-item (click)="logout()"  *ngIf="user.isLoggedIn$ | async">
         <mat-icon>logout</mat-icon>
         <span> Log Out</span>

@@ -11,6 +11,7 @@ import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
 import {ViewMedicationComponent} from "./view-medication/view-medication.component";
 import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
+import {HelpComponent} from "./help/help.component";
 
 
 
@@ -51,9 +52,9 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: '',
-    component: HomeComponent
-
+    path: 'help',
+    component: HelpComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'patients',
