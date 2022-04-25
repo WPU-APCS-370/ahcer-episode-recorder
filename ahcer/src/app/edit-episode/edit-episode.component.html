@@ -1,87 +1,153 @@
 <h2 mat-dialog-title>Edit Episode</h2>
 
 <mat-dialog-content [formGroup]="episodeForm">
-    <mat-form-field appearance="outline">
-      <mat-label>Start Time</mat-label>
-      <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
-      <mat-datepicker-toggle matSuffix [for]="StartTimePicker"></mat-datepicker-toggle>
-      <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>End Time</mat-label>
-      <input matInput [ngxMatDatetimePicker]="EndTimePicker" formControlName="endTime" />
-      <mat-datepicker-toggle matSuffix [for]="EndTimePicker"></mat-datepicker-toggle>
-      <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
-    </mat-form-field>
-    <mat-label>Symptoms:</mat-label>
-    <div class="symptom-group" formGroupName="symptomGroup">
-      <div class="symptom-container" *ngFor="let symptom of symptomLabels">
-        <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'">
-          {{symptom}}
-        </mat-checkbox>
-        <mat-form-field *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure'"
-                        [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
-          <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
-          <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'">
-            <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
-            <mat-option value="rigid">Rigid (Dystonia)</mat-option>
-          </mat-select>
-          <mat-label *ngIf="symptom=='Eyes'">Abnormalities</mat-label>
-          <mat-select *ngIf="symptom=='Eyes'" [formControlName]="symptom+' Dropdown'">
-            <mat-option value="nystagmus">Nystagmus</mat-option>
-            <mat-option value="outward">Outward (Exotropia)</mat-option>
-            <mat-option value="inward">Inward (Esotropia)</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
-                        class="invisible">
-          <input matInput>
-        </mat-form-field>
-      </div>
-    </div>
-    <mat-slide-toggle #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
-    <div class="trigger-container" *ngIf="trigger.checked" formGroupName="triggerGroup">
-      <div class="trigger-checkboxes">
-        <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="light">Light</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="anxiety">Anxiety</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="medication">Medication</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="stress">Stressful Situation</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="excitement">Over Excitement</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="menstruation">Menstruation</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="temperature">Temperature Change</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="water">Water (Swimming, Bathing, Showering)</mat-checkbox>
-      </div>
-      <mat-form-field appearance="outline">
-        <mat-label>Additional Triggers</mat-label>
-        <textarea matInput
-                  cdkTextareaAutosize
-                  cdkAutosizeMinRows="2"
-                  formControlName="additionalTriggers"></textarea>
+  <mat-form-field appearance="outline">
+    <mat-label>Start Time</mat-label>
+    <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
+    <mat-datepicker-toggle matSuffix [for]="StartTimePicker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>End Time</mat-label>
+    <input matInput [ngxMatDatetimePicker]="EndTimePicker" formControlName="endTime" />
+    <mat-datepicker-toggle matSuffix [for]="EndTimePicker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+  </mat-form-field>
+  <mat-label>Symptoms:</mat-label>
+  <div class="symptom-group" formGroupName="symptomGroup">
+    <div class="symptom-container" *ngFor="let symptom of symptomLabels">
+      <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'">
+        {{symptom}}
+      </mat-checkbox>
+      <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure'"
+                       [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
+        <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
+        <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'">
+          <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
+          <mat-option value="rigid">Rigid (Dystonia)</mat-option>
+        </mat-select>
+        <mat-label *ngIf="symptom=='Eyes'">Abnormalities</mat-label>
+        <mat-select *ngIf="symptom=='Eyes'" [formControlName]="symptom+' Dropdown'">
+          <mat-option value="nystagmus">Nystagmus</mat-option>
+          <mat-option value="outward">Outward (Exotropia)</mat-option>
+          <mat-option value="inward">Inward (Esotropia)</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
+                      class="invisible">
+        <input matInput>
       </mat-form-field>
     </div>
-    <mat-slide-toggle #medication formControlName="medication" color="primary">Rescue Medication?</mat-slide-toggle>
-    <div class="medication-container" *ngIf="medication.checked" formGroupName="medicationGroup">
-      <div class="medication-checkboxes">
-        <mat-checkbox color="primary" formControlName="vallumOral">Vallum (Oral)</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="vallumOther">Vallum (Other)</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="midazolam">Midazolam/Versed (Oral)</mat-checkbox>
-      </div>
-      <mat-form-field appearance="outline">
-        <mat-label>Additional Medications</mat-label>
-        <textarea matInput
-                  cdkTextareaAutosize
-                  cdkAutosizeMinRows="2"
-                  formControlName="additionalMedication"></textarea>
-      </mat-form-field>
+  </div>
+  <mat-slide-toggle #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
+  <div class="trigger-container" *ngIf="trigger.checked" formGroupName="triggerGroup">
+    <div class="trigger-checkboxes">
+      <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="light">Light</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="anxiety">Anxiety</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="medication">Medication</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="stress">Stressful Situation</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="excitement">Over Excitement</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="menstruation">Menstruation</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="temperature">Temperature Change</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="water">Water (Swimming, Bathing, Showering)</mat-checkbox>
     </div>
     <mat-form-field appearance="outline">
-      <mat-label>Other Behaviors</mat-label>
+      <mat-label>Additional Triggers</mat-label>
       <textarea matInput
                 cdkTextareaAutosize
                 cdkAutosizeMinRows="2"
-                formControlName="behavior"></textarea>
+                formControlName="additionalTriggers"></textarea>
     </mat-form-field>
+  </div>
+  <mat-slide-toggle #rescueMedToggle formControlName="rescueMedToggle"
+                    color="primary"
+                    (change)="onMedToggleChange($event.checked)">
+    Rescue Medication?
+  </mat-slide-toggle>
+  <div class="medication-group"
+       *ngIf="rescueMedToggle.checked && !(loadingRescueMeds || loadingArchivedMeds)"
+       formGroupName="rescueMedGroup">
+    <div class="medication-container" *ngFor="let rescueMed of rescueMedications; index as i">
+      <mat-checkbox color="primary" [formControlName]="'med-'+i+'-checkbox'">{{rescueMed.name}}</mat-checkbox>
+      <mat-form-field appearance="outline" class="rescue-med-dose">
+        <mat-label>Dose</mat-label>
+        <input matInput type="number" [formControlName]="'med-'+i+'-dose-amount'"/>
+        <mat-select [formControlName]="'med-'+i+'-dose-unit'">
+          <mat-option value="ng">ng</mat-option>
+          <mat-option value="μg">μg</mat-option>
+          <mat-option value="mg">mg</mat-option>
+          <mat-option value="g">g</mat-option>
+          <mat-option value="ml">ml</mat-option>
+          <mat-option value="caps">caps</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="medication-container archived-med"
+               *ngFor="let rescueMed of archivedRescueMeds; index as i">
+      <mat-checkbox color="primary"
+                    [formControlName]="'med-'+(i+rescueMedications.length)+'-checkbox'">
+        {{rescueMed.name}}
+      </mat-checkbox>
+      <mat-form-field appearance="outline" class="rescue-med-dose">
+        <mat-label>Dose</mat-label>
+        <input matInput type="number" [formControlName]="'med-'+(i+rescueMedications.length)+'-dose-amount'"/>
+        <mat-select [formControlName]="'med-'+(i+rescueMedications.length)+'-dose-unit'">
+          <mat-option value="ng">ng</mat-option>
+          <mat-option value="μg">μg</mat-option>
+          <mat-option value="mg">mg</mat-option>
+          <mat-option value="g">g</mat-option>
+          <mat-option value="ml">ml</mat-option>
+          <mat-option value="caps">caps</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <a href="javascript:void(0)" (click)="createRescueMed()">Don't see rescue medication? Add one now</a>
+  </div>
+  <div class="med-spinner-container" *ngIf="rescueMedToggle.checked && (loadingRescueMeds || loadingArchivedMeds)">
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
+  <h3>Prescription Medications</h3>
+  <div class="medication-group" formGroupName="prescriptionMedGroup">
+    <div class="medication-container" *ngFor="let med of prescriptionMeds; index as i">
+      <mat-form-field appearance="outline" class="prescription-med-name">
+        <mat-label>Name</mat-label>
+        <input matInput [formControlName]="'med-'+i+'-name'"/>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="prescription-med-dose">
+        <mat-label>Dose</mat-label>
+        <input matInput type="number" [formControlName]="'med-'+i+'-dose-amount'"/>
+        <mat-select [formControlName]="'med-'+i+'-dose-unit'">
+          <mat-option value="ng">ng</mat-option>
+          <mat-option value="μg">μg</mat-option>
+          <mat-option value="mg">mg</mat-option>
+          <mat-option value="g">g</mat-option>
+          <mat-option value="ml">ml</mat-option>
+          <mat-option value="caps">caps</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="prescription-med-delete-button-container">
+        <button mat-icon-button aria-label="Delete the prescription medication" (click)="onDeletePrescriptionMed(i)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div>
+      <button mat-button
+              class="new-prescription-med-button"
+              aria-label="Add new prescription medication" (click)="addPrescriptionMed()">
+        <mat-icon>add_circle_outlined</mat-icon>
+        <span class="new-button-text">Add New</span>
+      </button>
+    </div>
+  </div>
+  <mat-form-field appearance="outline">
+    <mat-label>Other Behaviors</mat-label>
+    <textarea matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="2"
+              formControlName="behavior"></textarea>
+  </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button (click)="close()">Close</button>

@@ -1,7 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Patient} from "../models/patient";
 import {Episode} from "../models/episode";
+import {MedicationService} from "../services/medication.service";
+import {Medication} from "../models/medication";
 
 @Component({
   selector: 'app-veiw-episode',
@@ -10,10 +11,17 @@ import {Episode} from "../models/episode";
 })
 export class ViewEpisodeComponent implements OnInit {
   episode: Episode;
+  patientId: string;
+  rescueMeds: Medication[]=[];
+  rescueMedsDoses: Object={};
+  loadingMeds: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) episode: Episode,
-              private dialogRef: MatDialogRef<ViewEpisodeComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
+              private dialogRef: MatDialogRef<ViewEpisodeComponent>,
+              private medicationService: MedicationService) {
     this.episode = episode;
+    this.patientId = patientId;
+    this.loadRescueMeds()
   }
 
   close(): void {
@@ -24,4 +32,27 @@ export class ViewEpisodeComponent implements OnInit {
 
   }
 
+  loadRescueMeds() {
+    if(this.episode.medications && Object.keys(this.episode.medications).length > 0)
+    {
+      let medications = this.episode.medications;
+      if(medications.rescueMeds) {
+        this.loadingMeds = true;
+        for(let med of medications.rescueMeds) {
+          this.rescueMedsDoses[med.id] = med.doseInfo;
+        }
+        this.medicationService.getMedicationsByIds(this.patientId,
+          medications.rescueMeds.map((x)=> x.id))
+          .subscribe({
+            next: (rescueMeds)=> {
+              this.rescueMeds = this.rescueMeds.concat(rescueMeds)
+            },
+            complete: () => {
+              this.rescueMeds.sort((a, b) => ((a.name < b.name)? -1 : 1));
+              this.loadingMeds = false;
+            }
+          })
+      }
+    }
+  }
 }
