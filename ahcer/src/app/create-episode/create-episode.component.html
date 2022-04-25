@@ -76,6 +76,13 @@
                   formControlName="additionalMedication"></textarea>
       </mat-form-field>
     </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Other Behaviors</mat-label>
+      <textarea matInput
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="2"
+                formControlName="behavior"></textarea>
+    </mat-form-field>
     <button mat-raised-button color="primary" [disabled]="!episodeForm.valid" (click)="onCreateEpisode()">
       Record Episode
     </button>

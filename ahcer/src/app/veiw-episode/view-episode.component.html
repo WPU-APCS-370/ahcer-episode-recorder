@@ -16,12 +16,14 @@
     <p>Seizure: {{episode.symptoms.seizure}}</p>
     <p>Loss of Consciousness: {{episode.symptoms.lossOfConsciousness}}</p>
   </div>
+  <p>Other Behaviors: {{episode.behavior? episode.behavior : ""}}</p>
   <h3>Medication and Triggers</h3>
   <p>Other Medication: {{episode.otherMedication? episode.otherMedication : ""}}</p>
   <p>Other Trigger: {{episode.otherTrigger? episode.otherTrigger : ""}}</p>
   <p>Known Trigger: {{episode.knownTriggers? episode.knownTriggers : ""}}</p>
   <p>Notes: {{episode.notes? episode.notes : ""}}</p>
   <p>Rescue Medication: {{episode.rescueMedication? episode.rescueMedication : ""}}</p>
+
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="accent" (click)="close()">Close</button>

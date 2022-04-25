@@ -51,7 +51,6 @@ import {NgxMaskModule} from "ngx-mask";
 import { HelpComponent } from './help/help.component';
 import { QuillModule } from 'ngx-quill';
 
-
 @NgModule({
   declarations: [
     AppComponent,

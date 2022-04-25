@@ -43,7 +43,8 @@ export class CreateEpisodeComponent implements OnInit{
       vallumOther: false,
       midazolam: false,
       additionalMedication: ""
-    })
+    }),
+    behavior: ""
   });
 
   symptomGroup(): FormGroup {
@@ -170,7 +171,8 @@ export class CreateEpisodeComponent implements OnInit{
       otherMedication: (val.medication)? val.medicationGroup.additionalMedication : "",
       otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,
-      rescueMedication: medications
+      rescueMedication: medications,
+      behavior: val.behavior
     };
 
     newEpisode.startTime = Timestamp.fromDate(val.startTime);

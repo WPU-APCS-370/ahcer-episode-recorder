@@ -21,5 +21,5 @@ export interface Episode {
   knownTriggers?: [string],
   notes?: string,
   rescueMedication?: [string],
-
+  behavior?: string,
 }
