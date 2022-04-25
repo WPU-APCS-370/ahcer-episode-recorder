@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Medication} from "../models/medication";
 import {catchError, first, switchMap, tap, throwError} from "rxjs";
 import {UsersService} from "../services/users.service";
@@ -18,12 +18,13 @@ export class CreateMedicationComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<CreateMedicationComponent>,
               private fb: FormBuilder,
               private usersService: UsersService,
-              private medicationService: MedicationService) {
+              private medicationService: MedicationService,
+              @Inject(MAT_DIALOG_DATA) data: {isRescue: boolean}) {
     this.medicationForm =this.fb.group({
       name: ["", Validators.required],
       doseAmount: ["", Validators.required],
       doseUnit:["", Validators.required],
-      type: ["", Validators.required],
+      type: [(data?.isRescue)? "Rescue" : "", Validators.required],
       active: false
     })
   }
@@ -43,7 +44,8 @@ export class CreateMedicationComponent implements OnInit {
         amount: val.doseAmount,
         unit: val.doseUnit
       },
-      type: val.type
+      type: val.type,
+      archived: false
     };
 
     if (val.type!="Rescue") {

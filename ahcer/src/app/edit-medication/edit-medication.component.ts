@@ -47,7 +47,8 @@ export class EditMedicationComponent implements OnInit {
         amount: val.doseAmount,
         unit: val.doseUnit
       },
-      type: val.type
+      type: val.type,
+      archived: false
     };
 
     if (val.type!="Rescue") {

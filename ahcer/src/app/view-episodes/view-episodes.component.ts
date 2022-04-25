@@ -138,7 +138,7 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.minWidth = '350px';
 
-    dialogConfig.data = episode;
+    dialogConfig.data = [episode, this.patientId];
     this.dialog
       .open(ViewEpisodeComponent, dialogConfig)
       .afterClosed()
@@ -157,13 +157,14 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.minWidth = '350px';
     dialogConfig.maxWidth = '350px';
 
-    dialogConfig.data = episode;
+    dialogConfig.data = [episode, this.patientId];
 
     this.dialog
       .open(EditEpisodeComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
-        this.loadFirst20();
+        if (val)
+          this.loadFirst20();
       });
   }
 
