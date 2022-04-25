@@ -24,12 +24,22 @@ async function addArchivedFieldToMedications() {
         if(!medicationsSnapshot.empty) {
           let medicationDocs = medicationsSnapshot.docs;
           for (let medicationDoc of medicationDocs) {
+            let updateData = {}
+            if((typeof medicationDoc.data().doseInfo) === 'undefined') {
+              updateData['doseInfo'] = {
+                amount: 0,
+                unit: 'mg'
+              };
+            }
+
             if((typeof medicationDoc.data().archived) === 'undefined') {
+              updateData['archived'] = false;
+            }
+            
+            if (Object.keys(updateData).length > 0) {
               await db.collection(`users/${userDoc.id}/patients/${patientDoc.id}/medications`)
                 .doc(medicationDoc.id)
-                .update({
-                  archived: false
-                })
+                .update(updateData)
             }
           }
         }
