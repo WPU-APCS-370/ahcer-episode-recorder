@@ -5,6 +5,8 @@ import {Patient} from "../models/patient";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {EditPatientComponent} from "../edit-patient/edit-patient.component";
 import {DeletePatientComponent} from "../delete-patient/delete-patient.component";
+import {MedicationService} from "../services/medication.service";
+import {Medication} from "../models/medication";
 
 @Component({
   selector: 'app-view-patient',
@@ -13,14 +15,26 @@ import {DeletePatientComponent} from "../delete-patient/delete-patient.component
 })
 export class ViewPatientComponent implements OnInit {
 
-  patients: Patient[] | undefined
+  patients: Patient[]
   loading: boolean = false;
+  activeMeds: Medication[][]=[];
 
   constructor(private dialog: MatDialog,
-              private patientService: PatientServices) { }
+              private patientService: PatientServices,
+              private medicationService: MedicationService) { }
 
   ngOnInit(): void {
     this.loadPatients();
+  }
+
+  loadActiveMeds(){
+    for(let i=0; i<this.patients.length; i++){
+      let patient = this.patients[i];
+      this.medicationService.getMedicationsByType(patient.id, false, true)
+        .subscribe((activeMeds)=> {
+          this.activeMeds.push(activeMeds)
+        })
+    }
   }
 
   loadPatients() {
@@ -33,7 +47,10 @@ export class ViewPatientComponent implements OnInit {
         })
       )
       .subscribe(
-        (result) => this.patients = result
+        (result) => {
+          this.patients = result;
+          this.loadActiveMeds();
+        }
       )
   }
 
