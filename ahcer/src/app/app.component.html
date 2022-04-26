@@ -67,7 +67,7 @@
     </button>
     <img src="/assets/img/large_e.png" class="menu-logo" alt="E Logo"><span>AHC Episode App</span>
     <div class="user-icon" *ngIf="user.isLoggedIn$ | async">
-      <a [routerLink]="'view-profile/'+(user.userId$ | async)">
+      <a routerLink="view-profile">
         <img alt="View Profile"
              [src]="(user.pictureUrl$ | async)?
                     (user.pictureUrl$ | async) :
