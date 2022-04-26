@@ -12,6 +12,7 @@ import {ViewMedicationComponent} from "./view-medication/view-medication.compone
 import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
+import { UserIdResolver } from "./services/user-id.resolver";
 
 
 
@@ -47,8 +48,11 @@ const routes: Routes = [
 
   },
   {
-    path: 'view-profile/:userId',
+    path: 'view-profile',
     component: ViewProfileComponent,
+    resolve: {
+      userId: UserIdResolver,
+    },
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
