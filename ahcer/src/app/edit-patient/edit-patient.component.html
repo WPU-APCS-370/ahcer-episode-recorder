@@ -47,10 +47,7 @@
   </mat-form-field>
   <mat-form-field appearance="fill" *ngIf="mutationDropdown.value=='Other'">
     <mat-label>Other Mutation</mat-label>
-    <textbox matInput
-              cdkTextareaAutosize
-              cdkAutosizeMinRows="2"
-              formControlName="otherMutation"></textbox>
+    <input matInput formControlName="otherMutation">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Primary Physician Name</mat-label>
