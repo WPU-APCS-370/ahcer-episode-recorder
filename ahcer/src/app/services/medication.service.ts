@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import {first, from, map, Observable, switchMap} from "rxjs";
+import {endWith, first, from, map, Observable, switchMap, takeWhile} from "rxjs";
 import {convertSnaps} from "./data-utils";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
+import {AngularFirestore, QueryFn} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
 import {Patient} from "../models/patient";
+import firebase from "firebase/compat/app";
+import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
   providedIn: 'root'
@@ -37,9 +39,66 @@ export class MedicationService {
     return this.user.userId$.pipe(
       switchMap(userId =>
         this.db.collection(`users/${userId}/patients/${patientId}/medications`,
-          ref => ref.orderBy('name'))
+          ref => ref.where('archived', '==', false)
+          .orderBy('name'))
           .get()),
       first(),
+      map(snaps => convertSnaps<Medication>(snaps))
+    )
+  }
+
+  getMedicationsByType(patientId: string, isRescue: boolean,
+                       onlyActiveMeds: boolean = false): Observable<Medication[]> {
+    if(isRescue && onlyActiveMeds) {
+      throw new Error("onlyActiveMeds can only be true when isRescue is false.")
+    }
+    let dbQueryFn : QueryFn<firebase.firestore.DocumentData> = ref => {
+      if (onlyActiveMeds)
+        return ref.where("archived", "==", false)
+          .where("type", "!=", "Rescue")
+          .where("active", "==", true)
+      else
+        return ref.where("archived", "==", false)
+          .where("type", (isRescue)? "==": "!=", "Rescue")
+    }
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+      this.db.collection(`users/${userId}/patients/${patientId}/medications`,
+          dbQueryFn)
+        .get()),
+      first(),
+      map(snaps => convertSnaps<Medication>(snaps)),
+      map(medications => medications.sort((a, b) => ((a.name < b.name)? -1 : 1)))
+    )
+  }
+
+  getMedicationsByIds(patientId: string, medicationsIdArray: string[],
+                      onlyArchived: boolean = false): Observable<Medication[]> {
+    let idChunks : string[][] = []
+    //in clause supports only up to 10 elements in the array. Thus, the following for loop.
+    for(let i=0; i<medicationsIdArray.length; i+=10) {
+      idChunks.push(medicationsIdArray.slice(i, i+10));
+    }
+    let queryFunction = (medIds) => {
+      let dbQueryFn: QueryFn<firebase.firestore.DocumentData> = ref => {
+        if (onlyArchived)
+          return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
+            .where("archived", "==", true)
+        else
+          return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
+      }
+      return dbQueryFn
+    }
+    return this.user.userId$.pipe(
+      switchMap(userId => from(idChunks).pipe(
+        map(medIds=> [userId, medIds]),
+        endWith(null)
+      )),
+      takeWhile((x) => x != null),
+      switchMap(([userId, medIds]) =>
+        this.db.collection(`users/${userId}/patients/${patientId}/medications`,
+          queryFunction(medIds))
+          .get()),
       map(snaps => convertSnaps<Medication>(snaps))
     )
   }
@@ -53,11 +112,15 @@ export class MedicationService {
     );
   }
 
-  deleteMedication(patientId: string, medicationId: string): Observable<any> {
+  archiveMedication(patientId: string, medicationId: string): Observable<any> {
     return this.user.userId$.pipe(
       switchMap(userId => {
-          console.log(userId)
-          return from(this.db.doc(`users/${userId}/patients/${patientId}/medications/${medicationId}`).delete())
+          return from(this.db.collection(`users/${userId}/patients/${patientId}/medications`)
+            .doc(medicationId)
+            .update({
+              archived: true,
+              archiveDate: Timestamp.fromDate(new Date())
+            }))
         }
       ),
       first()

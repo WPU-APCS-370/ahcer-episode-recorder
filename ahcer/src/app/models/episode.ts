@@ -20,6 +20,21 @@ export interface Episode {
   otherTrigger?: string,
   knownTriggers?: [string],
   notes?: string,
-  rescueMedication?: [string],
-
+  medications?: {
+    rescueMeds?: {
+      id: string,
+      doseInfo: {
+        amount: number,
+        unit: string
+      }
+    }[],
+    prescriptionMeds?: {
+      name: string,
+      doseInfo: {
+        amount: number,
+        unit: string
+      }
+    }[]
+  },
+  behavior?: string
 }

@@ -2,7 +2,7 @@ mat-form-field {
   width: 100%;
 }
 .symptom-group, .trigger-container, .trigger-checkboxes,
-.medication-container, .medication-checkboxes {
+.medication-group {
   display: flex;
   flex-direction: column;
 }
@@ -15,7 +15,7 @@ mat-slide-toggle {
   display: block;
 }
 
-.symptom-container {
+.symptom-container, .medication-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -25,6 +25,67 @@ mat-slide-toggle {
 
 .symptom-container > mat-form-field {
   width: 60%;
+}
+
+.medication-container > mat-checkbox {
+  width: calc(50% - 10px);
+  display: flex;
+  align-items: center;
+}
+
+:host::ng-deep .medication-container .mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+mat-form-field.rescue-med-dose {
+  width: 50%;
+  flex-basis: auto;
+  flex-shrink: 1;
+}
+
+mat-form-field.prescription-med-name {
+  width: calc((100% - 40px)/2);
+}
+
+mat-form-field.prescription-med-dose {
+  width: calc((100% - 40px)/2);
+}
+
+.prescription-med-delete-button-container .mat-icon-button {
+  height:30px !important;
+  width:30px !important;
+  line-height:30px !important;
+}
+
+::ng-deep .medication-container .mat-form-field-infix {
+  display: inherit !important;
+}
+
+::ng-deep .archived-med * {
+  color: grey !important;
+}
+
+.new-button-text {
+  margin-left: 5px;
+  font-size: 17px;
+}
+
+.new-prescription-med-button {
+  padding-left: 5px !important;
+}
+
+.new-prescription-med-button .mat-icon {
+  height:30px !important;
+  width:30px !important;
+  font-size:30px !important;
+}
+
+.med-spinner-container {
+  width:100%;
+}
+
+.med-spinner-container > mat-spinner {
+  margin: 10px auto 0 auto;
 }
 
 .invisible {
