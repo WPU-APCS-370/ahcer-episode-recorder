@@ -10,5 +10,8 @@ export interface Patient {
   dateOfDiagnosis?: Timestamp,
   primaryPhysicianName?: string,
   primaryPhysicianPhone?: string,
-  otherDoctorInfo?: string
+  otherDoctorInfo?: string,
+  gene?: string,
+  mutation?: string,
+  otherMutation?: string
 }

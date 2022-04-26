@@ -19,9 +19,6 @@
     <div>
       <p>Birthdate: {{patient.birthDate.toDate() | date: 'MM/dd/yyyy'}}</p>
     </div>
-    <div *ngIf="patient.dateOfDiagnosis">
-      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
-    </div>
     <div *ngIf="patient.primaryPhysicianName">
       <p>Primary Physician Name: {{patient.primaryPhysicianName}}</p>
     </div>
@@ -31,6 +28,18 @@
     <div *ngIf="patient.otherDoctorInfo" class="other-doctor-info">
       <h3>Other Doctors Information</h3>
       <p [innerHTML]="patient.otherDoctorInfo"></p>
+    </div>
+    <p *ngIf="patient.dateOfDiagnosis || patient.gene || patient.mutation">
+      <b>Diagnosis</b>
+    </p>
+    <div *ngIf="patient.dateOfDiagnosis">
+      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
+    </div>
+    <div *ngIf="patient.gene">
+      <p>Gene: {{patient.gene}}</p>
+    </div>
+    <div *ngIf="patient.mutation">
+      <p>Mutation: {{patient.mutation}} {{(patient.mutation=='Other')? ' (' + patient.otherMutation+')': ''}}</p>
     </div>
 
     <div *ngIf="activeMeds.length>i && activeMeds[i].length>0">

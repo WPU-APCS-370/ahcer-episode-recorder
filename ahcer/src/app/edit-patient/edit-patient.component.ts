@@ -28,7 +28,10 @@ export class EditPatientComponent implements OnInit {
       primaryPhysicianPhone: patient.primaryPhysicianPhone,
       otherDoctorInfo: patient.otherDoctorInfo,
       birthDate: [patient.birthDate.toDate(),Validators.required],
-      dateOfDiagnosis: (patient.dateOfDiagnosis)?patient.dateOfDiagnosis.toDate() : null
+      dateOfDiagnosis: (patient.dateOfDiagnosis)?patient.dateOfDiagnosis.toDate() : null,
+      gene: patient.gene,
+      mutation: patient.mutation,
+      otherMutation: patient.otherMutation
     })
   }
 

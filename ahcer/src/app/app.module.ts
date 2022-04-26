@@ -47,6 +47,7 @@ import {DeleteMedicationComponent} from "./delete-medication/delete-medication.c
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
+import {MatRadioModule} from "@angular/material/radio";
 import {NgxMaskModule} from "ngx-mask";
 import { HelpComponent } from './help/help.component';
 import { QuillModule } from 'ngx-quill';
@@ -101,6 +102,7 @@ import { QuillModule } from 'ngx-quill';
     NgxMatNativeDateModule,
     MatSlideToggleModule,
     QuillModule,
+    MatRadioModule,
     NgxMaskModule.forRoot()
   ],
   providers: [
