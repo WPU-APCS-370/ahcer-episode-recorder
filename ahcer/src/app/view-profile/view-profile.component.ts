@@ -12,18 +12,18 @@ import {PatientServices} from "../services/patient.service";
   styleUrls: ['./view-profile.component.scss']
 })
 export class ViewProfileComponent implements OnInit {
-  private userId: string = this.route.snapshot.paramMap.get('userId');
-  user$: Observable<User>
-  patients$: Observable<Patient[]>
+  private userId: string;
+  user$: Observable<User>;
+  patients$: Observable<Patient[]>;
+
   constructor(private route: ActivatedRoute,
               private usersService: UsersService,
-              private patientService: PatientServices) {
-    console.log(this.userId);
-    this.user$ = this.usersService.getUserById(this.userId);
-  }
+              private patientService: PatientServices) { }
 
   ngOnInit(): void {
-    this.patients$ = this.patientService.getPatients(this.userId)
+    this.userId = this.route.snapshot.data.userId;
+    this.user$ = this.usersService.getUserById(this.userId);
+    this.patients$ = this.patientService.getPatients();
   }
 
   logout() {
