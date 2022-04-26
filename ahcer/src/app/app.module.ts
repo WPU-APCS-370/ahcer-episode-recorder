@@ -47,6 +47,7 @@ import {DeleteMedicationComponent} from "./delete-medication/delete-medication.c
 import { ViewMedicationComponent } from './view-medication/view-medication.component';
 import { CreateMedicationComponent } from './create-medication/create-medication.component';
 import { EditMedicationComponent } from './edit-medication/edit-medication.component';
+import {MatRadioModule} from "@angular/material/radio";
 
 
 @NgModule({
@@ -70,34 +71,35 @@ import { EditMedicationComponent } from './edit-medication/edit-medication.compo
     CreateMedicationComponent,
     EditMedicationComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatInputModule,
-    MatNativeDateModule,
-    MatListModule,
-    MatTableModule,
-    CdkTableModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    NgxMatDatetimePickerModule,
-    MatCheckboxModule,
-    NgxMatNativeDateModule,
-    MatSlideToggleModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFirestoreModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatListModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatInputModule,
+        MatNativeDateModule,
+        MatListModule,
+        MatTableModule,
+        CdkTableModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        NgxMatDatetimePickerModule,
+        MatCheckboxModule,
+        NgxMatNativeDateModule,
+        MatSlideToggleModule,
+        MatRadioModule
+    ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService
   ],

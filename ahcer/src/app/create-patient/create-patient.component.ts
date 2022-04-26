@@ -21,6 +21,9 @@ export class CreatePatientComponent implements OnInit {
     gender: [''],
     birthDate: [null, Validators.required],
     dateOfDiagnosis: [null],
+    gene:[''],
+    mutation: [''],
+    otherMutation: [''],
     primaryPhysicianName: [''],
     primaryPhysicianPhone: [''],
     otherDoctorInfo: ['']
@@ -42,7 +45,10 @@ export class CreatePatientComponent implements OnInit {
       gender: val.gender,
       primaryPhysicianName: val.primaryPhysicianName,
       primaryPhysicianPhone: val.primaryPhysicianPhone,
-      otherDoctorInfo: val.otherDoctorInfo
+      otherDoctorInfo: val.otherDoctorInfo,
+      gene: val.gene,
+      mutation: val.mutation,
+      otherMutation: (val.mutation=='Other')? val.otherMutation : ''
     };
 
     newPatient.birthDate = Timestamp.fromDate(val.birthDate);

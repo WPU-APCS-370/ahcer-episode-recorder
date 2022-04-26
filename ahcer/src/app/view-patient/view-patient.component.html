@@ -21,9 +21,6 @@
     <div>
       <p>Birthdate: {{patient.birthDate.toDate() | date: 'MM/dd/yyyy'}}</p>
     </div>
-    <div *ngIf="patient.dateOfDiagnosis">
-      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
-    </div>
     <div *ngIf="patient.primaryPhysicianName">
       <p>Primary Physician Name: {{patient.primaryPhysicianName}}</p>
     </div>
@@ -34,11 +31,23 @@
       <p><b>Other Doctors Information</b></p>
       <p>{{patient.otherDoctorInfo}}</p>
     </div>
+    <p *ngIf="patient.dateOfDiagnosis || patient.gene || patient.mutation">
+      <b>Diagnosis</b>
+    </p>
+    <div *ngIf="patient.dateOfDiagnosis">
+      <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
+    </div>
+    <div *ngIf="patient.gene">
+      <p>Gene: {{patient.gene}}</p>
+    </div>
+    <div *ngIf="patient.mutation">
+      <p>Mutation: {{patient.mutation}} {{(patient.mutation=='Other')? ' (' + patient.otherMutation+')': ''}}</p>
+    </div>
   </mat-card-content>
 
   <mat-card-actions class="patient-actions">
     <button mat-button (click)="editPatient(patient)">Edit</button>
-    <button mat-button color="warn"(click)="onDeletePatient(patient)">Delete</button>
+    <button mat-button color="warn" (click)="onDeletePatient(patient)">Delete</button>
 
   </mat-card-actions>
 
