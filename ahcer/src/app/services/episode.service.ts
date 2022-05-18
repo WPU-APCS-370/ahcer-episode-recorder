@@ -93,4 +93,55 @@ export class EpisodeService {
       first()
     );
   }
+
+  calculateDuration(startTime: Timestamp, endTime: Timestamp) {
+    if (endTime) {
+      let time = endTime.seconds - startTime.seconds
+      let day = Math.floor(time / (24 * 3600))
+      time = time % (24 * 3600)
+      let hour = Math.floor(time / 3600)
+      time %= 3600
+      let minutes = Math.floor(time / 60)
+      time %= 60
+      let seconds = time
+      if (day > 0) {
+        if (minutes >= 30) {
+          hour += 1
+          if (hour == 24) {
+            day += 1
+            hour = 0
+          }
+        }
+        return `${day} days ${hour} hrs`
+      }
+
+      else if (hour > 0) {
+        if (seconds >= 30) {
+          minutes += 1
+          if (minutes == 60) {
+            hour += 1
+            minutes = 0
+          }
+        }
+        if (hour == 24) {
+          day += 1
+          hour = 0
+          return `${day} days ${hour} hrs`
+        }
+        else {
+          return `${hour} hrs ${minutes} mins`
+        }
+      }
+
+      else if (minutes > 0) {
+        return `${minutes} mins ${seconds} secs`
+      }
+      else {
+        return `${seconds} secs`
+      }
+    }
+    else {
+      return null;
+    }
+  }
 }
