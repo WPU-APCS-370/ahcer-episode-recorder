@@ -49,9 +49,9 @@ export class EpisodeService {
     );
   }
 
-  getEpisodesByPatient(patientId: string,
-                       sortOrder: OrderByDirection,
-                       lastStartTime?: Timestamp): Observable<Episode[]> {
+  get20EpisodesByPatient(patientId: string,
+                         sortOrder: OrderByDirection,
+                         lastStartTime?: Timestamp): Observable<Episode[]> {
     if (lastStartTime) {
       return this.user.userId$.pipe(
           switchMap(userId =>
@@ -72,6 +72,18 @@ export class EpisodeService {
           map(snaps => convertSnaps<Episode>(snaps))
         )
     }
+  }
+
+  getAllEpisodesByPatient(patientId: string,
+                          sortOrder: OrderByDirection) : Observable<Episode[]> {
+    return this.user.userId$.pipe(
+      switchMap(userId =>
+        this.db.collection(`users/${userId}/patients/${patientId}/episodes`,
+          ref => ref.orderBy('startTime', sortOrder))
+          .get()),
+      first(),
+      map(snaps => convertSnaps<Episode>(snaps))
+    )
   }
 
   updateEpisode(patientId: string, episodeId: string, changes: Partial<Patient>): Observable<any> {

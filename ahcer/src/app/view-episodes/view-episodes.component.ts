@@ -42,7 +42,7 @@ export class ViewEpisodesComponent implements OnInit {
     this.usersService.getLastViewedPatient().pipe(
       switchMap(patientId => {
         this.patientId = patientId;
-        return this.episodeServices.getEpisodesByPatient(this.patientId, 'desc')
+        return this.episodeServices.get20EpisodesByPatient(this.patientId, 'desc')
       }),
       first(),
       finalize(() => {
@@ -64,7 +64,7 @@ export class ViewEpisodesComponent implements OnInit {
     this.lastPageLoaded++;
     this.loading = true;
 
-    this.episodeServices.getEpisodesByPatient(this.patientId,
+    this.episodeServices.get20EpisodesByPatient(this.patientId,
       'desc', this.lastStartTime)
       .pipe(
         finalize(() => {

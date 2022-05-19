@@ -13,6 +13,7 @@ import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
+import {EpisodeReportComponent} from "./episode-report/episode-report.component";
 
 
 
@@ -79,11 +80,14 @@ const routes: Routes = [
     component: ViewEpisodesComponent,
     ...canActivate(redirectUnauthorizedToLogin)
   },
-
-
   {
     path: 'medications',
     component: ViewMedicationComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'episode-report',
+    component: EpisodeReportComponent,
    ...canActivate(redirectUnauthorizedToLogin)
   }
 ];

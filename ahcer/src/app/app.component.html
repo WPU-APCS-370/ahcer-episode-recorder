@@ -37,7 +37,7 @@
         <span> Manage Medications</span>
       </a>
 
-      <a mat-list-item  *ngIf="user.isLoggedIn$ | async">
+      <a mat-list-item routerLink="episode-report" *ngIf="user.isLoggedIn$ | async">
 
         <mat-icon>library_books</mat-icon>
 
