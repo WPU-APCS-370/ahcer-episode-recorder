@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Episode} from "../models/episode";
 import {Patient} from "../models/patient";
 import {EpisodeService} from "../services/episode.service";
@@ -78,6 +78,19 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.paginator = this.paginator;
+  }
+
+  @HostListener('window:beforeprint',['$event'])
+  onBeforePrint(event){
+    this.dataSource.data = this.episodes;
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+    this.dataSource.paginator = null;
+  }
+
+  @HostListener('window:afterprint', ['$event'])
+  onAfterPrint(event) {
+    this.reloadDataSource();
   }
 
   ngAfterViewInit() {

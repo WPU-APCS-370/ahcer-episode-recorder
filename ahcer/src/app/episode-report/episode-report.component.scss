@@ -36,10 +36,6 @@
   justify-content: center;
 }
 
-.invisible {
-  visibility: hidden;
-}
-
 .spinner-container {
   height: 100vh;
   width: 100vw;
@@ -59,4 +55,22 @@
 .mat-cell, .mat-header-cell, .mat-footer-cell {
   padding-right: 5px;
   padding-left: 5px;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: unset;
+  }
+
+  .not-printable {
+    display: none;
+  }
 }
