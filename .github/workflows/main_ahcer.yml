@@ -32,4 +32,4 @@ jobs:
         app-name: 'ahcer'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_fa593239d6fa4e4c835cb8ed35585801 }}
-        package: 'ahcer'
+        package: ./dist/ahcer
