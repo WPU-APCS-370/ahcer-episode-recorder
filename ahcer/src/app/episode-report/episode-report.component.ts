@@ -80,16 +80,16 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  @HostListener('window:beforeprint',['$event'])
-  onBeforePrint(event){
+  @HostListener('window:beforeprint')
+  onBeforePrint(){
     this.dataSource.data = this.episodes;
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.paginator = null;
   }
 
-  @HostListener('window:afterprint', ['$event'])
-  onAfterPrint(event) {
+  @HostListener('window:afterprint')
+  onAfterPrint() {
     this.reloadDataSource();
   }
 
