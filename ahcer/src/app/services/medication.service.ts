@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {endWith, first, from, map, Observable, switchMap, takeWhile} from "rxjs";
 import {convertSnaps} from "./data-utils";
-import {AngularFirestore, QueryFn} from "@angular/fire/compat/firestore";
+import {AngularFirestore, QueryFn, Query} from "@angular/fire/compat/firestore";
 import {UsersService} from "./users.service";
 import {Medication} from "../models/medication";
 import {Patient} from "../models/patient";
@@ -48,18 +48,21 @@ export class MedicationService {
   }
 
   getMedicationsByType(patientId: string, isRescue: boolean,
-                       onlyActiveMeds: boolean = false): Observable<Medication[]> {
-    if(isRescue && onlyActiveMeds) {
-      throw new Error("onlyActiveMeds can only be true when isRescue is false.")
+                       activeMedsOnly: boolean = false,
+                       nonArchivedOnly: boolean = true): Observable<Medication[]> {
+    if(isRescue && activeMedsOnly) {
+      throw new Error("activeMedsOnly can only be true when isRescue is false.")
     }
     let dbQueryFn : QueryFn<firebase.firestore.DocumentData> = ref => {
-      if (onlyActiveMeds)
-        return ref.where("archived", "==", false)
-          .where("type", "!=", "Rescue")
+      let query: Query<firebase.firestore.DocumentData>;
+      if (activeMedsOnly)
+        query = ref.where("type", "!=", "Rescue")
           .where("active", "==", true)
       else
-        return ref.where("archived", "==", false)
-          .where("type", (isRescue)? "==": "!=", "Rescue")
+        query = ref.where("type", (isRescue)? "==": "!=", "Rescue")
+      if (nonArchivedOnly)
+        query = query.where("archived", "==", false)
+      return query;
     }
     return this.user.userId$.pipe(
       switchMap(userId =>
@@ -73,7 +76,7 @@ export class MedicationService {
   }
 
   getMedicationsByIds(patientId: string, medicationsIdArray: string[],
-                      onlyArchived: boolean = false): Observable<Medication[]> {
+                      archivedOnly: boolean = false): Observable<Medication[]> {
     let idChunks : string[][] = []
     //in clause supports only up to 10 elements in the array. Thus, the following for loop.
     for(let i=0; i<medicationsIdArray.length; i+=10) {
@@ -81,7 +84,7 @@ export class MedicationService {
     }
     let queryFunction = (medIds) => {
       let dbQueryFn: QueryFn<firebase.firestore.DocumentData> = ref => {
-        if (onlyArchived)
+        if (archivedOnly)
           return ref.where(firebase.firestore.FieldPath.documentId(), "in", medIds)
             .where("archived", "==", true)
         else

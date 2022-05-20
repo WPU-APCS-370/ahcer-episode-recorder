@@ -51,6 +51,10 @@ import {MatRadioModule} from "@angular/material/radio";
 import {NgxMaskModule} from "ngx-mask";
 import { HelpComponent } from './help/help.component';
 import { QuillModule } from 'ngx-quill';
+import { EpisodeReportComponent } from './episode-report/episode-report.component';
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatSortModule} from "@angular/material/sort";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -72,7 +76,8 @@ import { QuillModule } from 'ngx-quill';
     ViewMedicationComponent,
     CreateMedicationComponent,
     EditMedicationComponent,
-    HelpComponent
+    HelpComponent,
+    EpisodeReportComponent
   ],
   imports: [
     BrowserModule,
@@ -103,7 +108,10 @@ import { QuillModule } from 'ngx-quill';
     MatSlideToggleModule,
     QuillModule,
     MatRadioModule,
-    NgxMaskModule.forRoot()
+    NgxMaskModule.forRoot(),
+    MatTooltipModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService

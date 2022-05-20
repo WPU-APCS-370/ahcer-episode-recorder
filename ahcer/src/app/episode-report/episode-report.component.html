@@ -1,0 +1,125 @@
+<div class="component-container">
+  <h2 class="header" *ngIf="!loadingPatient && currentPatient">
+    Complete episode list
+    <span class="not-printable"> for {{currentPatient.firstName}} {{currentPatient.lastName}}</span>
+  </h2>
+  <p *ngIf="!loadingPatient && !currentPatient">No patients found. Please add one.</p>
+
+  <mat-form-field appearance="fill" class="not-printable" *ngIf="patients && patients.length > 1">
+    <mat-label>Choose a different patient</mat-label>
+    <mat-select (selectionChange)="changePatient($event.value)">
+      <mat-option *ngFor="let patient of patients" [value]="patient.id">{{patient.firstName}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="table-container mat-elevation-z8" *ngIf="episodes_count > 0" >
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.startTime?.toDate()| date: 'MM/dd/yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.endTime?.toDate()| date: 'MM/dd/yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
+        <td mat-cell *matCellDef="let result">{{calculateDuration(result.startTime, result.endTime)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="symptoms">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Symptoms</th>
+        <td mat-cell *matCellDef="let result">
+          <span class="long-text-container not-printable">
+            <span class="long-text" #symptoms>
+              {{displaySymptomsString(result.symptoms)}}
+            </span>
+            <mat-icon *ngIf="(symptoms.innerText.slice(-3)=='...')"
+                      [matTooltip]="displaySymptomsString(result.symptoms, true)">
+              expand_circle_down
+            </mat-icon>
+          </span>
+          <span class="long-text-container print-only">
+            <span class="long-text">
+              {{displaySymptomsString(result.symptoms, true)}}
+            </span>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rescueMeds">
+        <th mat-header-cell *matHeaderCellDef>Rescue Meds</th>
+        <td mat-cell *matCellDef="let result">
+          <span class="long-text-container not-printable">
+            <span class="long-text" #rescueMeds>
+              {{displayRescueMedsString(result.medications?.rescueMeds)}}
+            </span>
+            <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
+                      [matTooltip]="displayRescueMedsString(result.medications?.rescueMeds, true)">
+              expand_circle_down
+            </mat-icon>
+          </span>
+          <span class="long-text-container print-only">
+            <span class="long-text">
+              {{displayRescueMedsString(result.medications?.rescueMeds, true)}}
+            </span>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="prescriptionMeds">
+        <th mat-header-cell *matHeaderCellDef>Prescription Meds</th>
+        <td mat-cell *matCellDef="let result">
+          <span class="long-text-container not-printable">
+            <span class="long-text" #rescueMeds>
+              {{displayPrescriptionMedsString(result.medications?.prescriptionMeds)}}
+            </span>
+            <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
+                      [matTooltip]="displayPrescriptionMedsString(
+                        result.medications?.prescriptionMeds,
+                        true)">
+              expand_circle_down
+            </mat-icon>
+          </span>
+          <span class="long-text-container print-only">
+            <span class="long-text">
+              {{displayPrescriptionMedsString(result.medications?.prescriptionMeds, true)}}
+            </span>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="triggers">
+        <th mat-header-cell *matHeaderCellDef>Triggers</th>
+        <td mat-cell *matCellDef="let result">
+          <span class="long-text-container not-printable">
+            <span class="long-text" #rescueMeds>
+              {{displayTriggersString(result.knownTriggers, result.otherTrigger)}}
+            </span>
+            <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
+                      [matTooltip]="displayTriggersString(result.knownTriggers,
+                                                          result.otherTrigger,
+                                                          true)">
+              expand_circle_down
+            </mat-icon>
+          </span>
+          <span class="long-text-container print-only">
+            <span class="long-text">
+              {{displayTriggersString(result.knownTriggers, result.otherTrigger, true)}}
+            </span>
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 40]" showFirstLastButtons class="not-printable"></mat-paginator>
+  </div>
+  <div *ngIf="episodes_count === 0">No episodes found.</div>
+</div>
+<div class="spinner-container" *ngIf="loadingPatient || loadingEpisodes">
+  <mat-spinner [diameter]="100"></mat-spinner>
+</div>
