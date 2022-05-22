@@ -45,7 +45,9 @@
               {{displaySymptomsString(result.symptoms)}}
             </span>
             <mat-icon *ngIf="(symptoms.innerText.slice(-3)=='...')"
-                      [matTooltip]="displaySymptomsString(result.symptoms, true)">
+                      [matTooltip]="displaySymptomsString(result.symptoms, true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -65,7 +67,9 @@
               {{displayRescueMedsString(result.medications?.rescueMeds)}}
             </span>
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
-                      [matTooltip]="displayRescueMedsString(result.medications?.rescueMeds, true)">
+                      [matTooltip]="displayRescueMedsString(result.medications?.rescueMeds, true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -87,7 +91,9 @@
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
                       [matTooltip]="displayPrescriptionMedsString(
                         result.medications?.prescriptionMeds,
-                        true)">
+                        true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -109,7 +115,9 @@
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
                       [matTooltip]="displayTriggersString(result.knownTriggers,
                                                           result.otherTrigger,
-                                                          true)">
+                                                          true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>

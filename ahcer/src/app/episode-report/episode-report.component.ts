@@ -12,6 +12,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
 import {AngularCsv} from "angular-csv-ext/dist/Angular-csv";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-episode-report',
@@ -279,6 +280,15 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       }
     }
     return triggersStr;
+  }
+
+  tooltipOnClick(tooltip: MatTooltip) {
+    if(tooltip._isTooltipVisible()) {
+      tooltip.hide();
+    }
+    else {
+      tooltip.show();
+    }
   }
 
   exportToCSV() {
