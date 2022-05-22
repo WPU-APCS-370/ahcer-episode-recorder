@@ -1,7 +1,14 @@
 <div class="component-container">
   <h2 class="header" *ngIf="!loadingPatient && currentPatient">
-    Complete episode list
-    <span class="not-printable"> for {{currentPatient.firstName}} {{currentPatient.lastName}}</span>
+    <span>
+      Complete episode list
+      <span class="not-printable"> for {{currentPatient.firstName}} {{currentPatient.lastName}}</span>
+    </span>
+    <button mat-raised-button color="accent" (click)="exportToCSV()"
+            *ngIf="!loadingEpisodes && !loadingRescueMeds && episodes_count > 0">
+      <mat-icon  fontSet="material-icons-outlined">file_download </mat-icon>
+      Export To CSV
+    </button>
   </h2>
   <p *ngIf="!loadingPatient && !currentPatient">No patients found. Please add one.</p>
 
@@ -11,7 +18,8 @@
       <mat-option *ngFor="let patient of patients" [value]="patient.id">{{patient.firstName}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <div class="table-container mat-elevation-z8" *ngIf="episodes_count > 0" >
+  <div class="table-container mat-elevation-z8"
+       *ngIf="!loadingEpisodes && !loadingRescueMeds && episodes_count > 0" >
     <table mat-table [dataSource]="dataSource" matSort>
 
       <ng-container matColumnDef="startTime">
@@ -37,7 +45,9 @@
               {{displaySymptomsString(result.symptoms)}}
             </span>
             <mat-icon *ngIf="(symptoms.innerText.slice(-3)=='...')"
-                      [matTooltip]="displaySymptomsString(result.symptoms, true)">
+                      [matTooltip]="displaySymptomsString(result.symptoms, true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -57,7 +67,9 @@
               {{displayRescueMedsString(result.medications?.rescueMeds)}}
             </span>
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
-                      [matTooltip]="displayRescueMedsString(result.medications?.rescueMeds, true)">
+                      [matTooltip]="displayRescueMedsString(result.medications?.rescueMeds, true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -79,7 +91,9 @@
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
                       [matTooltip]="displayPrescriptionMedsString(
                         result.medications?.prescriptionMeds,
-                        true)">
+                        true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -101,7 +115,9 @@
             <mat-icon *ngIf="(rescueMeds.innerText.slice(-3)=='...')"
                       [matTooltip]="displayTriggersString(result.knownTriggers,
                                                           result.otherTrigger,
-                                                          true)">
+                                                          true)"
+                      #tooltip="matTooltip"
+                      (click)="tooltipOnClick(tooltip)">
               expand_circle_down
             </mat-icon>
           </span>
@@ -120,6 +136,6 @@
   </div>
   <div *ngIf="episodes_count === 0">No episodes found.</div>
 </div>
-<div class="spinner-container" *ngIf="loadingPatient || loadingEpisodes">
+<div class="spinner-container" *ngIf="loadingPatient || loadingEpisodes || loadingRescueMeds">
   <mat-spinner [diameter]="100"></mat-spinner>
 </div>

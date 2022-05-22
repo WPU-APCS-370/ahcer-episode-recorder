@@ -11,6 +11,8 @@ import {MedicationService} from "../services/medication.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
+import {AngularCsv} from "angular-csv-ext/dist/Angular-csv";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-episode-report',
@@ -278,6 +280,47 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       }
     }
     return triggersStr;
+  }
+
+  tooltipOnClick(tooltip: MatTooltip) {
+    if(tooltip._isTooltipVisible()) {
+      tooltip.hide();
+    }
+    else {
+      tooltip.show();
+    }
+  }
+
+  exportToCSV() {
+    let data = [];
+
+    for (let index = 0; index < this.episodes.length; index++) {
+      let episode = this.episodes[index];
+      let episodeData = {};
+      episodeData['startTime'] = episode.startTime.toDate().toLocaleString();
+      episodeData['endTime'] = (episode.endTime)? episode.endTime.toDate().toLocaleString() : null;
+      episodeData['duration'] = this.episodeService.calculateDuration(episode.startTime, episode.endTime);
+      let symptoms = this.displaySymptomsString(episode.symptoms, true);
+      episodeData['symptoms'] = symptoms? symptoms: null;
+      let rescueMeds = this.displayRescueMedsString(episode.medications?.rescueMeds, true);
+      episodeData['rescueMeds'] = rescueMeds? rescueMeds: null;
+      let prescriptionMeds = this.displayPrescriptionMedsString(
+        episode.medications?.prescriptionMeds, true
+      );
+      episodeData['prescriptionMeds'] = prescriptionMeds? prescriptionMeds: null;
+      let triggers = this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true);
+      episodeData['triggers'] = triggers? triggers : null;
+      data.push(episodeData);
+    }
+    let headers = ['Start Time', 'End Time', 'Duration', 'Symptoms',
+                   'Rescue Medications', 'Prescription Medications', 'Triggers'];
+    new AngularCsv(data,
+      "Complete-Episode-List",
+      {
+        showLabels: true,
+        nullToEmptyString: true,
+        headers
+      });
   }
 }
 
