@@ -23,10 +23,19 @@
   }
 }
 
-.long-text-container {
+.header, .long-text-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 10px;
+}
+
+.header > button {
+  height: fit-content;
+  min-width: fit-content;
+}
+
+.long-text-container {
   gap: 5px;
 }
 
