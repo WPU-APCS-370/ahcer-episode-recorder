@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import {Episode} from "../models/episode";
@@ -8,6 +8,7 @@ import {EpisodeService} from "../services/episode.service";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
+import {formGroupErrorMatcher} from "../create-episode/create-episode.component";
 
 @Component({
   selector: 'app-edit-episode',
@@ -25,11 +26,12 @@ export class EditEpisodeComponent implements OnInit {
   loadingArchivedMeds: boolean = false;
 
   symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"]
+    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"];
   symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"]
+    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"];
 
   episodeForm : FormGroup;
+  formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
 
   symptomGroup(episode: Episode): FormGroup {
     let controls = {}
@@ -49,22 +51,20 @@ export class EditEpisodeComponent implements OnInit {
     let options = {
       validators: (formGroup: FormGroup) => {
         let checked = 0;
+        let errors = {};
         for (let label of this.symptomLabels) {
           let checkbox = formGroup.controls[label+' Checkbox']
-          let dropdown: AbstractControl = null
-          if(label!="Loss of Consciousness" && label!="Seizure")
-            dropdown = formGroup.controls[label+' Dropdown']
           let checkboxChecked = (checkbox.value === true)
-          let dropdownValueEmpty = false
-          if (dropdown)
-            dropdownValueEmpty = (dropdown.value==='')
-          if(checkboxChecked && !dropdownValueEmpty) {
+          let dropdownValueEmpty = false;
+          if (label!="Seizure" && label!="Loss of Consciousness") {
+            let dropdown = formGroup.controls[label + ' Dropdown']
+            dropdownValueEmpty = (dropdown.value === '')
+          }
+          if(checkboxChecked) {
             checked++;
           }
-          else if (checkboxChecked && dropdownValueEmpty) {
-            return {
-              requireDropdownToBeSelected: true
-            };
+          if (checkboxChecked && dropdownValueEmpty) {
+            errors[label+' Dropdown Error']=true;
           }
         }
         if (checked < 1){
@@ -72,6 +72,11 @@ export class EditEpisodeComponent implements OnInit {
             requireCheckboxesToBeChecked: true
           };
         }
+        else if(Object.keys(errors).length > 0) {
+          console.log(errors);
+          return errors;
+        }
+
         return null;
       }
     }
@@ -121,27 +126,29 @@ export class EditEpisodeComponent implements OnInit {
     return (formGroup: FormGroup) =>
     {
       let checked = 0;
-      for (let i=0;
-           i < this.rescueMedications.length + this.archivedRescueMeds.length;
-           i++) {
+      let errors = {};
+      for (let i=0; i < this.rescueMedications.length; i++) {
         let checkbox = formGroup.controls['med-' + i + '-checkbox']
         let checkboxChecked = (checkbox?.value === true)
         let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
-        let doseEmpty = (doseAmount?.value === '')
+        let doseEmpty = (doseAmount?.value === null)
+        console.log(`${i} - ${checkboxChecked && doseEmpty}`)
 
-        if (checkboxChecked && !doseEmpty) {
+        if (checkboxChecked) {
           checked++;
-        } else if (checkboxChecked && doseEmpty) {
-          return {
-            requireDoseToBeFilled: true
-          };
+        }
+        if (checkboxChecked && doseEmpty) {
+          errors['med-' + i + "-dose-amount Error"] = true;
         }
       }
-
       if (checked < 1) {
         return {
           requireCheckboxesToBeChecked: true
         };
+      }
+      else if(Object.keys(errors).length > 0) {
+        console.log(errors);
+        return errors;
       }
 
       return null;

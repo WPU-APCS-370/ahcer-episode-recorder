@@ -1,3 +1,5 @@
+@import '../../styles';
+
 .create-episode {
   text-align: left;
   max-width: 350px;
@@ -67,3 +69,12 @@ mat-slide-toggle {
 button {
   display: block;
 }
+
+::ng-deep mat-checkbox.checkbox-error .mat-checkbox-frame{
+  border-color: mat-color($theme-warn);
+}
+
+::ng-deep mat-checkbox.checkbox-error .mat-checkbox-label{
+  color: mat-color($theme-warn);
+}
+
