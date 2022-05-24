@@ -3,7 +3,6 @@
   <h3>Time</h3>
   <p>Start Time: {{episode.startTime?.toDate()| date: 'MM/dd/yyyy HH:mm'}}</p>
   <p>End Time: {{episode.endTime?.toDate()| date: 'MM/dd/yyyy HH:mm'}}</p>
-  <p>id: {{episode.id}}</p>
   <div *ngIf="episode.symptoms">
     <h3>Symptoms</h3>
     <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.eyes)">

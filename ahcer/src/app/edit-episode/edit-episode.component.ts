@@ -353,6 +353,7 @@ export class EditEpisodeComponent implements OnInit {
         } else {
           symptom['present'] = true;
         }
+        symptom['time'] = Timestamp.fromDate(val.startTime);
       }
       symptoms[this.symptomKeys[index]] = symptom;
     }
