@@ -164,8 +164,9 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     let symptomStr = "";
     let numSymptoms = 0;
     for (let index in symptomKeys) {
-      let symptomText = ""
-      if(symptoms[symptomKeys[index]]) {
+      let symptomText = "";
+      let symptom = symptoms[symptomKeys[index]];
+      if(symptom.type || symptom.present) {
         if(!showFullList && numSymptoms == 2) {
           symptomStr +=", ...";
           break;
@@ -176,7 +177,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         }
         else {
           symptomText = symptomTexts[index];
-          symptomText += ` (${symptoms[symptomKeys[index]]})`;
+          symptomText += ` (${symptom.type})`;
         }
 
         if(numSymptoms == 0) {

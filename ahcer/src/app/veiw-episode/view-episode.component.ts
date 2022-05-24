@@ -55,4 +55,8 @@ export class ViewEpisodeComponent implements OnInit {
       }
     }
   }
+
+  jsonObjectIsEmpty(object: Object) {
+    return (Object.keys(object).length <=0);
+  }
 }

@@ -3,20 +3,46 @@
   <h3>Time</h3>
   <p>Start Time: {{episode.startTime?.toDate()| date: 'MM/dd/yyyy HH:mm'}}</p>
   <p>End Time: {{episode.endTime?.toDate()| date: 'MM/dd/yyyy HH:mm'}}</p>
+  <p>id: {{episode.id}}</p>
   <div *ngIf="episode.symptoms">
     <h3>Symptoms</h3>
-    <p>Eyes: {{episode.symptoms.eyes}}</p>
-    <p>Left Arm: {{episode.symptoms.leftArm}}</p>
-    <p>Left Hand: {{episode.symptoms.leftHand}}</p>
-    <p>Left Leg: {{episode.symptoms.leftLeg}}</p>
-    <p>Right Arm: {{episode.symptoms.rightArm}}</p>
-    <p>Right Hand: {{episode.symptoms.rightHand}}</p>
-    <p>Right Leg: {{episode.symptoms.rightLeg}}</p>
-    <p>Full Body: {{episode.symptoms.fullBody}}</p>
-    <p>Seizure: {{episode.symptoms.seizure}}</p>
-    <p>Loss of Consciousness: {{episode.symptoms.lossOfConsciousness}}</p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.eyes)">
+      Eyes ({{episode.symptoms.eyes.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftArm)">
+      Left Arm ({{episode.symptoms.leftArm.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftHand)">
+      Left Hand ({{episode.symptoms.leftHand.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftLeg)">
+      Left Leg ({{episode.symptoms.leftLeg.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightArm)">
+      Right Arm ({{episode.symptoms.rightArm.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightHand)">
+      Right Hand ({{episode.symptoms.rightHand.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightLeg)">
+      Right Leg ({{episode.symptoms.rightLeg.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.fullBody)">
+      Full Body ({{episode.symptoms.fullBody.type}})
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.seizure) &&
+              episode.symptoms.seizure.present">
+      Seizure
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.lossOfConsciousness) &&
+              episode.symptoms.lossOfConsciousness.present">
+      Loss of Consciousness
+    </p>
   </div>
-  <p>Other Behaviors: {{episode.behavior? episode.behavior : ""}}</p>
+  <div *ngIf="episode.behavior">
+    <h3>Other Behaviors</h3>
+    <p>{{episode.behavior}}</p>
+  </div>
   <h3>Triggers</h3>
   <p>Known Triggers: {{episode.knownTriggers? episode.knownTriggers : ""}}</p>
   <p>Other Triggers: {{episode.otherTrigger? episode.otherTrigger : ""}}</p>

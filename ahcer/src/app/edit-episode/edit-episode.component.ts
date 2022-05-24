@@ -37,10 +37,14 @@ export class EditEpisodeComponent implements OnInit {
     let controls = {}
     for(let index in this.symptomLabels) {
       let label = this.symptomLabels[index];
-      if(episode.symptoms && episode.symptoms[this.symptomKeys[index]]) {
-        controls[label + ' Checkbox'] = true;
-        if(label!="Loss of Consciousness" && label!="Seizure")
-          controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]];
+      if(episode.symptoms && Object.keys(episode.symptoms[this.symptomKeys[index]]).length > 0) {
+        if(label!="Loss of Consciousness" && label!="Seizure") {
+          controls[label + ' Checkbox'] = true;
+          controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+        }
+        else {
+          controls[label + ' Checkbox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+        }
       }
       else {
         controls[label + ' Checkbox'] = false;
@@ -73,7 +77,6 @@ export class EditEpisodeComponent implements OnInit {
           };
         }
         else if(Object.keys(errors).length > 0) {
-          console.log(errors);
           return errors;
         }
 
@@ -132,7 +135,6 @@ export class EditEpisodeComponent implements OnInit {
         let checkboxChecked = (checkbox?.value === true)
         let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
         let doseEmpty = (doseAmount?.value === null)
-        console.log(`${i} - ${checkboxChecked && doseEmpty}`)
 
         if (checkboxChecked) {
           checked++;
@@ -147,7 +149,6 @@ export class EditEpisodeComponent implements OnInit {
         };
       }
       else if(Object.keys(errors).length > 0) {
-        console.log(errors);
         return errors;
       }
 
@@ -330,32 +331,30 @@ export class EditEpisodeComponent implements OnInit {
   save(): void {
 
     const val = this.episodeForm.value;
-    let symptoms = {
-      seizure: false,
-      lossOfConsciousness:false,
-      fullBody:'',
-      eyes: '',
-      leftArm: '',
-      leftHand: '',
-      leftLeg: '',
-      rightArm: '',
-      rightHand: '',
-      rightLeg: ''
+    let symptoms : Episode['symptoms']= {
+      seizure: {},
+      lossOfConsciousness:{},
+      fullBody: {},
+      eyes: {},
+      leftArm: {},
+      leftHand: {},
+      leftLeg: {},
+      rightArm: {},
+      rightHand: {},
+      rightLeg: {}
     }
 
     for (let index in this.symptomKeys) {
-      if(this.symptomKeys[index]!='lossOfConsciousness' && this.symptomKeys[index]!='seizure') {
-        if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-          symptoms[this.symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
-          +' Dropdown']
-        }
-        else {
-          symptoms[this.symptomKeys[index]] = ""
+      let symptom = {}
+      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
+        if (this.symptomKeys[index] != 'seizure' &&
+            this.symptomKeys[index] != 'lossOfConsciousness') {
+          symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+        } else {
+          symptom['present'] = true;
         }
       }
-      else {
-        symptoms[this.symptomKeys[index]]=val.symptomGroup[this.symptomLabels[index]+' Checkbox']
-      }
+      symptoms[this.symptomKeys[index]] = symptom;
     }
 
     let triggers : [string] = ['']
@@ -392,7 +391,8 @@ export class EditEpisodeComponent implements OnInit {
             doseInfo: {
               amount: val.rescueMedGroup['med-' + i + '-dose-amount'],
               unit: val.rescueMedGroup['med-' + i + '-dose-unit']
-            }
+            },
+            time: Timestamp.fromDate(val.startTime)
           })
         }
       }
