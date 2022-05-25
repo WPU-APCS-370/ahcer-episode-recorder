@@ -3,10 +3,17 @@ const admin = require('firebase-admin');
 const serviceAccountPath = process.argv[2];
 
 const updateGlobally = process.argv.includes('--global') || process.argv.includes('-g');
+const userIdProvided = process.argv[3]==='--user-id' || process.argv[3]==='-u';
+
+let userId = "CXby5i0PPnTpnd4SWCwx7HlMYAj2";
+if(userIdProvided)
+  userId = process.argv[4];
 
 console.log(`Using service account ${serviceAccountPath}.`);
 if(updateGlobally)
   console.log("Updating all episodes.")
+else if(userIdProvided)
+  console.log(`Updating all episodes under the user ${userId}.`);
 else
   console.log("Updating all episodes under test account.")
 
@@ -19,12 +26,10 @@ async function updateEpisodes() {
   let userDocs = (await db.collection('users').get()).docs;
   for (let userDoc of userDocs) {
     if (!updateGlobally) {
-      if(userDoc.id !== "CXby5i0PPnTpnd4SWCwx7HlMYAj2") {
+      if(userDoc.id !== userId)
         continue;
-      }
-    } else {
-      console.log(`Working on user ${userDoc.id}...`)
     }
+    console.log(`Working on user ${userDoc.id}...`);
 
     let patientsSnapshot = await db.collection(`users/${userDoc.id}/patients`).get();
     if(!patientsSnapshot.empty) {
