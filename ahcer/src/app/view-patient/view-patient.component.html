@@ -5,8 +5,7 @@
 
 
 
-
-<mat-card *ngFor="let patient of patients" class="patient-card mat-elevation-z10">
+<mat-card *ngFor="let patient of patients; index as i"  class="patient-card mat-elevation-z10">
 
   <mat-card-header>
 
@@ -42,6 +41,14 @@
     <div *ngIf="patient.mutation">
       <p>Mutation: {{patient.mutation}} {{(patient.mutation=='Other')? ' (' + patient.otherMutation+')': ''}}</p>
     </div>
+
+    <div *ngIf="activeMeds.length>i && activeMeds[i].length>0">
+      <h4>Active Medication</h4>
+      <ol>
+        <li *ngFor="let meds of activeMeds[i]">{{meds.name}}, {{meds.doseInfo.amount}} {{meds.doseInfo.unit}}</li>
+      </ol>
+    </div>
+
   </mat-card-content>
 
   <mat-card-actions class="patient-actions">
