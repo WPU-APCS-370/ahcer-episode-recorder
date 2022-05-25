@@ -30,6 +30,27 @@
       <mat-datepicker-toggle matSuffix [for]="diagnosisDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #diagnosisDatePicker></mat-datepicker>
     </mat-form-field>
+    <div class="gene-container">
+      <span>Gene: </span>
+      <mat-radio-group aria-label="Gene" formControlName="gene" color="primary">
+        <mat-radio-button value="ATP1A2">ATP1A2</mat-radio-button>
+        <mat-radio-button value="ATP1A3">ATP1A3</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Mutation</mat-label>
+      <mat-select formControlName="mutation" #mutationDropdown>
+        <mat-option value="D801">D801</mat-option>
+        <mat-option value="E815K">E815K</mat-option>
+        <mat-option value="G947R">G947R</mat-option>
+        <mat-option value="Other">Other</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" *ngIf="mutationDropdown.value=='Other'">
+      <mat-label>Other Mutation</mat-label>
+      <input matInput formControlName="otherMutation">
+    </mat-form-field>
+
     <mat-form-field appearance="fill">
       <mat-label>Primary Physician Name</mat-label>
       <input matInput formControlName="primaryPhysicianName">
