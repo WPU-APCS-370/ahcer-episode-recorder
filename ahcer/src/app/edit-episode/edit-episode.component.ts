@@ -45,11 +45,13 @@ export class EditEpisodeComponent implements OnInit {
         else {
           controls[label + ' Checkbox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
         }
+        controls[label + ' Time'] = [episode.symptoms[this.symptomKeys[index]]['time'].toDate()];
       }
       else {
         controls[label + ' Checkbox'] = false;
         if(label!="Loss of Consciousness" && label!="Seizure")
           controls[label + ' Dropdown'] = [''];
+        controls[label + ' Time'] = [null];
       }
     }
     let options = {
@@ -88,35 +90,38 @@ export class EditEpisodeComponent implements OnInit {
 
   rescueMedGroup(episode: Episode): FormGroup {
     let controls = {}
-    let rescueMedDoses = {};
+    let rescueMedDosesAndTimes = {};
     if(this.episode.medications && Object.keys(this.episode.medications).length > 0) {
       let medications = episode.medications;
       if (medications.rescueMeds) {
         for (let med of medications.rescueMeds) {
-          rescueMedDoses[med.id] = med.doseInfo;
+          rescueMedDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
         }
       }
     }
 
     for(let i=0; i < this.rescueMedications.length; i++) {
       let medication = this.rescueMedications[i];
-      if(medication.id in rescueMedDoses) {
+      if(medication.id in rescueMedDosesAndTimes) {
         controls['med-'+i+'-checkbox'] = true;
-        controls['med-'+i+'-dose-amount'] = [rescueMedDoses[medication.id].amount];
-        controls['med-'+i+'-dose-unit'] = [rescueMedDoses[medication.id].unit];
+        controls['med-'+i+'-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
+        controls['med-'+i+'-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
+        controls['med-'+i+'-time'] = [rescueMedDosesAndTimes[medication.id].time];
       }
       else {
         controls['med-' + i + '-checkbox'] = false;
         controls['med-' + i + '-dose-amount'] = [medication.doseInfo.amount];
         controls['med-' + i + '-dose-unit'] = [medication.doseInfo.unit];
+        controls['med-' + i + '-time'] = null;
       }
     }
     for(let i=0; i < this.archivedRescueMeds.length; i++) {
       let medication = this.archivedRescueMeds[i];
       let controlIndex = i + this.rescueMedications.length;
       controls['med-'+controlIndex+'-checkbox'] = true;
-      controls['med-'+controlIndex+'-dose-amount'] = [rescueMedDoses[medication.id].amount];
-      controls['med-'+controlIndex+'-dose-unit'] = [rescueMedDoses[medication.id].unit];
+      controls['med-'+controlIndex+'-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
+      controls['med-'+controlIndex+'-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
+      controls['med-'+controlIndex+'-time'] = [rescueMedDosesAndTimes[medication.id].time];
 
     }
     let options = {
@@ -353,7 +358,10 @@ export class EditEpisodeComponent implements OnInit {
         } else {
           symptom['present'] = true;
         }
-        symptom['time'] = Timestamp.fromDate(val.startTime);
+        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+        else
+          symptom['time'] = Timestamp.fromDate(val.startTime);
       }
       symptoms[this.symptomKeys[index]] = symptom;
     }
@@ -387,13 +395,18 @@ export class EditEpisodeComponent implements OnInit {
       for (let i=0; i < this.rescueMedications.length; i++) {
         if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
           let medication = this.rescueMedications[i];
+          let time: Timestamp;
+          if (val.rescueMedGroup['med-' + i + '-time'])
+            time = Timestamp.fromDate(val.rescueMedGroup['med-' + i + '-time']);
+          else
+            time = Timestamp.fromDate(val.startTime);
           rescueMeds.push({
             id: medication.id,
             doseInfo: {
               amount: val.rescueMedGroup['med-' + i + '-dose-amount'],
               unit: val.rescueMedGroup['med-' + i + '-dose-unit']
             },
-            time: Timestamp.fromDate(val.startTime)
+            time: time
           })
         }
       }

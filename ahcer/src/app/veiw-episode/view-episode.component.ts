@@ -13,7 +13,7 @@ export class ViewEpisodeComponent implements OnInit {
   episode: Episode;
   patientId: string;
   rescueMeds: Medication[]=[];
-  rescueMedsDoses: Object={};
+  rescueMedsDosesAndTimes: Object={};
   loadingMeds: boolean = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
@@ -39,7 +39,7 @@ export class ViewEpisodeComponent implements OnInit {
       if(medications.rescueMeds) {
         this.loadingMeds = true;
         for(let med of medications.rescueMeds) {
-          this.rescueMedsDoses[med.id] = med.doseInfo;
+          this.rescueMedsDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
         }
         this.medicationService.getMedicationsByIds(this.patientId,
           medications.rescueMeds.map((x)=> x.id))

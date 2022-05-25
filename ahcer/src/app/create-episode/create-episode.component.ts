@@ -67,6 +67,7 @@ export class CreateEpisodeComponent implements OnInit{
       controls[label+' Checkbox'] = false;
       if (label!="Seizure" && label!="Loss of Consciousness")
         controls[label+' Dropdown'] = ['']
+      controls[label+' Time'] = null
     }
     let options = {
       validators: (formGroup: FormGroup) => {
@@ -109,6 +110,7 @@ export class CreateEpisodeComponent implements OnInit{
       controls['med-'+i+'-checkbox'] = false;
       controls['med-'+i+'-dose-amount'] = [medication.doseInfo.amount];
       controls['med-'+i+'-dose-unit'] = [medication.doseInfo.unit];
+      controls['med-'+i+'-time'] = [null];
     }
     let options = {
       validators: this.medicationValidator()
@@ -238,7 +240,7 @@ export class CreateEpisodeComponent implements OnInit{
     const val = this.episodeForm.value;
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
                        "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness"]
-    let symptoms : Episode['symptoms']= {
+    let symptoms : Episode['symptoms'] = {
       seizure: {},
       lossOfConsciousness:{},
       fullBody: {},
@@ -259,7 +261,10 @@ export class CreateEpisodeComponent implements OnInit{
         } else {
           symptom['present'] = true;
         }
-        symptom['time'] = Timestamp.fromDate(val.startTime);
+        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
+        else
+          symptom['time'] = Timestamp.fromDate(val.startTime);
       }
       symptoms[symptomKeys[index]] = symptom;
     }
@@ -298,13 +303,18 @@ export class CreateEpisodeComponent implements OnInit{
       for (let i=0; i < this.rescueMedications.length; i++) {
         if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
           let medication = this.rescueMedications[i];
+          let time: Timestamp;
+          if (val.rescueMedGroup['med-' + i + '-time'])
+            time = Timestamp.fromDate(val.rescueMedGroup['med-' + i + '-time']);
+          else
+            time = Timestamp.fromDate(val.startTime);
           rescueMeds.push({
             id: medication.id,
             doseInfo: {
               amount: val.rescueMedGroup['med-' + i + '-dose-amount'],
               unit: val.rescueMedGroup['med-' + i + '-dose-unit']
             },
-            time: Timestamp.fromDate(val.startTime)
+            time: time
           })
         }
       }

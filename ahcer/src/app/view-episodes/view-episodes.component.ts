@@ -89,7 +89,7 @@ export class ViewEpisodesComponent implements OnInit {
 
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
+    dialogConfig.width = '350px';
 
     dialogConfig.data = [episode, this.patientId];
     this.dialog

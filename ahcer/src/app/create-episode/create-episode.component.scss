@@ -10,8 +10,10 @@
 mat-form-field {
   width: 100%;
 }
-.symptom-group, .trigger-container, .trigger-checkboxes,
-.medication-group {
+
+.symptoms-group, .symptom-container,
+.trigger-container, .trigger-checkboxes,
+.medications-group, .medication-container  {
   display: flex;
   flex-direction: column;
 }
@@ -24,7 +26,7 @@ mat-slide-toggle {
   display: block;
 }
 
-.symptom-container, .medication-container {
+.symptom-checkbox-container, .medication-checkbox-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -32,11 +34,11 @@ mat-slide-toggle {
   gap: 10px;
 }
 
-.symptom-container > mat-form-field {
+.symptom-checkbox-container > mat-form-field {
   width: 65%;
 }
 
-.medication-container > mat-form-field {
+.medication-checkbox-container > mat-form-field {
   width: 50%;
 }
 
