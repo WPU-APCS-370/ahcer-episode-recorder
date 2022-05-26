@@ -3,7 +3,7 @@ import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
+import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
 import {Patient} from "../models/patient";
 import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
 import {PatientServices} from "../services/patient.service";

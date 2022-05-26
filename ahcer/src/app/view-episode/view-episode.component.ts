@@ -5,7 +5,7 @@ import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
 
 @Component({
-  selector: 'app-veiw-episode',
+  selector: 'app-view-episode',
   templateUrl: './view-episode.component.html',
   styleUrls: ['./view-episode.component.scss']
 })

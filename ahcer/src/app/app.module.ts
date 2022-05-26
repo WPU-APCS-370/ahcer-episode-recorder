@@ -32,7 +32,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ViewProfileComponent } from './view-profile/view-profile.component';
-import { ViewEpisodeComponent } from './veiw-episode/view-episode.component';
+import { ViewEpisodeComponent } from './view-episode/view-episode.component';
 import { EditEpisodeComponent } from './edit-episode/edit-episode.component';
 import { LoginComponent } from './login/login.component';
 import { CreateEpisodeComponent } from './create-episode/create-episode.component';

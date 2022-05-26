@@ -5,7 +5,7 @@ import {finalize, first, switchMap} from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
+import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
