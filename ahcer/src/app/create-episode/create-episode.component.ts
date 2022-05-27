@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
 import {PatientServices} from "../services/patient.service";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat/app";
@@ -13,6 +13,15 @@ import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
+import {ErrorStateMatcher} from "@angular/material/core";
+
+export class formGroupErrorMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null) {
+    const formGroup = control.parent.controls;
+    const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
+    return control.touched && control.parent.hasError(name+" Error");
+  }
+}
 
 @Component({
   selector: 'app-create-episode',
@@ -28,6 +37,7 @@ export class CreateEpisodeComponent implements OnInit{
   patient: Patient;
   rescueMedications: Medication[] = [];
   prescriptionMeds: Medication[] = [];
+  formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
 
   episodeForm =this.fb.group({
     startTime: [null, Validators.required],
@@ -57,10 +67,12 @@ export class CreateEpisodeComponent implements OnInit{
       controls[label+' Checkbox'] = false;
       if (label!="Seizure" && label!="Loss of Consciousness")
         controls[label+' Dropdown'] = ['']
+      controls[label+' Time'] = null
     }
     let options = {
       validators: (formGroup: FormGroup) => {
         let checked = 0;
+        let errors = {};
         for (let label of this.symptomLabels) {
           let checkbox = formGroup.controls[label+' Checkbox']
           let checkboxChecked = (checkbox.value === true)
@@ -69,19 +81,20 @@ export class CreateEpisodeComponent implements OnInit{
             let dropdown = formGroup.controls[label + ' Dropdown']
             dropdownValueEmpty = (dropdown.value === '')
           }
-          if(checkboxChecked && !dropdownValueEmpty) {
+          if(checkboxChecked) {
             checked++;
           }
-          else if (checkboxChecked && dropdownValueEmpty) {
-            return {
-              requireDropdownToBeSelected: true
-            };
+          if (checkboxChecked && dropdownValueEmpty) {
+            errors[label+' Dropdown Error']=true;
           }
         }
         if (checked < 1){
           return {
             requireCheckboxesToBeChecked: true
           };
+        }
+        else if(Object.keys(errors).length > 0) {
+          return errors;
         }
 
         return null;
@@ -97,6 +110,7 @@ export class CreateEpisodeComponent implements OnInit{
       controls['med-'+i+'-checkbox'] = false;
       controls['med-'+i+'-dose-amount'] = [medication.doseInfo.amount];
       controls['med-'+i+'-dose-unit'] = [medication.doseInfo.unit];
+      controls['med-'+i+'-time'] = [null];
     }
     let options = {
       validators: this.medicationValidator()
@@ -108,24 +122,27 @@ export class CreateEpisodeComponent implements OnInit{
      return (formGroup: FormGroup) =>
      {
        let checked = 0;
+       let errors = {};
        for (let i=0; i < this.rescueMedications.length; i++) {
          let checkbox = formGroup.controls['med-' + i + '-checkbox']
          let checkboxChecked = (checkbox?.value === true)
          let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
-         let doseEmpty = (doseAmount?.value === '')
+         let doseEmpty = (doseAmount?.value === null)
 
-         if (checkboxChecked && !doseEmpty) {
+         if (checkboxChecked) {
            checked++;
-         } else if (checkboxChecked && doseEmpty) {
-           return {
-             requireDoseToBeFilled: true
-           };
+         }
+         if (checkboxChecked && doseEmpty) {
+           errors['med-' + i + "-dose-amount Error"] = true;
          }
        }
        if (checked < 1) {
          return {
            requireCheckboxesToBeChecked: true
          };
+       }
+       else if(Object.keys(errors).length > 0) {
+         return errors;
        }
 
        return null;
@@ -223,32 +240,33 @@ export class CreateEpisodeComponent implements OnInit{
     const val = this.episodeForm.value;
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
                        "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness"]
-    let symptoms = {
-      seizure:false,
-      lossOfConsciousness:false,
-      fullBody: '',
-      eyes: '',
-      leftArm: '',
-      leftHand: '',
-      leftLeg: '',
-      rightArm: '',
-      rightHand: '',
-      rightLeg: ''
+    let symptoms : Episode['symptoms'] = {
+      seizure: {},
+      lossOfConsciousness:{},
+      fullBody: {},
+      eyes: {},
+      leftArm: {},
+      leftHand: {},
+      leftLeg: {},
+      rightArm: {},
+      rightHand: {},
+      rightLeg: {}
     }
 
     for (let index in symptomKeys) {
-      if(symptomKeys[index]!='seizure' && symptomKeys[index]!='lossOfConsciousness') {
-        if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-          symptoms[symptomKeys[index]] = val.symptomGroup[this.symptomLabels[index]
-                                                          +' Dropdown']
+      let symptom = {}
+      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
+        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness') {
+            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+        } else {
+          symptom['present'] = true;
         }
-        else {
-          symptoms[symptomKeys[index]] = ""
-        }
+        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
+        else
+          symptom['time'] = Timestamp.fromDate(val.startTime);
       }
-      else {
-        symptoms[symptomKeys[index]]=val.symptomGroup[this.symptomLabels[index]+' Checkbox']
-      }
+      symptoms[symptomKeys[index]] = symptom;
     }
 
     let triggers : [string] = ['']
@@ -285,12 +303,18 @@ export class CreateEpisodeComponent implements OnInit{
       for (let i=0; i < this.rescueMedications.length; i++) {
         if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
           let medication = this.rescueMedications[i];
+          let time: Timestamp;
+          if (val.rescueMedGroup['med-' + i + '-time'])
+            time = Timestamp.fromDate(val.rescueMedGroup['med-' + i + '-time']);
+          else
+            time = Timestamp.fromDate(val.startTime);
           rescueMeds.push({
             id: medication.id,
             doseInfo: {
               amount: val.rescueMedGroup['med-' + i + '-dose-amount'],
               unit: val.rescueMedGroup['med-' + i + '-dose-unit']
-            }
+            },
+            time: time
           })
         }
       }

@@ -5,37 +5,54 @@
     <mat-label>Start Time</mat-label>
     <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
     <mat-datepicker-toggle matSuffix [for]="StartTimePicker"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+    <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true">
+    </ngx-mat-datetime-picker>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>End Time</mat-label>
     <input matInput [ngxMatDatetimePicker]="EndTimePicker" formControlName="endTime" />
     <mat-datepicker-toggle matSuffix [for]="EndTimePicker"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true"></ngx-mat-datetime-picker>
+    <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true">
+    </ngx-mat-datetime-picker>
   </mat-form-field>
   <mat-label>Symptoms:</mat-label>
-  <div class="symptom-group" formGroupName="symptomGroup">
+  <div class="symptoms-group" formGroupName="symptomGroup">
     <div class="symptom-container" *ngFor="let symptom of symptomLabels">
-      <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'">
-        {{symptom}}
-      </mat-checkbox>
-      <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure'"
-                       [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
-        <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
-        <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'">
-          <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
-          <mat-option value="rigid">Rigid (Dystonia)</mat-option>
-        </mat-select>
-        <mat-label *ngIf="symptom=='Eyes'">Abnormalities</mat-label>
-        <mat-select *ngIf="symptom=='Eyes'" [formControlName]="symptom+' Dropdown'">
-          <mat-option value="nystagmus">Nystagmus</mat-option>
-          <mat-option value="outward">Outward (Exotropia)</mat-option>
-          <mat-option value="inward">Inward (Esotropia)</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
-                      class="invisible">
-        <input matInput>
+      <div class="symptom-checkbox-container">
+        <mat-checkbox #checkbox color="primary" [formControlName]="symptom+' Checkbox'"
+                      [class]="(episodeForm.get('symptomGroup').touched &&
+                            episodeForm.get('symptomGroup').hasError('requireCheckboxesToBeChecked'))?
+                          'checkbox-error' : ''">
+          {{symptom}}
+        </mat-checkbox>
+        <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure'"
+                         [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
+          <mat-label *ngIf="symptom!='Eyes'">Type of Action</mat-label>
+          <mat-select *ngIf="symptom!='Eyes'" [formControlName]="symptom+' Dropdown'"
+                      [errorStateMatcher]="formGroupErrorMatcher">
+            <mat-option value="floppy">Floppy (Hemiplegia)</mat-option>
+            <mat-option value="rigid">Rigid (Dystonia)</mat-option>
+          </mat-select>
+          <mat-label *ngIf="symptom=='Eyes'">Abnormalities</mat-label>
+          <mat-select *ngIf="symptom=='Eyes'" [formControlName]="symptom+' Dropdown'"
+                      [errorStateMatcher]="formGroupErrorMatcher">
+            <mat-option value="nystagmus">Nystagmus</mat-option>
+            <mat-option value="outward">Outward (Exotropia)</mat-option>
+            <mat-option value="inward">Inward (Esotropia)</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
+                        class="invisible" style="width: 0;">
+          <input matInput>
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="fill" *ngIf="(checkbox.checked)">
+        <mat-label>Time</mat-label>
+        <input matInput [ngxMatDatetimePicker]="SymptomTimePicker" [formControlName]="symptom+' Time'" />
+        <mat-datepicker-toggle matSuffix [for]="SymptomTimePicker"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #SymptomTimePicker [showSeconds]="true" [enableMeridian]="true">
+        </ngx-mat-datetime-picker>
+        <mat-hint>Leave this field blank to use <i>Start Time</i>.</mat-hint>
       </mat-form-field>
     </div>
   </div>
@@ -65,14 +82,21 @@
                     (change)="onMedToggleChange($event.checked)">
     Rescue Medication?
   </mat-slide-toggle>
-  <div class="medication-group"
+  <div class="medications-group"
        *ngIf="rescueMedToggle.checked && !(loadingRescueMeds || loadingArchivedMeds)"
        formGroupName="rescueMedGroup">
     <div class="medication-container" *ngFor="let rescueMed of rescueMedications; index as i">
-      <mat-checkbox color="primary" [formControlName]="'med-'+i+'-checkbox'">{{rescueMed.name}}</mat-checkbox>
+      <div class="medication-checkbox-container">
+      <mat-checkbox #checkbox color="primary" [formControlName]="'med-'+i+'-checkbox'"
+                    [class]="(episodeForm.get('rescueMedGroup').touched &&
+                          episodeForm.get('rescueMedGroup').hasError('requireCheckboxesToBeChecked'))?
+                        'checkbox-error' : ''">
+        {{rescueMed.name}}
+      </mat-checkbox>
       <mat-form-field appearance="outline" class="rescue-med-dose">
         <mat-label>Dose</mat-label>
-        <input matInput type="number" [formControlName]="'med-'+i+'-dose-amount'"/>
+        <input matInput type="number" [formControlName]="'med-'+i+'-dose-amount'"
+               [errorStateMatcher]="formGroupErrorMatcher"/>
         <mat-select [formControlName]="'med-'+i+'-dose-unit'">
           <mat-option value="ng">ng</mat-option>
           <mat-option value="μg">μg</mat-option>
@@ -81,6 +105,15 @@
           <mat-option value="ml">ml</mat-option>
           <mat-option value="caps">caps</mat-option>
         </mat-select>
+      </mat-form-field>
+      </div>
+      <mat-form-field *ngIf="checkbox.checked" appearance="outline">
+        <mat-label>Time</mat-label>
+        <input matInput [ngxMatDatetimePicker]="rescueMedTimePicker" [formControlName]="'med-'+i+'-time'" />
+        <mat-datepicker-toggle matSuffix [for]="rescueMedTimePicker"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #rescueMedTimePicker [showSeconds]="true" [enableMeridian]="true">
+        </ngx-mat-datetime-picker>
+        <mat-hint>Leave this field blank to use <i>Start Time</i>.</mat-hint>
       </mat-form-field>
     </div>
     <div class="medication-container archived-med"
@@ -108,8 +141,8 @@
     <mat-spinner [diameter]="50"></mat-spinner>
   </div>
   <h3>Prescription Medications</h3>
-  <div class="medication-group" formGroupName="prescriptionMedGroup">
-    <div class="medication-container" *ngFor="let med of prescriptionMeds; index as i">
+  <div class="medications-group" formGroupName="prescriptionMedGroup">
+    <div class="medication-checkbox-container" *ngFor="let med of prescriptionMeds; index as i">
       <mat-form-field appearance="outline" class="prescription-med-name">
         <mat-label>Name</mat-label>
         <input matInput [formControlName]="'med-'+i+'-name'"/>

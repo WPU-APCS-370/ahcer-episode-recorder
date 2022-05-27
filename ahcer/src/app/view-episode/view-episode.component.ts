@@ -5,7 +5,7 @@ import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
 
 @Component({
-  selector: 'app-veiw-episode',
+  selector: 'app-view-episode',
   templateUrl: './view-episode.component.html',
   styleUrls: ['./view-episode.component.scss']
 })
@@ -13,7 +13,7 @@ export class ViewEpisodeComponent implements OnInit {
   episode: Episode;
   patientId: string;
   rescueMeds: Medication[]=[];
-  rescueMedsDoses: Object={};
+  rescueMedsDosesAndTimes: Object={};
   loadingMeds: boolean = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
@@ -39,7 +39,7 @@ export class ViewEpisodeComponent implements OnInit {
       if(medications.rescueMeds) {
         this.loadingMeds = true;
         for(let med of medications.rescueMeds) {
-          this.rescueMedsDoses[med.id] = med.doseInfo;
+          this.rescueMedsDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
         }
         this.medicationService.getMedicationsByIds(this.patientId,
           medications.rescueMeds.map((x)=> x.id))
@@ -54,5 +54,9 @@ export class ViewEpisodeComponent implements OnInit {
           })
       }
     }
+  }
+
+  jsonObjectIsEmpty(object: Object) {
+    return (Object.keys(object).length <=0);
   }
 }

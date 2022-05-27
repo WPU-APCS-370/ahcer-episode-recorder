@@ -3,7 +3,7 @@ import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ViewEpisodeComponent} from "../veiw-episode/view-episode.component";
+import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
 import {Patient} from "../models/patient";
 import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
 import {PatientServices} from "../services/patient.service";
@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
 
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
+    dialogConfig.width = '350px';
 
     dialogConfig.data = [episode, this.currentPatient.id];
     this.dialog
@@ -87,8 +87,7 @@ export class HomeComponent implements OnInit {
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-    dialogConfig.maxWidth = '350px';
+    dialogConfig.width = '350px';
 
     dialogConfig.data = [episode, this.currentPatient.id];
 

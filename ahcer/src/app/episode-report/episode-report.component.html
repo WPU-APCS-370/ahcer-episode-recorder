@@ -4,7 +4,7 @@
       Complete episode list
       <span class="not-printable"> for {{currentPatient.firstName}} {{currentPatient.lastName}}</span>
     </span>
-    <button mat-raised-button color="accent" (click)="exportToCSV()"
+    <button mat-raised-button color="accent" (click)="exportToCSV()" class="not-printable"
             *ngIf="!loadingEpisodes && !loadingRescueMeds && episodes_count > 0">
       <mat-icon  fontSet="material-icons-outlined">file_download </mat-icon>
       Export To CSV
