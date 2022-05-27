@@ -13,6 +13,7 @@ import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
+import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
 
 
 
@@ -85,6 +86,10 @@ const routes: Routes = [
     path: 'medications',
     component: ViewMedicationComponent,
    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'privacy-policy',
+    component: PrivacyPolicyComponent
   }
 ];
 

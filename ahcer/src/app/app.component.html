@@ -79,7 +79,11 @@
     <router-outlet></router-outlet>
   </div>
   <mat-toolbar color="primary" class="footer">
-    <span class="footer-spacer">AHCER-App &copy; 2022 - V {{version}}</span>
+    <span class="footer-spacer">AHCER-App &copy; 2022 - V {{version}}
+      | <a mat-list-item routerLink="privacy-policy">
+      <span> Privacy Policy</span>
+    </a>
+    </span>
   </mat-toolbar>
 </mat-sidenav-container>
 
