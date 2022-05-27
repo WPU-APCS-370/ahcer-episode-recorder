@@ -1,8 +1,19 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
 .footer {
   width: 100%;
   text-align: center;
   color: black;
 }
+
 .footer-spacer {
   flex: 1 1 auto;
 }
@@ -12,14 +23,18 @@
   margin:0 10px;
 }
 
-.container {
+.content-container {
   min-height: calc(100vh - 148px);
 }
 
 @media only screen and (max-width: 600px) {
-  .container {
+  .content-container {
     min-height: calc(100vh - 112px);
   }
+}
+
+.sidenav-container {
+  flex: 1;
 }
 
 .user-icon {
@@ -42,6 +57,16 @@
   position: -webkit-sticky; /* For macOS/iOS Safari */
   top: 0; /* Sets the sticky toolbar to be on top */
   z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+}
+
+@media print {
+  .container {
+    bottom: unset;
+  }
+
+  .nav-bar, .footer {
+    display: none;
+  }
 }
 
 
