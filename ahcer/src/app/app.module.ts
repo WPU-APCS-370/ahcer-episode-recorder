@@ -51,6 +51,7 @@ import {MatRadioModule} from "@angular/material/radio";
 import {NgxMaskModule} from "ngx-mask";
 import { HelpComponent } from './help/help.component';
 import { QuillModule } from 'ngx-quill';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { QuillModule } from 'ngx-quill';
     ViewMedicationComponent,
     CreateMedicationComponent,
     EditMedicationComponent,
-    HelpComponent
+    HelpComponent,
+    PrivacyPolicyComponent
   ],
   imports: [
     BrowserModule,
