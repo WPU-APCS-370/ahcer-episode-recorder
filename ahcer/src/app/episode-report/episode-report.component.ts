@@ -75,11 +75,41 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     }
   }
 
+  filterFunction(): (data: Episode, filterStr: string) => boolean {
+    return (data, filterStr) => {
+      let filters = JSON.parse(filterStr);
+      for (let key in filters) {
+        if(key == "startTime" || key == "endTime") {
+          if (Object.keys(filters[key]).length > 0) {
+            let episodeStartTime = data[key]?.toDate();
+            let filterStartDate: Date, filterEndDate: Date = null;
+            let dataMatchesFilter = true;
+
+            if (filters[key].start) {
+              filterStartDate = new Date(filters[key].start);
+              dataMatchesFilter = dataMatchesFilter && (episodeStartTime >= filterStartDate);
+            }
+            if (filters[key].end) {
+              filterEndDate = new Date(filters[key].end);
+              filterEndDate.setTime(filterEndDate.getTime() + (24 * 60 * 60 * 1000 - 1));
+              dataMatchesFilter = dataMatchesFilter && (episodeStartTime <= filterEndDate);
+            }
+            if (!dataMatchesFilter) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+  }
+
   reloadDataSource() {
     this.dataSource.data = this.episodes;
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = this.filterFunction();
   }
 
   @HostListener('window:beforeprint')
