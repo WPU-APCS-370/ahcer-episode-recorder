@@ -141,7 +141,8 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
 
   closeOverlayFromOutsideClick(event: MouseEvent) {
     if(!(this.overlayContainer.getContainerElement()).contains(event.target as HTMLElement) &&
-      !(this.filterButton.nativeElement).contains(event.target)) {
+       (event.target as HTMLElement).tagName.toLowerCase()!=='body' &&
+       !(this.filterButton.nativeElement).contains(event.target)) {
       this.closeOverlay();
     }
   }
@@ -149,9 +150,11 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
   onDatePickerStateChange(opened: boolean) {
     if(opened) {
       this.overlayContainer.getContainerElement().style.zIndex = '2000';
+      this.overlayOutsideClickHandler = null;
     }
     else {
       this.overlayContainer.getContainerElement().style.zIndex = '1000';
+      this.overlayOutsideClickHandler = this.closeOverlayFromOutsideClick;
     }
   }
 

@@ -326,6 +326,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   updateFilters(filters: Object) {
     this.filters = filters;
     this.dataSource.filter = JSON.stringify(filters);
+    this.dataSource.paginator = this.paginator;
   }
 
   exportToCSV() {
