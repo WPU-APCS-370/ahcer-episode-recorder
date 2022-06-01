@@ -13,6 +13,7 @@ import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
+import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
 
 
@@ -89,6 +90,10 @@ const routes: Routes = [
     path: 'episode-report',
     component: EpisodeReportComponent,
    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'privacy-policy',
+    component: PrivacyPolicyComponent
   }
 ];
 
