@@ -32,6 +32,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   currentPatient : Patient;
   episodes_count: number;
   dataSource: MatTableDataSource<Episode> = new MatTableDataSource<Episode>();
+  filters: Object = {};
 
   constructor(private medicationService: MedicationService,
               private episodeService: EpisodeService,
@@ -320,6 +321,11 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     else {
       tooltip.show();
     }
+  }
+
+  updateFilters(filters: Object) {
+    this.filters = filters;
+    this.dataSource.filter = JSON.stringify(filters);
   }
 
   exportToCSV() {

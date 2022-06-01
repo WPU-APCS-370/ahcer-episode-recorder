@@ -56,6 +56,8 @@ import { EpisodeReportComponent } from './episode-report/episode-report.componen
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSortModule} from "@angular/material/sort";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import { ReportFilterPopupComponent } from './report-filter-popup/report-filter-popup.component';
+import {OverlayModule} from "@angular/cdk/overlay";
 
 @NgModule({
   declarations: [
@@ -79,42 +81,44 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     EditMedicationComponent,
     HelpComponent,
     PrivacyPolicyComponent,
-    EpisodeReportComponent
+    EpisodeReportComponent,
+    ReportFilterPopupComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatInputModule,
-    MatNativeDateModule,
-    MatListModule,
-    MatTableModule,
-    CdkTableModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    NgxMatDatetimePickerModule,
-    MatCheckboxModule,
-    NgxMatNativeDateModule,
-    MatSlideToggleModule,
-    QuillModule,
-    MatRadioModule,
-    NgxMaskModule.forRoot(),
-    MatTooltipModule,
-    MatSortModule,
-    MatPaginatorModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFirestoreModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatListModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatInputModule,
+        MatNativeDateModule,
+        MatListModule,
+        MatTableModule,
+        CdkTableModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        NgxMatDatetimePickerModule,
+        MatCheckboxModule,
+        NgxMatNativeDateModule,
+        MatSlideToggleModule,
+        QuillModule,
+        MatRadioModule,
+        NgxMaskModule.forRoot(),
+        MatTooltipModule,
+        MatSortModule,
+        MatPaginatorModule,
+        OverlayModule
+    ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService
   ],

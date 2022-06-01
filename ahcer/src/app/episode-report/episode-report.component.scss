@@ -11,6 +11,7 @@
 
 @media only screen and (max-width:1000px) {
   .component-container {
+    max-width: unset;
     margin: 20px 10px 20px 10px;
   }
 
@@ -23,11 +24,21 @@
   }
 }
 
-.header, .long-text-container {
+.table-title-row-container {
+  border-bottom: 1px solid transparent;
+  padding-left: 15px !important;
+}
+
+.header, .table-title-row, .long-text-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
+}
+
+.table-title-row {
+  padding-left: 0;
+  justify-content: left;
 }
 
 .header > button {

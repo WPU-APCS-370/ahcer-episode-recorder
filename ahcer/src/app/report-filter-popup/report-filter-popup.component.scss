@@ -1,0 +1,41 @@
+.container {
+  text-align: left;
+  max-width: 250px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+button {
+  float: right;
+}
+
+::ng-deep .custom-overlay-open-animation {
+  transform: scaleY(1);
+  transform-origin: top left;
+  animation: openOverlay 0.1s;
+}
+
+@keyframes openOverlay {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+::ng-deep .custom-overlay-close-animation {
+  transform-origin: top left;
+}
+
+@media print {
+  .not-printable {
+    display: none;
+  }
+}
