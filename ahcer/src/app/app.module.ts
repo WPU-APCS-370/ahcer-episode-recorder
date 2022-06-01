@@ -79,7 +79,6 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     EditMedicationComponent,
     HelpComponent,
     PrivacyPolicyComponent,
-    HelpComponent,
     EpisodeReportComponent
   ],
   imports: [
