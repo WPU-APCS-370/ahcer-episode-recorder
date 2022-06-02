@@ -56,6 +56,8 @@ import { EpisodeReportComponent } from './episode-report/episode-report.componen
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSortModule} from "@angular/material/sort";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import { PComponent } from './p/p.component';
+import { TermsOfServiceComponent } from './origin/feature/terms-of-service/terms-of-service.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +81,9 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     EditMedicationComponent,
     HelpComponent,
     PrivacyPolicyComponent,
-    EpisodeReportComponent
+    EpisodeReportComponent,
+    PComponent,
+    TermsOfServiceComponent
   ],
   imports: [
     BrowserModule,
