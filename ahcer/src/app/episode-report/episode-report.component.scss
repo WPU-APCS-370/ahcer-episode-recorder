@@ -1,3 +1,5 @@
+@import '../../styles';
+
 @media only screen and (min-width:1000px) {
   .component-container {
     max-width: 90vw;
@@ -75,6 +77,11 @@
 .mat-cell, .mat-header-cell, .mat-footer-cell {
   padding-right: 5px;
   padding-left: 5px;
+}
+
+mat-chip.mat-accent {
+  background-color: mat-color($theme-accent, lighter) !important;
+  border: 1px solid mat-color($theme-accent, darker) !important;
 }
 
 .invisible {

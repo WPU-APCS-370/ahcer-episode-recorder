@@ -25,8 +25,18 @@
         <th mat-header-cell *matHeaderCellDef class="table-title-row-container"
             [attr.colspan]="displayedColumns.length">
           <div class="table-title-row">
-              <app-report-filter-popup [filters]="filters" (filterChanges)="updateFilters($event)"></app-report-filter-popup>
-            <span class="filter-chips"></span>
+            <app-report-filter-popup [filters]="filters" (filterChanges)="updateFilters($event)">
+            </app-report-filter-popup>
+            <mat-chip-list>
+              <mat-chip *ngFor="let filterChip of filterChipData; index as i"
+                        (removed)="removeChip(i, filterChip.key)"
+                        selected color="accent">
+                {{filterChip.label}}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
           </div>
         </th>
       </ng-container>

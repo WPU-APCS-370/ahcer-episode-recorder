@@ -33,6 +33,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   episodes_count: number;
   dataSource: MatTableDataSource<Episode> = new MatTableDataSource<Episode>();
   filters: Object = {};
+  filterChipData: {key: string, label: string}[] = [];
 
   constructor(private medicationService: MedicationService,
               private episodeService: EpisodeService,
@@ -324,6 +325,44 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   }
 
   updateFilters(filters: Object) {
+    this.filters = filters;
+    this.filterChipData = [];
+    for (let key in filters) {
+      let label ='';
+      if(key == 'startTime' || key == 'endTime') {
+        label = (key=='startTime')? 'Start time ' : 'End time  ';
+        if(!filters[key].start) {
+          if(!filters[key].end) {
+            continue;
+          }
+          else {
+            label += 'earlier than or on '+ (new Date(filters[key].end)).toLocaleDateString();
+          }
+        }
+        else {
+          let rangeStartDate = (new Date(filters[key].start)).toLocaleDateString();
+          if(!filters[key].end) {
+            label += 'later than or on ' + rangeStartDate;
+          }
+          else {
+            let rangeEndDate = (new Date(filters[key].end)).toLocaleDateString();
+            if(rangeStartDate === rangeEndDate)
+              label += 'on ' + rangeEndDate;
+            else
+              label += 'between ' + rangeStartDate + ' and ' + rangeEndDate;
+          }
+        }
+      }
+      this.filterChipData.push({key, label});
+    }
+    this.dataSource.filter = JSON.stringify(filters);
+    this.dataSource.paginator = this.paginator;
+  }
+
+  removeChip(index: number, keyStr: string) {
+    this.filterChipData.splice(index, 1);
+    let key: keyof Object = keyStr as keyof Object;
+    let {[key]: value, ...filters} = this.filters;
     this.filters = filters;
     this.dataSource.filter = JSON.stringify(filters);
     this.dataSource.paginator = this.paginator;
