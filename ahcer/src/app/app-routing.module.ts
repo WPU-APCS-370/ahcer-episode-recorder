@@ -15,6 +15,7 @@ import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
 import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
+import {TermsOfServiceComponent} from "./terms-of-service/terms-of-service.component";
 
 
 
@@ -94,6 +95,10 @@ const routes: Routes = [
   {
     path: 'privacy-policy',
     component: PrivacyPolicyComponent
+  },
+  {
+    path: 'terms-of-service',
+    component: TermsOfServiceComponent
   }
 ];
 
