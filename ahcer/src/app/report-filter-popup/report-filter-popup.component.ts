@@ -78,6 +78,8 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
         startTime: this.dateRangeFormGroup(this.filters['startTime']),
         endTime: this.dateRangeFormGroup(this.filters['endTime'])
       })
+      console.log(this.jsonObjectIsEmpty(this.filters['startTime']))
+      console.log(this.jsonObjectIsEmpty(this.filters['startTime']) && (this.filters['startTime']?.start || this.filters['startTime']?.end))
     }
   }
 
@@ -161,5 +163,9 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
   applyFilters() {
     this.closeOverlay();
     this.filterChanges.emit(this.filterForm.value);
+  }
+
+  jsonObjectIsEmpty(object: Object) {
+    return !object || (Object.keys(object).length <=0);
   }
 }

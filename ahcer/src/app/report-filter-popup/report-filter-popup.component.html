@@ -3,32 +3,50 @@
 </button>
 <ng-template #filterFormTemplate>
   <div class="container not-printable mat-elevation-z10">
-    <p style="font-size: 13px">Filter By:</p>
+    <h5 style="margin-left: 5px;">Filter By:</h5>
     <form [formGroup]="filterForm">
-      <mat-form-field>
-        <mat-label>Start Time Date Range</mat-label>
-        <mat-date-range-input formGroupName="startTime" [rangePicker]="startTimePicker">
-          <input matStartDate formControlName="start" placeholder="Start">
-          <input matEndDate formControlName="end" placeholder="End">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
-        <mat-date-range-picker #startTimePicker
-                               (opened)="onDatePickerStateChange(true)"
-                               (closed)="onDatePickerStateChange(false)">
-        </mat-date-range-picker>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>End Time Date Range</mat-label>
-        <mat-date-range-input formGroupName="endTime" [rangePicker]="endTimePicker">
-          <input matStartDate formControlName="start" placeholder="Start">
-          <input matEndDate formControlName="end" placeholder="End">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
-        <mat-date-range-picker #endTimePicker
-                               (opened)="onDatePickerStateChange(true)"
-                               (closed)="onDatePickerStateChange(false)">
-        </mat-date-range-picker>
-      </mat-form-field>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="!jsonObjectIsEmpty(filters['startTime']) &&
+                                         (filters['startTime']?.start || filters['startTime']?.end)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Start Time
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <mat-label>Start Time Date Range</mat-label>
+            <mat-date-range-input formGroupName="startTime" [rangePicker]="startTimePicker">
+              <input matStartDate formControlName="start" placeholder="Start">
+              <input matEndDate formControlName="end" placeholder="End">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #startTimePicker
+                                   (opened)="onDatePickerStateChange(true)"
+                                   (closed)="onDatePickerStateChange(false)">
+            </mat-date-range-picker>
+          </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="!jsonObjectIsEmpty(filters['endTime']) &&
+                                         (filters['endTime']?.start || filters['endTime']?.end)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              End Time
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-form-field>
+            <mat-label>End Time Date Range</mat-label>
+            <mat-date-range-input formGroupName="endTime" [rangePicker]="endTimePicker">
+              <input matStartDate formControlName="start" placeholder="Start">
+              <input matEndDate formControlName="end" placeholder="End">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #endTimePicker
+                                   (opened)="onDatePickerStateChange(true)"
+                                   (closed)="onDatePickerStateChange(false)">
+            </mat-date-range-picker>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
       <button mat-raised-button color="primary" [disabled]="!filterForm.valid" (click)="applyFilters()">
         Apply
       </button>

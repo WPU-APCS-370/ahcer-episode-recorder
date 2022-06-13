@@ -1,7 +1,7 @@
 .container {
   text-align: left;
   max-width: 250px;
-  padding: 20px;
+  padding: 20px 10px 15px 10px;
   background-color: white;
   border-radius: 4px;
 }
@@ -11,6 +11,7 @@ mat-form-field {
 }
 
 button {
+  margin-top: 10px;
   float: right;
 }
 
