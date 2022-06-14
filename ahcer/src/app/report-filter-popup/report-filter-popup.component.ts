@@ -18,6 +18,7 @@ import {
   AnimationPlayer,
   style
 } from "@angular/animations";
+import moment, {Moment} from "moment";
 
 @Component({
   selector: 'app-report-filter-popup',
@@ -39,6 +40,13 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
   filterFormTemplatePortal: TemplatePortal;
   animationPlayer: AnimationPlayer;
   overlayOutsideClickHandler: Function;
+
+  presetDateChips: string[] = ['This Week', 'Last Week', 'This Month', 'Last Month', 'Last Year'];
+  selectedPresetDate: {[key in 'startTime' | 'endTime']:  number} = {startTime: -1, endTime: -1};
+  presetDateMatches: {[key in 'startTime' | 'endTime']: {start: number[], end: number[]}} = {
+    startTime: {start: [], end: []},
+    endTime: {start: [], end: []}
+  }
 
   closeOverlayAnimation: AnimationMetadata[] = [
     style({opacity: 1}),
@@ -78,8 +86,9 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
         startTime: this.dateRangeFormGroup(this.filters['startTime']),
         endTime: this.dateRangeFormGroup(this.filters['endTime'])
       })
-      console.log(this.jsonObjectIsEmpty(this.filters['startTime']))
-      console.log(this.jsonObjectIsEmpty(this.filters['startTime']) && (this.filters['startTime']?.start || this.filters['startTime']?.end))
+      for (let x of ['startTime', 'endTime'] as const) {
+        this.checkRangeDateWithPreset(x, this.filters[x]?.start, this.filters[x]?.end);
+      }
     }
   }
 
@@ -167,5 +176,94 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
 
   jsonObjectIsEmpty(object: Object) {
     return !object || (Object.keys(object).length <=0);
+  }
+
+  dateChipOnClick(index: number, chipFor: 'startTime' | 'endTime'): void {
+    if (this.selectedPresetDate[chipFor] == index) {
+      this.selectedPresetDate[chipFor] = -1;
+      this.filterForm.get(chipFor).get('start').setValue(null);
+      this.filterForm.get(chipFor).get('end').setValue(null);
+    }
+    else {
+      this.selectedPresetDate[chipFor] = index;
+      let start: Moment, end: Moment = null;
+      switch (index) {
+        case 0:
+          start = moment().startOf('week');
+          break;
+        case 1:
+          start = moment().subtract(1, 'week').startOf('week');
+          end = moment().subtract(1, 'week').endOf('week').startOf('day');
+          break;
+        case 2:
+          start = moment().startOf('month');
+          break;
+        case 3:
+          start = moment().subtract(1, 'month').startOf('month');
+          end = moment().subtract(1, 'month').endOf('month').startOf('day');
+          break;
+        case 4:
+          start = moment().subtract(1, 'year').startOf('year');
+          end = moment().subtract(1, 'year').endOf('year').startOf('day');
+          break;
+      }
+      this.filterForm.get(chipFor).get('start').setValue(start.toDate());
+      if(end)
+        this.filterForm.get(chipFor).get('end').setValue(end.toDate());
+      else
+        this.filterForm.get(chipFor).get('end').setValue(null);
+    }
+  }
+
+  checkRangeDateWithPreset(checkFor: 'startTime' | 'endTime', start?: Date, end?: Date) {
+    if(typeof start == 'undefined' && typeof end == 'undefined')
+      this.presetDateMatches[checkFor] = {start: [], end: []};
+
+    if(typeof start != 'undefined') {
+      let startMoment: Moment = start? moment(start).startOf('day') : null;
+      let datesToCompare: Moment[] = [
+        moment().startOf('week'),                                   //This Week
+        moment().subtract(1, 'week').startOf('week'),   //Last Week
+        moment().startOf('month'),                                  //This Month
+        moment().subtract(1, 'month').startOf('month'), //Last Month
+        moment().subtract(1, 'year').startOf('year')    //Last Year
+      ];
+      this.presetDateMatches[checkFor].start =
+        datesToCompare.reduce(function(a, e, i) {
+          if (e.isSame(startMoment))
+            a.push(i);
+          return a;
+        }, [])
+    }
+
+    if(typeof end != 'undefined') {
+      let endMoment: Moment = end? moment(end).startOf('day') : null;
+      let datesToCompare: Moment[] = [
+        null,                                                                                       //This Week
+        moment().subtract(1, 'week').endOf('week').startOf('day'),   //Last Week
+        null,                                                                                       //This Month
+        moment().subtract(1, 'month').endOf('month').startOf('day'), //Last Month
+        moment().subtract(1, 'year').endOf('year').startOf('day')    //Last Year
+      ];
+      this.presetDateMatches[checkFor].end =
+        datesToCompare.reduce(function(a, e, i) {
+          if(e) {
+            if (e.isSame(endMoment))
+              a.push(i);
+          }
+          else {
+            if (e == endMoment)
+              a.push(i);
+          }
+          return a;
+        }, [])
+    }
+    for(let index of this.presetDateMatches[checkFor].start) {
+      if(this.presetDateMatches[checkFor].end.includes(index)) {
+        this.selectedPresetDate[checkFor] = index;
+        return;
+      }
+    }
+    this.selectedPresetDate[checkFor] = -1;
   }
 }

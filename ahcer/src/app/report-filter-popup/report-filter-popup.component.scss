@@ -1,3 +1,5 @@
+@import '../../styles';
+
 .container {
   text-align: left;
   max-width: 300px;
@@ -33,6 +35,15 @@ form > button {
 
 ::ng-deep .custom-overlay-close-animation {
   transform-origin: top left;
+}
+
+mat-chip.mat-accent {
+  background-color: mat-color($theme-accent, lighter) !important;
+  border: 1px solid mat-color($theme-accent, darker) !important;
+}
+
+.mat-standard-chip:focus::after {
+  opacity: 0;
 }
 
 @media print {
