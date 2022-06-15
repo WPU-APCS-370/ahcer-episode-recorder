@@ -3,6 +3,7 @@
 .container {
   text-align: left;
   max-width: 300px;
+  height: calc(100% - 35px);    //subtracting top and bottom padding
   padding: 20px 10px 15px 10px;
   background-color: white;
   border-radius: 4px;
@@ -35,6 +36,16 @@ form > button {
 
 ::ng-deep .custom-overlay-close-animation {
   transform-origin: top left;
+}
+
+form {
+  height: calc(100% - 32px);      //subtracting h5 tag height
+}
+
+.filter-expansion-panels {
+  height: calc(100% - 56.4px);    //subtracting raised button height + top and bottom padding
+  overflow-y: auto;
+  padding: 5px;                   //padding for expansion panel box-shadow
 }
 
 mat-chip.mat-accent {

@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef, EventEmitter, HostListener,
+  ElementRef, EventEmitter,
   Input, OnChanges,
   OnInit, Output, SimpleChanges,
   TemplateRef,
@@ -38,8 +38,6 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
   isOpen: boolean = false;
   overlayRef: OverlayRef;
   filterFormTemplatePortal: TemplatePortal;
-  animationPlayer: AnimationPlayer;
-  overlayOutsideClickHandler: Function;
 
   presetDateChips: string[] = ['This Week', 'Last Week', 'This Month', 'Last Month', 'Last Year'];
   selectedPresetDate: {[key in 'startTime' | 'endTime']:  number} = {startTime: -1, endTime: -1};
@@ -97,14 +95,14 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
   }
 
   animateOverlayClosing() {
+    let animationPlayer: AnimationPlayer;
     const factory = this.animationBuilder.build(this.closeOverlayAnimation);
-    this.animationPlayer = factory.create(this.overlayRef.overlayElement);
-    this.animationPlayer.play();
-
-    this.animationPlayer.onDone(()=> {
+    animationPlayer = factory.create(this.overlayRef.overlayElement);
+    animationPlayer.onDone(()=> {
       this.overlayRef.detach();
-      this.animationPlayer.destroy();
+      animationPlayer.destroy();
     });
+    animationPlayer.play();
   }
 
   openOverlay() {
@@ -118,55 +116,20 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
             overlayX: 'start',
             overlayY: 'top'
           } as ConnectedPosition])
-          .withPush(false),
+          .withPush(true),
         disposeOnNavigation: true,
-        scrollStrategy: this.overlay.scrollStrategies.reposition(),
-        panelClass: 'custom-overlay-open-animation'
+        panelClass: 'custom-overlay-open-animation',
+        hasBackdrop: true,
+        backdropClass: 'cdk-overlay-transparent-backdrop'
       });
     this.overlayRef.attach(this.filterFormTemplatePortal);
-    this.overlayOutsideClickHandler = this.closeOverlayFromOutsideClick;
-    this.isOpen = true;
+    this.overlayRef.backdropClick().subscribe(()=> {
+      this.closeOverlay();
+    })
   }
 
   closeOverlay() {
     this.animateOverlayClosing();
-    this.overlayOutsideClickHandler = null;
-    this.isOpen = false;
-  }
-
-  toggleOverlay() {
-    if(!this.isOpen) {
-      this.openOverlay();
-    }
-    else {
-      this.closeOverlay();
-    }
-  }
-
-  @HostListener('document:click', ['$event'])
-  outsideClick(event) {
-    if(this.overlayOutsideClickHandler) {
-      this.overlayOutsideClickHandler(event);
-    }
-  }
-
-  closeOverlayFromOutsideClick(event: MouseEvent) {
-    if(!(this.overlayContainer.getContainerElement()).contains(event.target as HTMLElement) &&
-       (event.target as HTMLElement).tagName.toLowerCase()!=='body' &&
-       !(this.filterButton.nativeElement).contains(event.target)) {
-      this.closeOverlay();
-    }
-  }
-
-  onDatePickerStateChange(opened: boolean) {
-    if(opened) {
-      this.overlayContainer.getContainerElement().style.zIndex = '2000';
-      this.overlayOutsideClickHandler = null;
-    }
-    else {
-      this.overlayContainer.getContainerElement().style.zIndex = '1000';
-      this.overlayOutsideClickHandler = this.closeOverlayFromOutsideClick;
-    }
   }
 
   applyFilters() {
