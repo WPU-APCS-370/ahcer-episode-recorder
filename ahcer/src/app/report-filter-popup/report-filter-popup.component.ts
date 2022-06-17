@@ -18,7 +18,7 @@ import {
   AnimationPlayer,
   style
 } from "@angular/animations";
-import moment, {Moment} from "moment";
+import {DateTime} from "luxon";
 
 @Component({
   selector: 'app-report-filter-popup',
@@ -141,6 +141,12 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
     return !object || (Object.keys(object).length <=0);
   }
 
+  sundayStartOfWeek(dateTime: DateTime): DateTime {
+    return dateTime.startOf('week')
+      .plus({ weeks: dateTime.weekdayShort === 'Sun' ? 1 : 0 })
+      .minus({ days: 1 })
+  }
+
   dateChipOnClick(index: number, chipFor: 'startTime' | 'endTime'): void {
     if (this.selectedPresetDate[chipFor] == index) {
       this.selectedPresetDate[chipFor] = -1;
@@ -149,30 +155,30 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
     }
     else {
       this.selectedPresetDate[chipFor] = index;
-      let start: Moment, end: Moment = null;
+      let start: DateTime, end: DateTime = null;
       switch (index) {
         case 0:
-          start = moment().startOf('week');
+          start = this.sundayStartOfWeek(DateTime.now());
           break;
         case 1:
-          start = moment().subtract(1, 'week').startOf('week');
-          end = moment().subtract(1, 'week').endOf('week').startOf('day');
+          start = this.sundayStartOfWeek(DateTime.now().minus({weeks: 1}));
+          end = this.sundayStartOfWeek(DateTime.now()).minus({days: 1}).startOf('day');
           break;
         case 2:
-          start = moment().startOf('month');
+          start = DateTime.now().startOf('month');
           break;
         case 3:
-          start = moment().subtract(1, 'month').startOf('month');
-          end = moment().subtract(1, 'month').endOf('month').startOf('day');
+          start = DateTime.now().minus({months: 1}).startOf('month');
+          end = DateTime.now().minus({months: 1}).endOf('month').startOf('day');
           break;
         case 4:
-          start = moment().subtract(1, 'year').startOf('year');
-          end = moment().subtract(1, 'year').endOf('year').startOf('day');
+          start = DateTime.now().minus({years: 1}).startOf('year');
+          end = DateTime.now().minus({years: 1}).endOf('year').startOf('day');
           break;
       }
-      this.filterForm.get(chipFor).get('start').setValue(start.toDate());
+      this.filterForm.get(chipFor).get('start').setValue(start.toJSDate());
       if(end)
-        this.filterForm.get(chipFor).get('end').setValue(end.toDate());
+        this.filterForm.get(chipFor).get('end').setValue(end.toJSDate());
       else
         this.filterForm.get(chipFor).get('end').setValue(null);
     }
@@ -183,44 +189,41 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
       this.presetDateMatches[checkFor] = {start: [], end: []};
 
     if(typeof start != 'undefined') {
-      let startMoment: Moment = start? moment(start).startOf('day') : null;
-      let datesToCompare: Moment[] = [
-        moment().startOf('week'),                                   //This Week
-        moment().subtract(1, 'week').startOf('week'),   //Last Week
-        moment().startOf('month'),                                  //This Month
-        moment().subtract(1, 'month').startOf('month'), //Last Month
-        moment().subtract(1, 'year').startOf('year')    //Last Year
+      let startLuxon: DateTime = start ? DateTime.fromJSDate(start) : null;
+      let datesToCompare: DateTime[] = [
+        this.sundayStartOfWeek(DateTime.now()),                            //This Week
+        this.sundayStartOfWeek(DateTime.now().minus({weeks: 1})),  //Last Week
+        DateTime.now().startOf('month'),                              //This Month
+        DateTime.now().minus({months: 1}).startOf('month'),   //Last Month
+        DateTime.now().minus({years: 1}).startOf('year')      //Last Year
       ];
-      this.presetDateMatches[checkFor].start =
-        datesToCompare.reduce(function(a, e, i) {
-          if (e.isSame(startMoment))
+      this.presetDateMatches[checkFor].start = (startLuxon === null) ? [] :
+        datesToCompare.reduce(function (a, e, i) {
+          if (e.hasSame(startLuxon, 'day'))
             a.push(i);
           return a;
-        }, [])
+        }, []);
     }
 
     if(typeof end != 'undefined') {
-      let endMoment: Moment = end? moment(end).startOf('day') : null;
-      let datesToCompare: Moment[] = [
-        null,                                                                                       //This Week
-        moment().subtract(1, 'week').endOf('week').startOf('day'),   //Last Week
-        null,                                                                                       //This Month
-        moment().subtract(1, 'month').endOf('month').startOf('day'), //Last Month
-        moment().subtract(1, 'year').endOf('year').startOf('day')    //Last Year
+      let endLuxon: DateTime = end ? DateTime.fromJSDate(end) : null;
+      let datesToCompare: DateTime[] = [
+        null,                                                            //This Week
+        this.sundayStartOfWeek(DateTime.now()).minus({days: 1}), //Last Week
+        null,                                                            //This Month
+        DateTime.now().minus({months: 1}).endOf('month'),    //Last Month
+        DateTime.now().minus({years: 1}).endOf('year')       //Last Year
       ];
-      this.presetDateMatches[checkFor].end =
-        datesToCompare.reduce(function(a, e, i) {
-          if(e) {
-            if (e.isSame(endMoment))
-              a.push(i);
-          }
-          else {
-            if (e == endMoment)
+      this.presetDateMatches[checkFor].end = (endLuxon === null) ? [0, 2] :
+        datesToCompare.reduce(function (a, e, i) {
+          if (e !== null) {
+            if (e.hasSame(endLuxon, 'day'))
               a.push(i);
           }
           return a;
-        }, [])
+        }, []);
     }
+
     for(let index of this.presetDateMatches[checkFor].start) {
       if(this.presetDateMatches[checkFor].end.includes(index)) {
         this.selectedPresetDate[checkFor] = index;
