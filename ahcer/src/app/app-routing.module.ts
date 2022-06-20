@@ -9,7 +9,7 @@ import {LoginComponent} from "./login/login.component";
 import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
 import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
 import {ViewMedicationComponent} from "./view-medication/view-medication.component";
-import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
+import {redirectUnauthorizedTo, redirectLoggedInTo} from "@angular/fire/auth-guard";
 import {AuthPipeGenerator, canActivate} from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
@@ -19,6 +19,7 @@ import {EpisodeReportComponent} from "./episode-report/episode-report.component"
 
 
 const redirectUnauthorizedToLogin: AuthPipeGenerator = () => redirectUnauthorizedTo(['login']);
+const redirectLoggedInToHome: AuthPipeGenerator = () => redirectLoggedInTo(['']);
 
 function customPayload(title: string, authPipe?: AuthPipeGenerator) {
   let payload: {canActivate?: any[], data: {title?: string, authGuardPipe?: AuthPipeGenerator}} = {data: { }};
@@ -68,7 +69,7 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    ...customPayload("Login")
+    ...customPayload("Login", redirectLoggedInToHome)
   },
   {
     path: 'record-episode',
