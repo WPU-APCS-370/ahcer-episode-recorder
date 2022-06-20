@@ -94,6 +94,10 @@ const routes: Routes = [
     path: 'privacy-policy',
     component: PrivacyPolicyComponent,
     ...customPayload("Privacy Policy")
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];
 
