@@ -1,3 +1,5 @@
+@import '../../styles';
+
 @media only screen and (min-width:1000px) {
   .component-container {
     max-width: 90vw;
@@ -11,6 +13,7 @@
 
 @media only screen and (max-width:1000px) {
   .component-container {
+    max-width: unset;
     margin: 20px 10px 20px 10px;
   }
 
@@ -23,11 +26,20 @@
   }
 }
 
-.header, .long-text-container {
+.table-title-row-container {
+  padding-left: 15px !important;
+}
+
+.header, .table-title-row, .long-text-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
+}
+
+.table-title-row {
+  padding-left: 0;
+  justify-content: left;
 }
 
 .header > button {
@@ -64,6 +76,11 @@
 .mat-cell, .mat-header-cell, .mat-footer-cell {
   padding-right: 5px;
   padding-left: 5px;
+}
+
+mat-chip.mat-accent {
+  background-color: mat-color($theme-accent, lighter) !important;
+  border: 1px solid mat-color($theme-accent, darker) !important;
 }
 
 .invisible {

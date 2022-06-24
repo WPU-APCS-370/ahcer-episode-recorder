@@ -32,6 +32,8 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   currentPatient : Patient;
   episodes_count: number;
   dataSource: MatTableDataSource<Episode> = new MatTableDataSource<Episode>();
+  filters: Object = {};
+  filterChipData: {key: string, label: string}[] = [];
 
   constructor(private medicationService: MedicationService,
               private episodeService: EpisodeService,
@@ -75,11 +77,41 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     }
   }
 
+  filterFunction(): (data: Episode, filterStr: string) => boolean {
+    return (data, filterStr) => {
+      let filters = JSON.parse(filterStr);
+      for (let key in filters) {
+        if(key == "startTime" || key == "endTime") {
+          if (Object.keys(filters[key]).length > 0) {
+            let episodeStartTime = data[key]?.toDate();
+            let filterStartDate: Date, filterEndDate: Date = null;
+            let dataMatchesFilter = true;
+
+            if (filters[key].start) {
+              filterStartDate = new Date(filters[key].start);
+              dataMatchesFilter = dataMatchesFilter && (episodeStartTime >= filterStartDate);
+            }
+            if (filters[key].end) {
+              filterEndDate = new Date(filters[key].end);
+              filterEndDate.setTime(filterEndDate.getTime() + (24 * 60 * 60 * 1000 - 1));
+              dataMatchesFilter = dataMatchesFilter && (episodeStartTime <= filterEndDate);
+            }
+            if (!dataMatchesFilter) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+  }
+
   reloadDataSource() {
     this.dataSource.data = this.episodes;
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = this.filterFunction();
   }
 
   @HostListener('window:beforeprint')
@@ -290,6 +322,50 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     else {
       tooltip.show();
     }
+  }
+
+  updateFilters(filters: Object) {
+    this.filters = filters;
+    this.filterChipData = [];
+    for (let key in filters) {
+      let label ='';
+      if(key == 'startTime' || key == 'endTime') {
+        label = (key=='startTime')? 'Start time ' : 'End time  ';
+        if(!filters[key].start) {
+          if(!filters[key].end) {
+            continue;
+          }
+          else {
+            label += 'earlier than or on '+ (new Date(filters[key].end)).toLocaleDateString();
+          }
+        }
+        else {
+          let rangeStartDate = (new Date(filters[key].start)).toLocaleDateString();
+          if(!filters[key].end) {
+            label += 'later than or on ' + rangeStartDate;
+          }
+          else {
+            let rangeEndDate = (new Date(filters[key].end)).toLocaleDateString();
+            if(rangeStartDate === rangeEndDate)
+              label += 'on ' + rangeEndDate;
+            else
+              label += 'between ' + rangeStartDate + ' and ' + rangeEndDate;
+          }
+        }
+      }
+      this.filterChipData.push({key, label});
+    }
+    this.dataSource.filter = JSON.stringify(filters);
+    this.dataSource.paginator = this.paginator;
+  }
+
+  removeChip(index: number, keyStr: string) {
+    this.filterChipData.splice(index, 1);
+    let key: keyof Object = keyStr as keyof Object;
+    let {[key]: value, ...filters} = this.filters;
+    this.filters = filters;
+    this.dataSource.filter = JSON.stringify(filters);
+    this.dataSource.paginator = this.paginator;
   }
 
   exportToCSV() {

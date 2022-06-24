@@ -21,6 +21,25 @@
   <div class="table-container mat-elevation-z8"
        *ngIf="!loadingEpisodes && !loadingRescueMeds && episodes_count > 0" >
     <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="titleRow">
+        <th mat-header-cell *matHeaderCellDef class="table-title-row-container"
+            [attr.colspan]="displayedColumns.length">
+          <div class="table-title-row">
+            <app-report-filter-popup [filters]="filters" (filterChanges)="updateFilters($event)">
+            </app-report-filter-popup>
+            <mat-chip-list>
+              <mat-chip *ngFor="let filterChip of filterChipData; index as i"
+                        (removed)="removeChip(i, filterChip.key)"
+                        selected color="accent">
+                {{filterChip.label}}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+          </div>
+        </th>
+      </ng-container>
 
       <ng-container matColumnDef="startTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
@@ -129,8 +148,15 @@
         </td>
       </ng-container>
 
+      <tr mat-header-row *matHeaderRowDef="['titleRow']"></tr>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No episodes found with applied filters.
+        </td>
+      </tr>
     </table>
     <mat-paginator [pageSizeOptions]="[10, 20, 40]" showFirstLastButtons class="not-printable"></mat-paginator>
   </div>
