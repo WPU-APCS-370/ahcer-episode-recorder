@@ -1,0 +1,73 @@
+<button mat-icon-button #filterButton (click)="openOverlay()">
+  <mat-icon>filter_list</mat-icon>
+</button>
+<ng-template #filterFormTemplate>
+  <div class="container not-printable mat-elevation-z10">
+    <h5 style="margin-left: 5px;">Filter By:</h5>
+    <form [formGroup]="filterForm">
+      <div class="filter-expansion-panels">
+        <mat-accordion multi>
+          <mat-expansion-panel [expanded]="!jsonObjectIsEmpty(filters['startTime']) &&
+                                           (filters['startTime']?.start || filters['startTime']?.end)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Start Time
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+              <mat-label>Start Time Date Range</mat-label>
+              <mat-date-range-input formGroupName="startTime" [rangePicker]="startTimePicker">
+                <input matStartDate formControlName="start" placeholder="Start"
+                       (dateChange)="checkRangeDateWithPreset('startTime', $event.value)">
+                <input matEndDate formControlName="end" placeholder="End"
+                       (dateChange)="checkRangeDateWithPreset('startTime', undefined, $event.value)">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #startTimePicker>
+              </mat-date-range-picker>
+            </mat-form-field>
+            <mat-chip-list>
+              <mat-chip *ngFor="let presetDate of presetDateChips; index as i"
+                        (click)="dateChipOnClick(i, 'startTime')"
+                        [color]="(selectedPresetDate['startTime']==i)? 'accent' : null"
+                        [selectable]="false">
+                {{presetDate}}
+              </mat-chip>
+            </mat-chip-list>
+          </mat-expansion-panel>
+          <mat-expansion-panel [expanded]="!jsonObjectIsEmpty(filters['endTime']) &&
+                                           (filters['endTime']?.start || filters['endTime']?.end)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                End Time
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+              <mat-label>End Time Date Range</mat-label>
+              <mat-date-range-input formGroupName="endTime" [rangePicker]="endTimePicker">
+                <input matStartDate formControlName="start" placeholder="Start"
+                       (dateChange)="checkRangeDateWithPreset('endTime', $event.value)">
+                <input matEndDate formControlName="end" placeholder="End"
+                       (dateChange)="checkRangeDateWithPreset('endTime', undefined, $event.value)">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #endTimePicker>
+              </mat-date-range-picker>
+            </mat-form-field>
+            <mat-chip-list>
+              <mat-chip *ngFor="let presetDate of presetDateChips; index as i"
+                        (click)="dateChipOnClick(i, 'endTime')"
+                        [color]="(selectedPresetDate['endTime']==i)? 'accent' : null"
+                        [selectable]="false">
+                {{presetDate}}
+              </mat-chip>
+            </mat-chip-list>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <button mat-raised-button color="primary" [disabled]="!filterForm.valid" (click)="applyFilters()">
+        Apply
+      </button>
+    </form>
+  </div>
+</ng-template>
