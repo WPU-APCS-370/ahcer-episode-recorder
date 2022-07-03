@@ -3,12 +3,12 @@ import {EpisodeService} from "../services/episode.service";
 import {finalize} from "rxjs";
 import {Episode} from "../models/episode";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
+import {ViewEpisodeComponent} from "../episode-components/view-episode/view-episode.component";
 import {Patient} from "../models/patient";
-import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
+import {EditEpisodeComponent} from "../episode-components/edit-episode/edit-episode.component";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
-import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
+import {DeleteEpisodeComponent} from "../episode-components/delete-episode/delete-episode.component";
 
 @Component({
   selector: 'app-home',

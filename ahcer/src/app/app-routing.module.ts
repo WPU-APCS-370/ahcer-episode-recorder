@@ -1,20 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {AboutComponent} from "./about/about.component";
-import {CreatePatientComponent} from "./create-patient/create-patient.component";
-import {ViewPatientComponent} from "./view-patient/view-patient.component";
+import {CreatePatientComponent} from "./patient-components/create-patient/create-patient.component";
+import {ViewPatientComponent} from "./patient-components/view-patient/view-patient.component";
 import {HomeComponent} from "./home/home.component";
-import {ViewProfileComponent} from "./view-profile/view-profile.component";
-import {LoginComponent} from "./login/login.component";
-import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
-import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
-import {ViewMedicationComponent} from "./view-medication/view-medication.component";
-import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
-import { canActivate } from '@angular/fire/compat/auth-guard';
+import {ViewProfileComponent} from "./user-components/view-profile/view-profile.component";
+import {LoginComponent} from "./user-components/login/login.component";
+import {CreateEpisodeComponent} from "./episode-components/create-episode/create-episode.component";
+import {ViewEpisodesComponent} from "./episode-components/view-episodes/view-episodes.component";
+import {ViewMedicationComponent} from "./medication-components/view-medication/view-medication.component";
+import {redirectUnauthorizedTo, redirectLoggedInTo} from "@angular/fire/auth-guard";
+import {AuthPipeGenerator, canActivate} from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import { UserIdResolver } from "./services/user-id.resolver";
 import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
-import {EpisodeReportComponent} from "./episode-report/episode-report.component";
+import {EpisodeReportComponent} from "./report-components/episode-report/episode-report.component";
 
 
 

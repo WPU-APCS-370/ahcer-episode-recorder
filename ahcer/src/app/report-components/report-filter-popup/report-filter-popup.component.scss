@@ -1,0 +1,64 @@
+@import '../../../styles';
+
+.container {
+  text-align: left;
+  max-width: 300px;
+  height: calc(100% - 35px);    //subtracting top and bottom padding
+  padding: 20px 10px 15px 10px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+form > button {
+  margin-top: 10px;
+  float: right;
+}
+
+::ng-deep .custom-overlay-open-animation {
+  transform: scaleY(1);
+  transform-origin: top left;
+  animation: openOverlay 0.1s;
+}
+
+@keyframes openOverlay {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+::ng-deep .custom-overlay-close-animation {
+  transform-origin: top left;
+}
+
+form {
+  height: calc(100% - 32px);      //subtracting h5 tag height
+}
+
+.filter-expansion-panels {
+  height: calc(100% - 56.4px);    //subtracting raised button height + top and bottom padding
+  overflow-y: auto;
+  padding: 5px;                   //padding for expansion panel box-shadow
+}
+
+mat-chip.mat-accent {
+  background-color: mat-color($theme-accent, lighter) !important;
+  border: 1px solid mat-color($theme-accent, darker) !important;
+}
+
+.mat-standard-chip:focus::after {
+  opacity: 0;
+}
+
+@media print {
+  .not-printable {
+    display: none;
+  }
+}

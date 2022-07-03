@@ -1,0 +1,114 @@
+@import '../../../styles';
+
+mat-form-field {
+  width: 100%;
+}
+.symptoms-group, .symptom-container,
+.trigger-container, .trigger-checkboxes,
+.medications-group, .medication-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.symptom-container, .medication-container {
+  margin-bottom: 10px;
+}
+
+.trigger-container, .medication-checkbox-container {
+  margin-top: 10px;
+}
+
+mat-slide-toggle {
+  display: block;
+}
+
+.symptom-checkbox-container, .medication-checkbox-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.symptom-checkbox-container > mat-form-field {
+  width: 60%;
+}
+
+.medication-checkbox-container > mat-checkbox {
+  width: calc(50% - 10px);
+  display: flex;
+  align-items: center;
+}
+
+:host::ng-deep .medication-checkbox-container .mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+mat-form-field.rescue-med-dose {
+  width: 50%;
+  flex-basis: auto;
+  flex-shrink: 1;
+}
+
+mat-form-field.prescription-med-name {
+  width: calc((100% - 40px)/2);
+}
+
+mat-form-field.prescription-med-dose {
+  width: calc((100% - 40px)/2);
+}
+
+.prescription-med-delete-button-container .mat-icon-button {
+  height:30px !important;
+  width:30px !important;
+  line-height:30px !important;
+}
+
+::ng-deep .medication-checkbox-container .mat-form-field-infix {
+  display: inherit !important;
+}
+
+::ng-deep .archived-med * {
+  color: grey !important;
+}
+
+.new-button-text {
+  margin-left: 5px;
+  font-size: 17px;
+}
+
+.new-prescription-med-button {
+  padding-left: 5px !important;
+}
+
+.new-prescription-med-button .mat-icon {
+  height:30px !important;
+  width:30px !important;
+  font-size:30px !important;
+}
+
+.med-spinner-container {
+  width:100%;
+}
+
+.med-spinner-container > mat-spinner {
+  margin: 10px auto 0 auto;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+::ng-deep mat-checkbox.checkbox-error .mat-checkbox-frame{
+  border-color: mat-color($theme-warn);
+}
+
+::ng-deep mat-checkbox.checkbox-error .mat-checkbox-label{
+  color: mat-color($theme-warn);
+}
+
