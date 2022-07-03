@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import {EpisodeService} from "../../services/episode.service";
 import {Episode} from "../../models/episode";
-import {finalize, first, switchMap} from "rxjs";
+import {finalize, first, Observable, switchMap} from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
 import {PatientServices} from "../../services/patient.service";
 import {UsersService} from "../../services/users.service";
-import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
 import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
+import {DeleteModelOpener} from "../../helper-components/template-delete-modal/template-delete-modal.component";
 
 
 @Component({
@@ -122,20 +122,13 @@ export class ViewEpisodesComponent implements OnInit {
   }
 
   deleteEpisode(episode: Episode){
-    const dialogConfig = new MatDialogConfig();
+    const prompt: string = `Are you sure you want to delete this episode?`;
+    const deleteHandle$: Observable<any> = this.usersService.getLastViewedPatient().pipe(
+      switchMap((patientId) => this.episodeServices.deleteEpisode(patientId, episode.id))
+    );
+    const onDialogResult: () => void = this.loadFirst20.bind(this);
 
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-
-    dialogConfig.data = episode;
-    this.dialog
-      .open(DeleteEpisodeComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((val) => {
-        if (val) {
-          this.loadFirst20()
-        }
-      });
+    let deleteModelOpener: DeleteModelOpener = new DeleteModelOpener(this.dialog);
+    deleteModelOpener.openModal('Medication', prompt, deleteHandle$, onDialogResult);
   }
 }

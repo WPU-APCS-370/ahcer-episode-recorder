@@ -37,13 +37,10 @@ import { EditEpisodeComponent } from './episode-components/edit-episode/edit-epi
 import { LoginComponent } from './user-components/login/login.component';
 import { CreateEpisodeComponent } from './episode-components/create-episode/create-episode.component';
 import {UsersService} from "./services/users.service";
-import { DeletePatientComponent } from './patient-components/delete-patient/delete-patient.component';
-import { DeleteEpisodeComponent } from './episode-components/delete-episode/delete-episode.component';
 import {NgxMatNativeDateModule, NgxMatDatetimePickerModule} from "@angular-material-components/datetime-picker";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ViewEpisodesComponent } from './episode-components/view-episodes/view-episodes.component';
-import {DeleteMedicationComponent} from "./medication-components/delete-medication/delete-medication.component";
 import { ViewMedicationComponent } from './medication-components/view-medication/view-medication.component';
 import { CreateMedicationComponent } from './medication-components/create-medication/create-medication.component';
 import { EditMedicationComponent } from './medication-components/edit-medication/edit-medication.component';
@@ -60,6 +57,7 @@ import { ReportFilterPopupComponent } from './report-components/report-filter-po
 import {OverlayModule} from "@angular/cdk/overlay";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatExpansionModule} from "@angular/material/expansion";
+import { TemplateDeleteModalComponent } from './helper-components/template-delete-modal/template-delete-modal.component';
 
 @NgModule({
   declarations: [
@@ -73,18 +71,16 @@ import {MatExpansionModule} from "@angular/material/expansion";
     ViewEpisodesComponent,
     ViewEpisodeComponent,
     LoginComponent,
-    DeletePatientComponent,
-    DeleteEpisodeComponent,
     EditEpisodeComponent,
     CreateEpisodeComponent,
-    DeleteMedicationComponent,
     ViewMedicationComponent,
     CreateMedicationComponent,
     EditMedicationComponent,
     HelpComponent,
     PrivacyPolicyComponent,
     EpisodeReportComponent,
-    ReportFilterPopupComponent
+    ReportFilterPopupComponent,
+    TemplateDeleteModalComponent
   ],
     imports: [
         BrowserModule,

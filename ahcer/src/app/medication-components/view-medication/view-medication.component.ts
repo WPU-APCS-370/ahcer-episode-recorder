@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {PatientServices} from "../../services/patient.service";
 import {UsersService} from "../../services/users.service";
-import {finalize, first, switchMap, tap} from "rxjs";
+import {finalize, first, Observable, switchMap, tap} from "rxjs";
 import {Medication} from "../../models/medication";
 import {MedicationService} from "../../services/medication.service";
 import {Patient} from "../../models/patient";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
-import {DeleteMedicationComponent} from "../delete-medication/delete-medication.component";
 import {EditMedicationComponent} from "../edit-medication/edit-medication.component";
+import {DeleteModelOpener} from "../../helper-components/template-delete-modal/template-delete-modal.component";
 
 @Component({
   selector: 'app-view-medication',
@@ -119,20 +119,13 @@ export class ViewMedicationComponent implements OnInit {
   }
 
   deleteMedication(medication: Medication){
-    const dialogConfig = new MatDialogConfig();
+    const prompt: string = `Are you sure you want to delete this medication ${medication.name}?`;
+    const deleteHandle$: Observable<any> = this.usersService.getLastViewedPatient().pipe(
+      switchMap((patientId) => this.medicationService.archiveMedication(patientId, medication.id))
+    );
+    const onDialogResult: () => void = this.load.bind(this);
 
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-
-    dialogConfig.data = medication;
-    this.dialog
-      .open(DeleteMedicationComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((val) => {
-        if (val) {
-          this.load()
-        }
-      });
+    let deleteModelOpener: DeleteModelOpener = new DeleteModelOpener(this.dialog);
+    deleteModelOpener.openModal('Medication', prompt, deleteHandle$, onDialogResult);
   }
 }

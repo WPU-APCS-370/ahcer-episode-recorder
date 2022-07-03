@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {PatientServices} from "../../services/patient.service";
-import {finalize} from "rxjs";
+import {finalize, iif, Observable, of, switchMap} from "rxjs";
 import {Patient} from "../../models/patient";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {EditPatientComponent} from "../edit-patient/edit-patient.component";
-import {DeletePatientComponent} from "../delete-patient/delete-patient.component";
 import {MedicationService} from "../../services/medication.service";
 import {Medication} from "../../models/medication";
+import {DeleteModelOpener} from "../../helper-components/template-delete-modal/template-delete-modal.component";
+import {UsersService} from "../../services/users.service";
 
 @Component({
   selector: 'app-view-patient',
@@ -20,6 +21,7 @@ export class ViewPatientComponent implements OnInit {
   activeMeds: Medication[][]=[];
 
   constructor(private dialog: MatDialog,
+              private usersService: UsersService,
               private patientService: PatientServices,
               private medicationService: MedicationService) { }
 
@@ -74,21 +76,22 @@ export class ViewPatientComponent implements OnInit {
   }
 
   onDeletePatient(patient: Patient) {
-    const dialogConfig = new MatDialogConfig();
+    const prompt: string = `Are you sure you want to delete your patient ${patient.firstName} ${patient.lastName}?`;
+    const deleteHandle$: Observable<any> = this.patientService.deletePatient(patient.id)
+      .pipe(
+        switchMap(() => this.usersService.getLastViewedPatient()),
+        switchMap(patientId => iif(() => (patientId == patient.id),
+          this.patientService.getPatients(),
+          of(null))),
+        switchMap(patients => iif(() => patients != null,
+          this.usersService.changeLastViewedPatient(
+            (patients.length > 0) ? patients[0].id : ""
+          ),
+          of(null)))
+      );
+    const onDialogResult: () => void = this.loadPatients.bind(this);
 
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.minWidth = '350px';
-
-    dialogConfig.data = patient;
-
-    this.dialog
-      .open(DeletePatientComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((val) => {
-        if (val) {
-          this.loadPatients()
-        }
-      });
+    let deleteModelOpener: DeleteModelOpener = new DeleteModelOpener(this.dialog);
+    deleteModelOpener.openModal('Patient', prompt, deleteHandle$, onDialogResult);
   }
 }
