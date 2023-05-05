@@ -40,6 +40,8 @@ jobs:
         key: ${{ secrets.LINODE_PRIVATE_KEY }}
         source: dist/
         target: /var/www/html/ahcer.org/public_html
+        working-directory: 'ahcer'
+      
     #- name: 'Deploy to Azure Web App'
     #  uses: azure/webapps-deploy@v2
     #  with:
