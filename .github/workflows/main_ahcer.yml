@@ -32,9 +32,17 @@ jobs:
         npm run build --prod
       working-directory: 'ahcer'
 
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v2
+    - name: Deploy to Linode
+      uses: appleboy/scp-action@master
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_fa593239d6fa4e4c835cb8ed35585801 }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        host: ahcer.org
+        username: hammannr
+        key: ${{ secrets.LINODE_PRIVATE_KEY }}
+        source: dist/
+        target: /var/www/html/ahcer.org/public_html
+    #- name: 'Deploy to Azure Web App'
+    #  uses: azure/webapps-deploy@v2
+    #  with:
+    #    app-name: ${{ env.AZURE_WEBAPP_NAME }}
+    #    publish-profile: ${{ secrets.AzureAppService_PublishProfile_fa593239d6fa4e4c835cb8ed35585801 }}
+    #    package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
