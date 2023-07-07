@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../styles';
 
 mat-form-field {
@@ -105,10 +106,10 @@ mat-dialog-actions {
 }
 
 ::ng-deep mat-checkbox.checkbox-error .mat-checkbox-frame{
-  border-color: mat-color($theme-warn);
+  border-color: mat.get-color-from-palette($theme-warn);
 }
 
 ::ng-deep mat-checkbox.checkbox-error .mat-checkbox-label{
-  color: mat-color($theme-warn);
+  color: mat.get-color-from-palette($theme-warn);
 }
 
