@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
 import {PatientServices} from "../services/patient.service";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat/app";
@@ -16,7 +16,7 @@ import {CreateMedicationComponent} from "../create-medication/create-medication.
 import {ErrorStateMatcher} from "@angular/material/core";
 
 export class formGroupErrorMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null) {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null) {
     const formGroup = control.parent.controls;
     const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
     return control.touched && control.parent.hasError(name+" Error");
@@ -61,7 +61,7 @@ export class CreateEpisodeComponent implements OnInit{
     behavior: ""
   });
 
-  symptomGroup(): FormGroup {
+  symptomGroup(): UntypedFormGroup {
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
@@ -70,7 +70,7 @@ export class CreateEpisodeComponent implements OnInit{
       controls[label+' Time'] = null
     }
     let options = {
-      validators: (formGroup: FormGroup) => {
+      validators: (formGroup: UntypedFormGroup) => {
         let checked = 0;
         let errors = {};
         for (let label of this.symptomLabels) {
@@ -103,7 +103,7 @@ export class CreateEpisodeComponent implements OnInit{
     return this.fb.group(controls, options);
   }
 
-  rescueMedGroup(): FormGroup {
+  rescueMedGroup(): UntypedFormGroup {
     let controls = {}
     for(let i=0; i < this.rescueMedications.length; i++) {
       let medication = this.rescueMedications[i];
@@ -119,7 +119,7 @@ export class CreateEpisodeComponent implements OnInit{
   }
 
    medicationValidator() {
-     return (formGroup: FormGroup) =>
+     return (formGroup: UntypedFormGroup) =>
      {
        let checked = 0;
        let errors = {};
@@ -149,7 +149,7 @@ export class CreateEpisodeComponent implements OnInit{
      }
    }
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private episodeService: EpisodeService,
               private patientService: PatientServices,
               private usersService: UsersService,

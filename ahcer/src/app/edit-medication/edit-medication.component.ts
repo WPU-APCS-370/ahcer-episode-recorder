@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {UsersService} from "../services/users.service";
 import {MedicationService} from "../services/medication.service";
@@ -15,10 +15,10 @@ import {first, switchMap} from "rxjs";
 export class EditMedicationComponent implements OnInit {
 
   medication: Medication;
-  medicationForm: FormGroup;
+  medicationForm: UntypedFormGroup;
 
   constructor(private dialogRef: MatDialogRef<EditMedicationComponent>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               @Inject(MAT_DIALOG_DATA) medication: Medication,
               private usersService: UsersService,
               private medicationService: MedicationService) {

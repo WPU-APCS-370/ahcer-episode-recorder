@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import {Episode} from "../models/episode";
@@ -30,10 +30,10 @@ export class EditEpisodeComponent implements OnInit {
   symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
     "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"];
 
-  episodeForm : FormGroup;
+  episodeForm : UntypedFormGroup;
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
 
-  symptomGroup(episode: Episode): FormGroup {
+  symptomGroup(episode: Episode): UntypedFormGroup {
     let controls = {}
     for(let index in this.symptomLabels) {
       let label = this.symptomLabels[index];
@@ -55,7 +55,7 @@ export class EditEpisodeComponent implements OnInit {
       }
     }
     let options = {
-      validators: (formGroup: FormGroup) => {
+      validators: (formGroup: UntypedFormGroup) => {
         let checked = 0;
         let errors = {};
         for (let label of this.symptomLabels) {
@@ -88,7 +88,7 @@ export class EditEpisodeComponent implements OnInit {
     return this.fb.group(controls, options);
   }
 
-  rescueMedGroup(episode: Episode): FormGroup {
+  rescueMedGroup(episode: Episode): UntypedFormGroup {
     let controls = {}
     let rescueMedDosesAndTimes = {};
     if(this.episode.medications && Object.keys(this.episode.medications).length > 0) {
@@ -131,7 +131,7 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   rescueMedsValidator() {
-    return (formGroup: FormGroup) =>
+    return (formGroup: UntypedFormGroup) =>
     {
       let checked = 0;
       let errors = {};
@@ -161,7 +161,7 @@ export class EditEpisodeComponent implements OnInit {
     }
   }
 
-  prescriptionMedGroup(): FormGroup {
+  prescriptionMedGroup(): UntypedFormGroup {
     let controls = {};
     for (let i=0; i < this.prescriptionMeds.length; i++) {
       controls[`med-${i}-name`] = [this.prescriptionMeds[i].name, Validators.required];
@@ -196,7 +196,7 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   constructor(private dialogRef: MatDialogRef<EditEpisodeComponent>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               @Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
               private episodeService: EpisodeService,
               private medicationService: MedicationService,
