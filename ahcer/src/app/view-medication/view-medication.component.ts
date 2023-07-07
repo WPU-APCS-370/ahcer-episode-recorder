@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from "@angular/material/legacy-dialog";
 import {PatientServices} from "../services/patient.service";
 import {UsersService} from "../services/users.service";
 import {finalize, first, switchMap, tap} from "rxjs";

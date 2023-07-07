@@ -8,11 +8,11 @@ import {finalize} from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import {MedicationService} from "../services/medication.service";
-import {MatTableDataSource} from "@angular/material/table";
+import {MatLegacyTableDataSource as MatTableDataSource} from "@angular/material/legacy-table";
 import {MatSort} from "@angular/material/sort";
-import {MatPaginator} from "@angular/material/paginator";
+import {MatLegacyPaginator as MatPaginator} from "@angular/material/legacy-paginator";
 import {AngularCsv} from "angular-csv-ext/dist/Angular-csv";
-import {MatTooltip} from "@angular/material/tooltip";
+import {MatLegacyTooltip as MatTooltip} from "@angular/material/legacy-tooltip";
 
 @Component({
   selector: 'app-episode-report',

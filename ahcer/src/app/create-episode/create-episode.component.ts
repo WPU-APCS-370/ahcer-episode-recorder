@@ -11,7 +11,7 @@ import {Patient} from "../models/patient";
 import {UsersService} from "../services/users.service";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from "@angular/material/legacy-dialog";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
 import {ErrorStateMatcher} from "@angular/material/core";
 
