@@ -15,6 +15,7 @@ import {MatLegacyListModule as MatListModule} from "@angular/material/legacy-lis
 import { AboutComponent } from './about/about.component';
 import { CreatePatientComponent } from './create-patient/create-patient.component';
 import {AngularFireModule} from "@angular/fire/compat";
+import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatLegacyFormFieldModule as MatFormFieldModule} from "@angular/material/legacy-form-field";
@@ -60,6 +61,19 @@ import { ReportFilterPopupComponent } from './report-filter-popup/report-filter-
 import {OverlayModule} from "@angular/cdk/overlay";
 import {MatLegacyChipsModule as MatChipsModule} from "@angular/material/legacy-chips";
 import {MatExpansionModule} from "@angular/material/expansion";
+import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
+
+const firebaseUiAuthConfig: firebaseui.auth.Config = {
+  signInFlow: 'redirect',
+  signInOptions: [
+    {
+      requireDisplayName: false,
+      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID
+    },
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+  ],
+  credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO
+};
 
 @NgModule({
   declarations: [
@@ -91,6 +105,8 @@ import {MatExpansionModule} from "@angular/material/expansion";
         AppRoutingModule,
         BrowserAnimationsModule,
         AngularFireModule.initializeApp(environment.firebase),
+        AngularFireAuthModule,
+        FirebaseUIModule.forRoot(firebaseUiAuthConfig),
         AngularFirestoreModule,
         MatToolbarModule,
         MatIconModule,
