@@ -58,6 +58,10 @@
   justify-content: center;
 }
 
+th.mat-mdc-header-cell:first-of-type, td.mat-mdc-cell:first-of-type, td.mat-mdc-footer-cell:first-of-type {
+  padding-left: 24px;
+}
+
 .spinner-container {
   height: 100vh;
   width: 100vw;

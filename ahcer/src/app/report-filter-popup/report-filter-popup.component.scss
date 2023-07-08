@@ -4,7 +4,7 @@
 .container {
   text-align: left;
   max-width: 300px;
-  height: calc(100% - 35px);    //subtracting top and bottom padding
+  height: calc(100% - 34px);    //subtracting (top+bottom padding - 1)
   padding: 20px 10px 15px 10px;
   background-color: white;
   border-radius: 4px;
@@ -54,8 +54,11 @@ form {
   height: 20px;
 }
 
-//TODO:Check in the prod build whether ng-reflect exists
-mat-chip-option[color="accent"], mat-chip-option[ng-reflect-color="accent"] {
+::ng-deep mat-chip-option * {
+  padding: 0 !important;
+}
+
+mat-chip-option[color="accent"], mat-chip-option.selected {
   background-color: mat.get-color-from-palette($theme-accent, lighter) !important;
   border: 1px solid mat.get-color-from-palette($theme-accent, darker) !important;
 }
