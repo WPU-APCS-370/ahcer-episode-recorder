@@ -58,8 +58,8 @@
           </mat-form-field>
         </div>
       </div>
-      <mat-slide-toggle #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
-      <div class="trigger-container" *ngIf="trigger.checked" formGroupName="triggerGroup">
+      <mat-slide-toggle style="display:block; margin-bottom: 10px;" #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
+      <div class="trigger-container" style="margin-top: -10px;" *ngIf="trigger.checked" formGroupName="triggerGroup">
         <div class="trigger-checkboxes">
           <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
           <mat-checkbox color="primary" formControlName="light">Light</mat-checkbox>

@@ -49,12 +49,18 @@ form {
   padding: 5px;                   //padding for expansion panel box-shadow
 }
 
-mat-chip.mat-accent {
+.mat-mdc-standard-chip {
+  min-height: unset !important;
+  height: 20px;
+}
+
+//TODO:Check in the prod build whether ng-reflect exists
+mat-chip-option[color="accent"], mat-chip-option[ng-reflect-color="accent"] {
   background-color: mat.get-color-from-palette($theme-accent, lighter) !important;
   border: 1px solid mat.get-color-from-palette($theme-accent, darker) !important;
 }
 
-.mat-standard-chip:focus::after {
+.mat-mdc-standard-chip:focus::after {
   opacity: 0;
 }
 

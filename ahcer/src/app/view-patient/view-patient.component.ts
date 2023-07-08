@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {PatientServices} from "../services/patient.service";
 import {finalize} from "rxjs";
 import {Patient} from "../models/patient";
-import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from "@angular/material/legacy-dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {EditPatientComponent} from "../edit-patient/edit-patient.component";
 import {DeletePatientComponent} from "../delete-patient/delete-patient.component";
 import {MedicationService} from "../services/medication.service";

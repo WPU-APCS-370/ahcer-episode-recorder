@@ -1,18 +1,14 @@
-.mat-form-field {
+.mat-mdc-form-field {
   display: block;
-}
-
-mat-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .gene-container {
   margin-bottom: 20px;
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
-.mat-radio-button ~ .mat-radio-button {
+.mat-mdc-radio-button ~ .mat-radio-button {
   margin-left: 16px;
 }

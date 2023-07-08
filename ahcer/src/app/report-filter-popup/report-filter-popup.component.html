@@ -26,14 +26,14 @@
               <mat-date-range-picker #startTimePicker>
               </mat-date-range-picker>
             </mat-form-field>
-            <mat-chip-list>
-              <mat-chip *ngFor="let presetDate of presetDateChips; index as i"
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let presetDate of presetDateChips; index as i"
                         (click)="dateChipOnClick(i, 'startTime')"
                         [color]="(selectedPresetDate['startTime']==i)? 'accent' : null"
                         [selectable]="false">
                 {{presetDate}}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </mat-expansion-panel>
           <mat-expansion-panel [expanded]="!jsonObjectIsEmpty(filters['endTime']) &&
                                            (filters['endTime']?.start || filters['endTime']?.end)">
@@ -54,14 +54,14 @@
               <mat-date-range-picker #endTimePicker>
               </mat-date-range-picker>
             </mat-form-field>
-            <mat-chip-list>
-              <mat-chip *ngFor="let presetDate of presetDateChips; index as i"
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let presetDate of presetDateChips; index as i"
                         (click)="dateChipOnClick(i, 'endTime')"
                         [color]="(selectedPresetDate['endTime']==i)? 'accent' : null"
                         [selectable]="false">
                 {{presetDate}}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </mat-expansion-panel>
         </mat-accordion>
       </div>

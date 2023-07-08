@@ -19,9 +19,10 @@ mat-form-field {
   margin-top: 10px;
 }
 
-mat-slide-toggle {
-  display: block;
-}
+/* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
+//mat-slide-toggle {
+//  display: block;
+//}
 
 .symptom-checkbox-container, .medication-checkbox-container {
   display: flex;
@@ -41,9 +42,10 @@ mat-slide-toggle {
   align-items: center;
 }
 
-:host::ng-deep .medication-checkbox-container .mat-checkbox-layout {
-  white-space: normal !important;
-}
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+//:host::ng-deep .medication-checkbox-container .mat-checkbox-layout {
+//  white-space: normal !important;
+//}
 
 mat-form-field.rescue-med-dose {
   width: 50%;
@@ -59,13 +61,14 @@ mat-form-field.prescription-med-dose {
   width: calc((100% - 40px)/2);
 }
 
-.prescription-med-delete-button-container .mat-icon-button {
+.prescription-med-delete-button-container .mat-mdc-icon-button {
   height:30px !important;
   width:30px !important;
-  line-height:30px !important;
+  padding: 3px 0 0 0 !important;
 }
 
-::ng-deep .medication-checkbox-container .mat-form-field-infix {
+//TODO: maybe check regularly if mat-mdc-form-field-infix works?
+::ng-deep .medication-checkbox-container .mat-mdc-form-field-infix {
   display: inherit !important;
 }
 
@@ -100,16 +103,11 @@ mat-form-field.prescription-med-dose {
   visibility: hidden;
 }
 
-mat-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-::ng-deep mat-checkbox.checkbox-error .mat-checkbox-frame{
+::ng-deep mat-checkbox.checkbox-error .mat-mdc-checkbox-frame{
   border-color: mat.get-color-from-palette($theme-warn);
 }
 
-::ng-deep mat-checkbox.checkbox-error .mat-checkbox-label{
+::ng-deep mat-checkbox.checkbox-error .mat-mdc-checkbox-label{
   color: mat.get-color-from-palette($theme-warn);
 }
 
