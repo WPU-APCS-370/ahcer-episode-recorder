@@ -58,7 +58,11 @@
           </mat-form-field>
         </div>
       </div>
-      <mat-slide-toggle style="display:block; margin-bottom: 10px;" #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
+      <mat-slide-toggle style="display:block; margin-bottom: 10px;"
+                        #trigger formControlName="trigger"
+                        color="primary">
+        Known Triggers?
+      </mat-slide-toggle>
       <div class="trigger-container" style="margin-top: -10px;" *ngIf="trigger.checked" formGroupName="triggerGroup">
         <div class="trigger-checkboxes">
           <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
@@ -79,12 +83,14 @@
                     formControlName="additionalTriggers"></textarea>
         </mat-form-field>
       </div>
-      <mat-slide-toggle #rescueMedToggle formControlName="rescueMedToggle"
-                                    color="primary"
-                                    (change)="onMedToggleChange($event.checked)">
+      <mat-slide-toggle style="display:block;" formControlName="rescueMedToggle"
+                        color="primary" #rescueMedToggle
+                        (change)="onMedToggleChange($event.checked)">
         Rescue Medication?
       </mat-slide-toggle>
-      <div class="medications-group" *ngIf="rescueMedToggle.checked && !loadingRescueMeds" formGroupName="rescueMedGroup">
+      <div class="medications-group"
+           *ngIf="rescueMedToggle.checked && !loadingRescueMeds"
+           formGroupName="rescueMedGroup">
         <div class="medication-container" *ngFor="let rescueMed of rescueMedications; index as i">
           <div class="medication-checkbox-container">
             <mat-checkbox #checkbox color="primary" [formControlName]="'med-'+i+'-checkbox'"

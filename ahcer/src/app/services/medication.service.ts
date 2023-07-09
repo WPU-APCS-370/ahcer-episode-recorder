@@ -95,7 +95,7 @@ export class MedicationService {
     return this.user.userId$.pipe(
       switchMap(userId => from(idChunks).pipe(
         map(medIds=> [userId, medIds]),
-        endWith(null)
+        endWith()
       )),
       takeWhile((x) => x != null),
       switchMap(([userId, medIds]) =>
