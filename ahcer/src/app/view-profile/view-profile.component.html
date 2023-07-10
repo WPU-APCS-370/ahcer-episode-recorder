@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="view-profile.component.scss">
 <div class="container">
   <mat-card class="user-profile-card">
-    <mat-card-title>
-      <h2>{{ (user$ | async)?.firstName }} {{ (user$ | async)?.lastName }}</h2>
-    </mat-card-title>
-    <mat-card-subtitle>{{ (user$ | async)?.emailAddress }}</mat-card-subtitle>
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ (user$ | async)?.firstName }} {{ (user$ | async)?.lastName }}</h2>
+      </mat-card-title>
+      <mat-card-subtitle>{{ (user$ | async)?.emailAddress }}</mat-card-subtitle>
+    </mat-card-header>
     <mat-card-content>
       <h3>Patient List</h3>
       <p *ngFor="let patient of patients$ | async">{{patient.firstName}} {{patient.lastName}} <a routerLink="/patients">View Details</a></p>

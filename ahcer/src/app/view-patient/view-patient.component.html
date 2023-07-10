@@ -26,12 +26,12 @@
       <p>Primary Physician Phone: <a [href]="'tel:' + patient.primaryPhysicianPhone">{{patient.primaryPhysicianPhone| mask: '(000) 000-0000'}}</a></p>
     </div>
     <div *ngIf="patient.otherDoctorInfo" class="other-doctor-info">
-      <h3>Other Doctors Information</h3>
+      <h3><b>Other Doctors Information</b></h3>
       <p [innerHTML]="patient.otherDoctorInfo"></p>
     </div>
-    <p *ngIf="patient.dateOfDiagnosis || patient.gene || patient.mutation">
+    <h4 *ngIf="patient.dateOfDiagnosis || patient.gene || patient.mutation">
       <b>Diagnosis</b>
-    </p>
+    </h4>
     <div *ngIf="patient.dateOfDiagnosis">
       <p>Date of Diagnosis: {{patient.dateOfDiagnosis.toDate() | date: 'MM/dd/yyyy'}}</p>
     </div>
@@ -43,7 +43,7 @@
     </div>
 
     <div *ngIf="activeMeds.length>i && activeMeds[i].length>0">
-      <h4>Active Medication</h4>
+      <h3><b>Active Medication</b></h3>
       <ol>
         <li *ngFor="let meds of activeMeds[i]">{{meds.name}}, {{meds.doseInfo.amount}} {{meds.doseInfo.unit}}</li>
       </ol>

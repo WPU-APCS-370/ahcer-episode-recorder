@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {inject, NgModule} from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {AboutComponent} from "./about/about.component";
 import {CreatePatientComponent} from "./create-patient/create-patient.component";
@@ -12,9 +12,10 @@ import {ViewMedicationComponent} from "./view-medication/view-medication.compone
 import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { canActivate } from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
-import { UserIdResolver } from "./services/user-id.resolver";
 import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
+import {UsersService} from "./services/users.service";
+import {first} from "rxjs";
 
 
 
@@ -53,7 +54,7 @@ const routes: Routes = [
     path: 'view-profile',
     component: ViewProfileComponent,
     resolve: {
-      userId: UserIdResolver,
+      userId: () => inject(UsersService).userId$.pipe(first()),
     },
     ...canActivate(redirectUnauthorizedToLogin)
   },

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
 import firebase from "firebase/compat/app";
@@ -12,11 +12,11 @@ import Timestamp = firebase.firestore.Timestamp;
   styleUrls: ['./edit-patient.component.scss']
 })
 export class EditPatientComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   patient: Patient;
 
   constructor(private dialogRef: MatDialogRef<EditPatientComponent>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               @Inject(MAT_DIALOG_DATA) patient: Patient,
               private patientsService: PatientServices) {
     this.patient = patient;

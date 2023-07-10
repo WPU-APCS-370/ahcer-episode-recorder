@@ -1,9 +1,10 @@
+@use '@angular/material' as mat;
 @import '../../styles';
 
 .container {
   text-align: left;
   max-width: 300px;
-  height: calc(100% - 35px);    //subtracting top and bottom padding
+  height: calc(100% - 34px);    //subtracting (top+bottom padding - 1)
   padding: 20px 10px 15px 10px;
   background-color: white;
   border-radius: 4px;
@@ -48,12 +49,21 @@ form {
   padding: 5px;                   //padding for expansion panel box-shadow
 }
 
-mat-chip.mat-accent {
-  background-color: mat-color($theme-accent, lighter) !important;
-  border: 1px solid mat-color($theme-accent, darker) !important;
+.mat-mdc-standard-chip {
+  min-height: unset !important;
+  height: 20px;
 }
 
-.mat-standard-chip:focus::after {
+::ng-deep mat-chip-option * {
+  padding: 0 !important;
+}
+
+mat-chip-option[color="accent"], mat-chip-option.selected {
+  background-color: mat.get-color-from-palette($theme-accent, lighter) !important;
+  border: 1px solid mat.get-color-from-palette($theme-accent, darker) !important;
+}
+
+.mat-mdc-standard-chip:focus::after {
   opacity: 0;
 }
 

@@ -8,7 +8,7 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
 import {ConnectedPosition, Overlay, OverlayContainer, OverlayRef} from "@angular/cdk/overlay";
 import {TemplatePortal} from "@angular/cdk/portal";
 import {
@@ -51,12 +51,12 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
     animate(100, style({opacity: 0}))
   ];
 
-  filterForm: FormGroup = this.fb.group({
+  filterForm: UntypedFormGroup = this.fb.group({
     startTime: this.dateRangeFormGroup(),
     endTime: this.dateRangeFormGroup()
   })
 
-  dateRangeFormGroup(rangeJSON?: { start: string | null, end: string | null} | undefined): FormGroup {
+  dateRangeFormGroup(rangeJSON?: { start: string | null, end: string | null} | undefined): UntypedFormGroup {
     if (rangeJSON && Object.keys(rangeJSON).length > 0)
       return this.fb.group({
         start: rangeJSON.start? [new Date(rangeJSON.start)] : [null],
@@ -66,7 +66,7 @@ export class ReportFilterPopupComponent implements OnInit, AfterViewInit, OnChan
       return this.fb.group({ start: [null], end: [null] });
   }
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private overlay: Overlay,
               private viewContainerRef: ViewContainerRef,
               private overlayContainer: OverlayContainer,

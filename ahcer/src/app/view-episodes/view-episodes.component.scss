@@ -25,17 +25,21 @@ table {
   margin-top: 10px;
 }
 
-.mat-icon-button {
+.mat-mdc-icon-button {
   width: 32px !important;
   height: 32px !important;
-  line-height: 32px !important;
+  padding: 4px 0 0 0 !important;
 }
 
-th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+.mdc-data-table__cell, .mdc-data-table__header-cell {
+  padding: unset;
+}
+
+th.mat-mdc-header-cell:first-of-type, td.mat-mdc-cell:first-of-type, td.mat-mdc-footer-cell:first-of-type {
   padding-left: 18px !important;
 }
 
-th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type, td.mat-mdc-cell:last-of-type, td.mat-mdc-footer-cell:last-of-type {
   padding-right: 0 !important;
 }
 

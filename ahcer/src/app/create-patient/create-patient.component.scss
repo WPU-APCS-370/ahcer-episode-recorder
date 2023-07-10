@@ -13,13 +13,14 @@ mat-form-field {
   margin-bottom: 20px;
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 button {
   display: block;
 }
 
-.mat-radio-button ~ .mat-radio-button {
+.mat-mdc-radio-button ~ .mat-radio-button {
   margin-left: 16px;
 }
 

@@ -56,8 +56,13 @@
       </mat-form-field>
     </div>
   </div>
-  <mat-slide-toggle #trigger formControlName="trigger" color="primary">Known Triggers?</mat-slide-toggle>
-  <div class="trigger-container" *ngIf="trigger.checked" formGroupName="triggerGroup">
+  <mat-slide-toggle  style="display:block; margin-bottom: 10px;"
+                     #trigger formControlName="trigger"
+                     color="primary">
+    Known Triggers?
+  </mat-slide-toggle>
+  <div class="trigger-container" style="margin-top: -10px;"
+       *ngIf="trigger.checked" formGroupName="triggerGroup">
     <div class="trigger-checkboxes">
       <mat-checkbox color="primary" formControlName="food">Food</mat-checkbox>
       <mat-checkbox color="primary" formControlName="light">Light</mat-checkbox>
@@ -77,8 +82,8 @@
                 formControlName="additionalTriggers"></textarea>
     </mat-form-field>
   </div>
-  <mat-slide-toggle #rescueMedToggle formControlName="rescueMedToggle"
-                    color="primary"
+  <mat-slide-toggle  style="display:block;" formControlName="rescueMedToggle"
+                    color="primary" #rescueMedToggle
                     (change)="onMedToggleChange($event.checked)">
     Rescue Medication?
   </mat-slide-toggle>
@@ -182,7 +187,7 @@
               formControlName="behavior"></textarea>
   </mat-form-field>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions align="end">
   <button mat-raised-button (click)="close()">Close</button>
 
   <button mat-raised-button color="primary" [disabled]="!episodeForm.valid" (click)="save()">Save</button>

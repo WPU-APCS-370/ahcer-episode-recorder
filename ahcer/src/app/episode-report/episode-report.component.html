@@ -27,16 +27,16 @@
           <div class="table-title-row">
             <app-report-filter-popup [filters]="filters" (filterChanges)="updateFilters($event)">
             </app-report-filter-popup>
-            <mat-chip-list>
-              <mat-chip *ngFor="let filterChip of filterChipData; index as i"
+            <mat-chip-set role="list">
+              <mat-chip role="listitem" *ngFor="let filterChip of filterChipData; index as i"
                         (removed)="removeChip(i, filterChip.key)"
-                        selected color="accent">
+                        color="accent">
                 {{filterChip.label}}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>
                 </button>
               </mat-chip>
-            </mat-chip-list>
+            </mat-chip-set>
           </div>
         </th>
       </ng-container>

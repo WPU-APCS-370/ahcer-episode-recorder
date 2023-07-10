@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../styles';
 
 .create-episode {
@@ -22,10 +23,6 @@ mat-form-field {
   margin-top: 10px;
 }
 
-mat-slide-toggle {
-  display: block;
-}
-
 .symptom-checkbox-container, .medication-checkbox-container {
   display: flex;
   flex-direction: row;
@@ -42,7 +39,8 @@ mat-slide-toggle {
   width: 50%;
 }
 
-::ng-deep .medication-container .mat-form-field-infix {
+//TODO: maybe check regularly if mat-mdc-form-field-infix works?
+::ng-deep .medication-container .mat-mdc-form-field-infix {
   display: inherit !important;
 }
 
@@ -72,11 +70,11 @@ button {
   display: block;
 }
 
-::ng-deep mat-checkbox.checkbox-error .mat-checkbox-frame{
-  border-color: mat-color($theme-warn);
+::ng-deep mat-checkbox.checkbox-error .mdc-checkbox__background{
+  border-color: mat.get-color-from-palette($theme-warn) !important;
 }
 
-::ng-deep mat-checkbox.checkbox-error .mat-checkbox-label{
-  color: mat-color($theme-warn);
+::ng-deep mat-checkbox.checkbox-error label{
+  color: mat.get-color-from-palette($theme-warn);
 }
 

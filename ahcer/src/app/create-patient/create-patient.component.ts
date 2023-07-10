@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
+import {UntypedFormBuilder, Validators} from "@angular/forms";
 import {PatientServices} from "../services/patient.service";
 import {Router} from "@angular/router";
 import {Patient} from "../models/patient";
@@ -29,7 +29,7 @@ export class CreatePatientComponent implements OnInit {
     otherDoctorInfo: ['']
   });
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private patientService: PatientServices,
               private usersService: UsersService,
               private router: Router) { }
