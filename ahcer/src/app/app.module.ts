@@ -64,7 +64,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
-  signInFlow: 'redirect',
+  signInFlow: 'popup',
   signInOptions: [
     {
       requireDisplayName: false,
