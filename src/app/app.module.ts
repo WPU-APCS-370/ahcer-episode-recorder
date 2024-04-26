@@ -62,6 +62,8 @@ import {OverlayModule} from "@angular/cdk/overlay";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
+import { ViewVideoComponent } from './view-video/view-video.component';
+import { RecordVideoComponent } from './record-video/record-video.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -98,7 +100,9 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     HelpComponent,
     PrivacyPolicyComponent,
     EpisodeReportComponent,
-    ReportFilterPopupComponent
+    ReportFilterPopupComponent,
+    ViewVideoComponent,
+    RecordVideoComponent
   ],
     imports: [
         BrowserModule,

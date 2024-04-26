@@ -4,5 +4,6 @@ export interface User {
   lastName : string,
   emailAddress : string,
   id : string,
-  lastPatientViewed: string
+  lastPatientViewed: string,
+  videos: string[]
 }

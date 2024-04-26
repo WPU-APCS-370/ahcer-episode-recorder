@@ -44,6 +44,13 @@
           <span> View Patients</span>
         </a>
 
+        <a mat-list-item routerLink="videos" *ngIf="user.isLoggedIn$ | async">
+
+          <mat-icon>video_library</mat-icon>
+
+          <span> Videos</span>
+        </a>
+
         <a mat-list-item routerLink="medications" *ngIf="user.isLoggedIn$ | async">
 
           <mat-icon>vaccines</mat-icon>

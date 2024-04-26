@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {first, from, map, Observable, switchMap} from "rxjs";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
-import {convertOneSnap} from "./data-utils";
+import {convertOneSnap, convertSnaps} from "./data-utils";
 import {User} from "../models/user";
 import {Router} from "@angular/router";
 
@@ -42,6 +42,27 @@ export class UsersService {
       ),
       first(),
       map(result => convertOneSnap<User>(result).lastPatientViewed)
+    )
+  }
+
+  getUserVideos(): Observable<any> {
+    return this.userId$.pipe(
+      switchMap(resUserId => 
+        this.db.doc(`users/${resUserId}`).get().pipe(
+          map(snapshot => snapshot.data())
+        )
+      ),
+      first()
+    );
+  
+  }
+
+  updateUserVideoArray(videos: any[]): Observable<any> {
+    return this.userId$.pipe(
+      switchMap(userId =>
+        from(this.db.doc(`users/${userId}`).update({videos}))
+      ),
+      first()
     )
   }
 

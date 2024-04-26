@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "start:dev": "npm run build && npx cap copy && npx cap run android",
     "build-prod": "ng build ng build --output-path=dist/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

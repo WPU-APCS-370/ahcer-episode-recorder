@@ -16,6 +16,7 @@ import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component"
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
 import {UsersService} from "./services/users.service";
 import {first} from "rxjs";
+import { ViewVideoComponent } from './view-video/view-video.component';
 
 
 
@@ -51,6 +52,12 @@ const routes: Routes = [
 
   },
   {
+    path: 'videos',
+    component: ViewVideoComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+
+  },
+  { 
     path: 'view-profile',
     component: ViewProfileComponent,
     resolve: {
