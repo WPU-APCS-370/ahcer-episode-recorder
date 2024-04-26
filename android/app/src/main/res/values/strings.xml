@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Ahcer Episode Recorder</string>
+    <string name="title_activity_main">Ahcer Episode Recorder</string>
+    <string name="package_name">com.ahcer.app</string>
+    <string name="custom_url_scheme">com.ahcer.app</string>
+</resources>
