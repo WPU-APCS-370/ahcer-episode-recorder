@@ -4,12 +4,23 @@
     </div>
   
   
-  
+    <div *ngIf="!loading && !fileUploading">
+      Upload New Video 
+      <button mat-mini-fab color="accent" (click)="uploadClick()">
+        <mat-icon class="add-patient-btn">add</mat-icon>
+      </button>
+    </div>
+    <div style="margin-top: 30px;" *ngIf="fileUploading">
+      <span class="message">{{fileUploadMessage}}</span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span class="error">{{fileUploadError}} </span>
+    </div>
   <mat-card *ngFor="let video of videos; index as i"  class="patient-card mat-elevation-z10">
   
     <mat-card-header>
   
-      <mat-card-title>{{i + 1}}) {{video.name}}</mat-card-title>
+      <mat-card-title>{{video.name}}</mat-card-title>
   
     </mat-card-header>
     <mat-card-content>
@@ -29,17 +40,8 @@
     </mat-card-actions>
   
   </mat-card>
-    <div *ngIf="!loading && !fileUploading">
-    Upload New Video <button mat-mini-fab color="accent" (click)="uploadClick()">
-    <mat-icon class="add-patient-btn">add</mat-icon>
-    </button>
-    </div>
-    <div style="margin-top: 30px;" *ngIf="fileUploading">
-        <span class="message">{{fileUploadMessage}}</span>
-    </div>
-    <div style="margin-top: 10px;">
-        <span class="error">{{fileUploadError}} </span>
-    </div>
+
+
 </div>
 <input type="file" accept="video/*" style="display: none;" #fileInput (change)="uploadFile($event)">
   

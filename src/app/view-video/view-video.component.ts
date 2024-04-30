@@ -45,8 +45,7 @@ export class ViewVideoComponent {
       )
       .subscribe(
         (result) => {
-          this.videos = result.videos ?? [];
-          console.log(this.videos);
+          this.videos = result.videos.sort().reverse()  ?? [];
         }
       )
   }
@@ -54,11 +53,9 @@ export class ViewVideoComponent {
   onDeleteVideo(videoIndex: number){
     if (videoIndex !== -1) {
       this.videos.splice(videoIndex, 1);
-   }
-    console.log(this.videos, videoIndex);
+    }
     this.userService.updateUserVideoArray(this.videos).subscribe(()=>{
       this.fileUploadMessage = 'Video Deleted Successfully'
-      this.loadVideos();
     }, (error)=>{
       this.setFileUploadError('Some error occured');
     })
@@ -92,20 +89,19 @@ export class ViewVideoComponent {
         finalize(() => {
           fileRef.getDownloadURL().subscribe(downloadURL => {
             console.log('Video available at', downloadURL);
-            this.fileUploadMessage = 'Video uploaded successfully!'
+            this.fileUploadMessage = 'Video Uploaded Successfully!'
             const randomId = Math.floor(100000 + Math.random() * 900000).toString();
             const list = this.videos;
             list.push({
               name: file.name,
               link:  downloadURL,
               id: randomId
-            })
+            });
+            this.videos = this.videos.sort().reverse();
             this.userService.updateUserVideoArray(list).subscribe(()=>{
               this.fileUploadMessage = 'Video Uploaded Successfully'
-              this.loadVideos();
             }, (error)=>{
               console.log(error);
-              
               this.setFileUploadError('Some error occured');
             })
           });
