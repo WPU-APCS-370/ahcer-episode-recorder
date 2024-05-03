@@ -5,6 +5,7 @@ import {User} from "../models/user";
 import {UsersService} from "../services/users.service";
 import {Patient} from "../models/patient";
 import {PatientServices} from "../services/patient.service";
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'app-view-profile',
@@ -26,7 +27,8 @@ export class ViewProfileComponent implements OnInit {
     this.patients$ = this.patientService.getPatients();
   }
 
-  logout() {
+  async logout() {
+    await GoogleAuth.signOut();
     this.usersService.logout();
   }
 }

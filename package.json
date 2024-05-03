@@ -27,6 +27,7 @@
     "@capacitor/android": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@capacitor/ios": "^6.0.0",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "angular-csv-ext": "^1.0.5",
     "firebase": "^9.6.7",
     "firebaseui": "^6.0.1",

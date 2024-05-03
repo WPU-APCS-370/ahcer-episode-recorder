@@ -10,6 +10,7 @@ import { EditPatientComponent } from '../edit-patient/edit-patient.component';
 import { DeletePatientComponent } from '../delete-patient/delete-patient.component';
 import { UsersService } from '../services/users.service';
 import { error } from 'console';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-view-video',
@@ -50,16 +51,37 @@ export class ViewVideoComponent {
       )
   }
 
-  onDeleteVideo(videoIndex: number){
+  deleteFile(filePath: string): Observable<any> {
+    const fileRef = this.storage.refFromURL(filePath);
+    return fileRef.delete();
+  }
+
+  deleteVideoFromUser(videoIndex: number){
     if (videoIndex !== -1) {
       this.videos.splice(videoIndex, 1);
     }
     this.userService.updateUserVideoArray(this.videos).subscribe(()=>{
       this.fileUploadMessage = 'Video Deleted Successfully'
+      // this.loadVideos();
     }, (error)=>{
       this.setFileUploadError('Some error occured');
     })
   }
+
+  onDeleteVideo(videoIndex: number, videoLink:string) {
+    const filePath = videoLink;
+    this.deleteFile(filePath).subscribe(
+      () => {
+        this.fileUploadMessage = 'File deleted successfully';
+        this.deleteVideoFromUser(videoIndex)
+      },
+      (error) => {
+        this.fileUploadError = 'Error deleting file:';
+        this.loadVideos();
+      }
+    );
+  }
+
 
   uploadClick() {
     this.fileInput.nativeElement.click();

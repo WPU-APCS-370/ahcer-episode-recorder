@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import packageJson from '../../package.json';
 import {UsersService} from "./services/users.service";
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ export class AppComponent {
   }
   public uid = this.user.userId$.subscribe((results) => this.uid = results)
 
-  logout() {
+  async logout() {
+    await GoogleAuth.signOut();
     this.user.logout();
   }
 }
