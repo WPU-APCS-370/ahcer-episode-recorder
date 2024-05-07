@@ -35,7 +35,7 @@ export class SignUpComponent {
     const val = this.userForm.value;
 
     this.afAuth.app.then(cred => {
-      let parentId = cred.auth().currentUser.uid ?? '';
+      let parentId = cred.auth().currentUser?.uid ? cred.auth().currentUser?.uid : '';
       this.userService
         .createUserByEmailPassword(val.email, val.password).then((res:any)=>{
           const childId = res.user.uid;
@@ -43,17 +43,20 @@ export class SignUpComponent {
               .get()
               .then((doc)=> {
                 const body = {
-                  parentId, 
-                  isParent:false,
+                  isParent: parentId ? false : true,
                   username:val.username, 
                   email: val.email,
                   password:val.password
+                }
+                if (parentId) {
+                  body['parentId'] =  parentId;
                 }
                 return !doc.exists ?
                   this.db.collection(`users`).doc(childId).set(body) :
                   null;
               });
-            this.db.firestore.doc(`users/${parentId}`)
+            if (parentId) {
+              this.db.firestore.doc(`users/${parentId}`)
               .get()
               .then((doc)=> {
                 if (doc.exists) {
@@ -62,6 +65,7 @@ export class SignUpComponent {
                   this.db.collection(`users`).doc(parentId).update({child:user.child, isParent: true})
                 }
               });
+            }
             this.router.navigateByUrl('/users')
         }).catch((error)=>{
           this.signUpError = error;

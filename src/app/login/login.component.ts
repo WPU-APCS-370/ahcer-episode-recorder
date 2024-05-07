@@ -41,6 +41,8 @@ export class LoginComponent implements OnInit {
       this.db.firestore.doc(`users/${uid}`)
         .get()
         .then((doc)=> {
+          const data = doc.data();
+          localStorage.setItem('user', JSON.stringify(data))
           return !doc.exists ?
             this.db.collection(`users`).doc(uid).set({}) :
             null;

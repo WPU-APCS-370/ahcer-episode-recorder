@@ -29,7 +29,7 @@ export class UsersService {
     this.isLoggedIn$ = afAuth.authState.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
     this.pictureUrl$ = afAuth.authState.pipe(map(user => user? user.photoURL : null));
-    this.newUserId$ = afAuth.authState.pipe(map(user => user? user['parentId'] ? user['parentId'] : user.uid: null));
+    this.newUserId$ = afAuth.authState.pipe(map(user => user? user.uid: null));
     this.userId$ = this.getCurerntUser().pipe(map((user:any)=>{
       return user ?user['parentId'] ?user['parentId'] :user.id : null
     }));
@@ -101,6 +101,7 @@ export class UsersService {
   logout() {
     this.afAuth.signOut();
     this.router.navigateByUrl('/login');
+    localStorage.removeItem('user')
   }
 
   createUserByEmailPassword(email:string,password:string):Promise<any>{

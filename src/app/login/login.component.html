@@ -19,7 +19,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput formControlName="password">
+          <input type="password" matInput formControlName="password">
         </mat-form-field>
         <div class="button-group">
           <button mat-raised-button color="primary" [disabled]="!userForm.valid" (click)="emailLogin()">

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import packageJson from '../../package.json';
 import {UsersService} from "./services/users.service";
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
@@ -10,31 +10,43 @@ import { Subscription } from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
   public version: string = packageJson.version;
   public uid = this.user.userId$.subscribe((results) => this.uid = results)
   public unsubscribe: Subscription[] = [];
   public currentUser: any;
 
-  constructor(public user: UsersService) {
+  constructor(public user: UsersService, private cdRef: ChangeDetectorRef) {
+  }
+
+
+  ngAfterContentInit(): void {
+    // this.getCurrentUser();
   }
   
   ngOnInit(): void {
-    this.getCurrentUser();
+    // this.getCurrentUser();
   }
   
-  getCurrentUser(){
-    this.unsubscribe.push(
-      this.user.getCurerntUser().subscribe((res: User)=>{
-        this.currentUser = res;
-        console.log(this.currentUser, 'current user');
-      })
-    )
+  // getCurrentUser(){
+  //   this.unsubscribe.push(
+  //     this.user.getCurerntUser().subscribe((res: User)=>{
+  //       this.currentUser = res;
+  //       this.cdRef.detectChanges();
+  //       console.log(this.currentUser, 'current user');
+  //     })
+  //   )
+  // }
+
+  get isParent(){
+    const data = JSON.parse(localStorage.getItem('user'));
+    return data ? data.isParent : false;
   }
   
   async logout() {
     await GoogleAuth.signOut();
     this.user.logout();
+    localStorage.removeItem('user')
   }
 
   ngOnDestroy(): void {
