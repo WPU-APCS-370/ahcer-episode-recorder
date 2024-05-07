@@ -44,6 +44,13 @@
           <span> View Patients</span>
         </a>
 
+        <div *ngIf="currentUser && currentUser.isParent">
+          <a mat-list-item routerLink="users" *ngIf="user.isLoggedIn$ | async">
+            <mat-icon>supervised_user_circle</mat-icon>
+            <span> Users</span>
+          </a>
+        </div>
+
         <a mat-list-item routerLink="videos" *ngIf="user.isLoggedIn$ | async">
 
           <mat-icon>video_library</mat-icon>

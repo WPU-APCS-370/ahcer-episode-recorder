@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 })
 export class ViewVideoComponent {
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
-  videos: any[]
+  videos: any[] = []
   loading: boolean = false;
   public fileUploading: boolean = false;
   public fileUploadMessage: string = '';
@@ -46,7 +46,14 @@ export class ViewVideoComponent {
       )
       .subscribe(
         (result) => {
-          this.videos = result.videos.sort().reverse()  ?? [];
+          if (result.videos) {
+            this.videos= result.videos;
+            if (result.videos.length > 0) {
+              this.videos = result.videos.sort().reverse()  ?? [];
+            }
+          }else{
+            this.videos = [];
+          }
         }
       )
   }
@@ -96,7 +103,7 @@ export class ViewVideoComponent {
     
     // Check if the selected file is a video
     if (file.type.startsWith('video/')) {
-      const filePath = 'videos/' + file.name; // Define the path where you want to store the file in Firebase Storage
+      const filePath = 'videos/' + file.name;
       const fileRef = this.storage.ref(filePath);
       const task = this.storage.upload(filePath, file);
 

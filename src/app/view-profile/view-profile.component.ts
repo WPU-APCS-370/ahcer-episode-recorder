@@ -28,7 +28,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   async logout() {
-    await GoogleAuth.signOut();
+    // await GoogleAuth.signOut();
     this.usersService.logout();
   }
 }

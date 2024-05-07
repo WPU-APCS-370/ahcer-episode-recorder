@@ -17,6 +17,8 @@ import {EpisodeReportComponent} from "./episode-report/episode-report.component"
 import {UsersService} from "./services/users.service";
 import {first} from "rxjs";
 import { ViewVideoComponent } from './view-video/view-video.component';
+import { ViewUsersComponent } from './view-users/view-users.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 
 
@@ -76,8 +78,22 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
+    path: 'users',
+    component: ViewUsersComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'add-user',
+    component: SignUpComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'signup',
+    component: SignUpComponent
   },
   {
     path: 'record-episode',

@@ -64,6 +64,12 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
 import { ViewVideoComponent } from './view-video/view-video.component';
 import { RecordVideoComponent } from './record-video/record-video.component';
+import { ViewUsersComponent } from './view-users/view-users.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { getAuth } from 'firebase/auth';
+import { provideAuth } from '@angular/fire/auth';
+import { initializeApp } from 'firebase/app';
+import { provideFirebaseApp } from '@angular/fire/app';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -102,13 +108,17 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     EpisodeReportComponent,
     ReportFilterPopupComponent,
     ViewVideoComponent,
-    RecordVideoComponent
+    RecordVideoComponent,
+    ViewUsersComponent,
+    SignUpComponent
   ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         AngularFireModule.initializeApp(environment.firebase),
+        // provideFirebaseApp(() => initializeApp(environment.firebase)),
+        // provideAuth(() => getAuth()),
         AngularFireAuthModule,
         FirebaseUIModule.forRoot(firebaseUiAuthConfig),
         AngularFirestoreModule,

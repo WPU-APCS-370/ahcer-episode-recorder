@@ -6,6 +6,8 @@ import { Authentication, GoogleAuth } from '@codetrix-studio/capacitor-google-au
 import { Observable, from } from 'rxjs';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { Platform } from '@angular/cdk/platform';
+import { FormBuilder, Validators } from '@angular/forms';
+import { UsersService } from '../services/users.service';
 
 
 @Component({
@@ -14,21 +16,24 @@ import { Platform } from '@angular/cdk/platform';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  constructor(private afAuth: AngularFireAuth,
-              public platform: Platform,
-              private router: Router,
-              private db: AngularFirestore) {
-               
-               }
+  public signInClicked: boolean = false;
+  public signInError: string = '';
 
-  ngOnInit() {
-    // this.platform.ready().then(async () => {
-  
-    //   let isWeb = !this.platform.is('android') && !this.platform.is('ios');
-    //   if (isWeb || this.platform.is('mobileweb'))
-  
-    // });
-  }
+  constructor(
+    private afAuth: AngularFireAuth,
+    public platform: Platform,
+    private router: Router,
+    private db: AngularFirestore,
+    private fb: FormBuilder,
+    private userService: UsersService
+  ) {}
+
+  ngOnInit() {}
+
+  userForm =this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
 
   onLoginSuccessful() {
     this.afAuth.app.then(cred => {
@@ -72,55 +77,51 @@ export class LoginComponent implements OnInit {
            }
 
            this.onLoginSuccessful();
-          //  this.router.navigateByUrl('/')
-           
-           // localStorage.setItem('user_id', res.user?.uid);
-           // let user_id = res.user?.uid;
-           // this.sharedData.IsAppLoad(true);
-   
-           // const collectionName = 'users';
-   
-           // this.appService.getUserById(user_id).pipe(
-           //   first()
-           // ).subscribe(
-           //   (res: any) => {
-           //     if (res.length > 0) {
-           //       // this.appService.setUserTokens(res[0].balance);
-           //       // this.appService.currentUserDocId = res[0].id;
-           //       localStorage.setItem('userDoc_id', res[0].id);
-           //       // this.toast.showSuccessToast('User has successfully Login!');
-           //       this.router.navigate(['home']);
-           //     } else {
-           //       this.appService.save(userObj, collectionName).subscribe(
-           //         (res: any) => {
-           //           this.toast.showSuccessToast('User has successfully registered!');
-           //           this.router.navigate(['home']);
-           //         }
-           //         ,
-           //         (error: any) => {
-           //           //this.uos.toastService.showErrorToast(error.error.message);
-           //           this.toast.showErrorToast("3" + error);
-           //         }
-           //       );
-           //     }
-           //   },
-           //   (error: any) => {
-           //     //this.uos.toastService.showErrorToast(error.error.message);
-           //     this.toast.showErrorToast("2" + error);
-           //   }
-           // );
+
          }, (error: any) => {
-           // this.toast.showErrorToast('Unable to Login due to an Unknown error');
+          this.signInError = error;
+          setTimeout(() => {
+            this.signInError = '';
+          }, 5000);
+            console.log(error);
          });
    
        }
        else {
         console.log('APPP: siginin else');
-         // this.toast.showErrorToast('Unable to Login due to an Unknown error');
        }
       
     } catch (error) {
         console.log(error.message);
     }
+  }
+
+  emailLogin(){
+    const val = this.userForm.getRawValue();
+
+    this.userService.loginWithEmail(val.email, val.password).then((res)=>{
+      this.onLoginSuccessful();
+    }).catch((error)=>{
+      this.signInError = error;
+      setTimeout(() => {
+        this.signInError = '';
+      }, 5000);
+        console.log(error);
+    })
+  }
+
+  toggleEmailClicked(){
+    this.signInClicked = !this.signInClicked
+  }
+
+  signInWithEmail(){
+    const val = this.userForm.value;
+    // const newUserBody: {email:string,password:string} = {
+    //   email: val.email,
+    //   password: val.password
+    // };
+
+    const newUser = this.userService.createUserByEmailPassword(val.email, val.password);
+    this.onLoginSuccessful();
   }
 }
