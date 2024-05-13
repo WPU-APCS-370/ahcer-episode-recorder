@@ -1,0 +1,47 @@
+<div class="patient-view">
+    <div class="spinner-container" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  
+  
+    <div *ngIf="!loading && !fileUploading">
+      Upload New Video 
+      <button mat-mini-fab color="accent" (click)="uploadClick()">
+        <mat-icon class="add-patient-btn">add</mat-icon>
+      </button>
+    </div>
+    <div style="margin-top: 30px;" *ngIf="fileUploading">
+      <span class="message">{{fileUploadMessage}}</span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span class="error">{{fileUploadError}} </span>
+    </div>
+  <mat-card *ngFor="let video of videos; index as i"  class="patient-card mat-elevation-z10">
+  
+    <mat-card-header>
+  
+      <mat-card-title>{{video.name}}</mat-card-title>
+  
+    </mat-card-header>
+    <mat-card-content>
+        <div class="video">
+            <video controls (click)="toggleVideo()" #videoPlayer>
+                <!-- <source src="https://vjs.zencdn.net/v/oceans.mp4" type="video/mp4" /> -->
+                <source [src]="video.link" type="video/mp4" />
+                Browser not supported
+            </video>
+        </div>
+    </mat-card-content>
+  
+    <mat-card-actions class="patient-actions">
+      <!-- <button mat-button (click)="editPatient(patient)">Edit</button> -->
+      <button mat-button color="warn" (click)="onDeleteVideo(i, video.link)">Delete</button>
+  
+    </mat-card-actions>
+  
+  </mat-card>
+
+
+</div>
+<input type="file" accept="video/*" style="display: none;" #fileInput (change)="uploadFile($event)">
+  

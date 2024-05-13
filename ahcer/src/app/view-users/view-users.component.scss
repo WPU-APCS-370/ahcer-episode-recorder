@@ -1,0 +1,29 @@
+@use '@angular/material' as mat;
+
+.children-card{
+  margin: 10px auto 10px auto;
+  max-width: 350px;
+
+}
+.other-doctor-info {
+  margin: auto;
+
+}
+.children-view {
+  max-width: 350px;
+  margin: 10px auto 10px auto;
+}
+.children-card{
+  margin: 10px auto 10px auto;
+  max-width: 350px;
+  @include mat.elevation(10);
+}
+.spinner-container {
+  height: 360px;
+  width: 390px;
+  position: fixed;
+}
+
+.spinner-container mat-spinner {
+  margin: 130px auto 0 auto;
+}
