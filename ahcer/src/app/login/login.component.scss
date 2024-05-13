@@ -9,3 +9,55 @@
   align-items: center;
   margin-top: 40px;
 }
+
+.login-btn{
+  width: 188px;
+  border-radius: 0px;
+  height: 40px;
+}
+.login-btn.email{
+  background-color: #db4437;
+  color: white;
+  margin-bottom: 5px;
+}
+.login-btn.new-account{
+  margin-bottom: 20px;
+}
+
+.create-user {
+  text-align: left;
+  max-width: 350px;
+  margin: 20px auto 20px auto;
+  padding: 0 20px 0 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.gene-container {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+button {
+  display: block;
+}
+
+.mat-mdc-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
+
+.button-group{
+  display: flex;
+}
+.error{
+  color: red;
+  font-weight: 600;
+}
+
+::ng-deep button[data-provider-id="password"] {
+  display: none !important;
+}
