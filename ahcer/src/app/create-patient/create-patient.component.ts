@@ -23,6 +23,7 @@ export class CreatePatientComponent implements OnInit {
     dateOfDiagnosis: [null],
     gene:[''],
     mutation: [''],
+    weight: [''],
     otherMutation: [''],
     primaryPhysicianName: [''],
     primaryPhysicianPhone: [''],
@@ -48,6 +49,7 @@ export class CreatePatientComponent implements OnInit {
       otherDoctorInfo: val.otherDoctorInfo,
       gene: val.gene,
       mutation: val.mutation,
+      weight: val.weight,
       otherMutation: (val.mutation=='Other')? val.otherMutation : ''
     };
 

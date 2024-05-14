@@ -26,24 +26,38 @@ export class EditEpisodeComponent implements OnInit {
   loadingArchivedMeds: boolean = false;
 
   symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"];
+    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure",
+    "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
   symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"];
+    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
+    "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"];
 
   episodeForm : UntypedFormGroup;
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
+  public showAutonomicTextField: boolean = false;
+
 
   symptomGroup(episode: Episode): UntypedFormGroup {
     let controls = {}
     for(let index in this.symptomLabels) {
       let label = this.symptomLabels[index];
       if(episode.symptoms && Object.keys(episode.symptoms[this.symptomKeys[index]]).length > 0) {
-        if(label!="Loss of Consciousness" && label!="Seizure") {
+        if(label!="Loss of Consciousness" && label!="Seizure" && label !=="Apnea/Breathing") {
           controls[label + ' Checkbox'] = true;
-          controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+          if (label=="Swallowing/Choking" || label=="Chorea/Tremors") {
+            controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+          }else{
+            if (label=="Autonomic Dysfunction") {
+              if (episode.symptoms[this.symptomKeys[index]]['type'] === 'other') {
+                this.showAutonomicTextField = true;
+              }
+              controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['text']];
+            }
+            controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+          }
         }
         else {
-          controls[label + ' Checkbox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+          controls[label + ' Checkbox'] = [episode.symptoms[this.symptomKeys[index]]['time']];
         }
         controls[label + ' Time'] = [episode.symptoms[this.symptomKeys[index]]['time'].toDate()];
       }
@@ -53,39 +67,40 @@ export class EditEpisodeComponent implements OnInit {
           controls[label + ' Dropdown'] = [''];
         controls[label + ' Time'] = [null];
       }
-    }
-    let options = {
-      validators: (formGroup: UntypedFormGroup) => {
-        let checked = 0;
-        let errors = {};
-        for (let label of this.symptomLabels) {
-          let checkbox = formGroup.controls[label+' Checkbox']
-          let checkboxChecked = (checkbox.value === true)
-          let dropdownValueEmpty = false;
-          if (label!="Seizure" && label!="Loss of Consciousness") {
-            let dropdown = formGroup.controls[label + ' Dropdown']
-            dropdownValueEmpty = (dropdown.value === '')
-          }
-          if(checkboxChecked) {
-            checked++;
-          }
-          if (checkboxChecked && dropdownValueEmpty) {
-            errors[label+' Dropdown Error']=true;
-          }
-        }
-        if (checked < 1){
-          return {
-            requireCheckboxesToBeChecked: true
-          };
-        }
-        else if(Object.keys(errors).length > 0) {
-          return errors;
-        }
+    }    
+    // let options = {
+    //   validators: (formGroup: UntypedFormGroup) => {
+    //     let checked = 0;
+    //     let errors = {};
+    //     for (let label of this.symptomLabels) {
+    //       let checkbox = formGroup.controls[label+' Checkbox']
+    //       let checkboxChecked = (checkbox.value === true)
+    //       let dropdownValueEmpty = false;
+    //       if (label!="Seizure" && label!="Loss of Consciousness" && label !== "Apnea/Breathing") {
+    //         let dropdown = formGroup.controls[label + ' Dropdown']
+    //         dropdownValueEmpty = (dropdown.value === '')
+    //       }
+    //       if(checkboxChecked) {
+    //         checked++;
+    //       }
+    //       if (checkboxChecked && dropdownValueEmpty) {
+    //         errors[label+' Dropdown Error']=true;
+    //       }
+    //     }
+    //     if (checked < 1){
+    //       return {
+    //         requireCheckboxesToBeChecked: true
+    //       };
+    //     }
+    //     else if(Object.keys(errors).length > 0) {
+    //       return errors;
+    //     }
 
-        return null;
-      }
-    }
-    return this.fb.group(controls, options);
+    //     return null;
+    //   }
+    // }
+    // return this.fb.group(controls, options);
+    return this.fb.group(controls);
   }
 
   rescueMedGroup(episode: Episode): UntypedFormGroup {
@@ -203,6 +218,7 @@ export class EditEpisodeComponent implements OnInit {
               private dialog: MatDialog) {
     this.patientId = patientId;
     this.episode = episode;
+    
   }
 
   ngOnInit(): void {
@@ -221,6 +237,10 @@ export class EditEpisodeComponent implements OnInit {
       menstruation: false,
       temperature: false,
       water: false,
+      flushing: false,
+      mottling: false,
+      hot_or_cold_body_parts: false,
+      vomiting: false,
       additionalTriggers: ""
     }
 
@@ -346,15 +366,29 @@ export class EditEpisodeComponent implements OnInit {
       leftLeg: {},
       rightArm: {},
       rightHand: {},
-      rightLeg: {}
+      rightLeg: {},
+      apnea_breathing: {},
+      autonomic_dysfunction: {},
+      swallowing_choking: {},
+      chorea_tremors: {},
     }
 
     for (let index in this.symptomKeys) {
       let symptom = {}
       if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
         if (this.symptomKeys[index] != 'seizure' &&
-            this.symptomKeys[index] != 'lossOfConsciousness') {
-          symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            this.symptomKeys[index] != 'lossOfConsciousness' &&
+            this.symptomKeys[index] !=="apnea_breathing"
+        ) {
+          if (this.symptomKeys[index] =="swallowing_choking" || this.symptomKeys[index] =="chorea_tremors") {
+            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+          }else{
+            if (this.symptomKeys[index] =="autonomic_dysfunction") {
+              symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+            }
+            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+          }
+          // symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
         } else {
           symptom['present'] = true;
         }
@@ -431,11 +465,19 @@ export class EditEpisodeComponent implements OnInit {
     updateEpisode.startTime = Timestamp.fromDate(val.startTime);
     if(val.endTime)
       updateEpisode.endTime = Timestamp.fromDate(val.endTime);
-
+    
     this.episodeService.updateEpisode(this.patientId, this.episode.id, updateEpisode)
       .subscribe(() => {
         this.dialogRef.close(updateEpisode);
     });
+  }
+
+  onAutonomicOtherClick(value:string){
+    if (value == 'other') {
+      this.showAutonomicTextField = true;
+    }else{
+      this.showAutonomicTextField = false;
+    }
   }
 
 

@@ -47,6 +47,23 @@
       <b>Loss of Consciousness</b>
       at <u>{{episode.symptoms.lossOfConsciousness.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
     </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.apnea_breathing) &&
+              episode.symptoms.apnea_breathing.present">
+      <b>Apnea/Breathing</b>
+      at <u>{{episode.symptoms.apnea_breathing.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.autonomic_dysfunction)">
+      <b>Autonomic Dysfunction</b>
+      at <u>{{episode.symptoms.autonomic_dysfunction.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.swallowing_choking)">
+      <b>Swallowing/Chocking</b>
+      at <u>{{episode.symptoms.swallowing_choking.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+    </p>
+    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.chorea_tremors)">
+      <b>Chorea/Tremors</b>
+      at <u>{{episode.symptoms.chorea_tremors.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+    </p>
   </div>
   <div *ngIf="episode.behavior">
     <h3>Other Behaviors</h3>

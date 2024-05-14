@@ -17,9 +17,11 @@ import {ErrorStateMatcher} from "@angular/material/core";
 
 export class formGroupErrorMatcher implements ErrorStateMatcher {
   isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null) {
-    const formGroup = control.parent.controls;
-    const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
-    return control.touched && control.parent.hasError(name+" Error");
+    if (control?.parent.controls) {
+      const formGroup = control.parent.controls;
+      const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
+      return control.touched && control.parent.hasError(name+" Error");
+    }
   }
 }
 
@@ -30,7 +32,8 @@ export class formGroupErrorMatcher implements ErrorStateMatcher {
 })
 export class CreateEpisodeComponent implements OnInit{
   symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"];
+                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure", 
+                   "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
   loadingPatient: boolean = false;
   loadingRescueMeds: boolean = false;
   loadingPrescriptionMeds: boolean = false;
@@ -54,6 +57,10 @@ export class CreateEpisodeComponent implements OnInit{
       menstruation: false,
       temperature: false,
       water: false,
+      flushing: false,
+      mottling: false,
+      hot_or_cold_body_parts: false,
+      vomiting: false,
       additionalTriggers: ""
     }),
     rescueMedToggle: false,
@@ -65,8 +72,10 @@ export class CreateEpisodeComponent implements OnInit{
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
-      if (label!="Seizure" && label!="Loss of Consciousness")
+      if (label!="Seizure" && label!="Loss of Consciousness" && label!="Apnea/Breathing" && label !=="Swallowing/Choking" && label !=="Chorea/Tremors")
         controls[label+' Dropdown'] = ['']
+      if (label=="Swallowing/Choking" || label=="Chorea/Tremors" || label=="Autonomic Dysfunction")
+        controls[label+' TextBox'] = ['']
       controls[label+' Time'] = null
     }
     let options = {
@@ -77,7 +86,7 @@ export class CreateEpisodeComponent implements OnInit{
           let checkbox = formGroup.controls[label+' Checkbox']
           let checkboxChecked = (checkbox.value === true)
           let dropdownValueEmpty = false;
-          if (label!="Seizure" && label!="Loss of Consciousness") {
+          if (label!="Seizure" && label!="Loss of Consciousness" && label!="Apnea/Breathing" && label !=="Swallowing/Choking" && label !=="Chorea/Tremors") {
             let dropdown = formGroup.controls[label + ' Dropdown']
             dropdownValueEmpty = (dropdown.value === '')
           }
@@ -102,6 +111,8 @@ export class CreateEpisodeComponent implements OnInit{
     }
     return this.fb.group(controls, options);
   }
+
+  public showAutonomicTextField: boolean = false;
 
   rescueMedGroup(): UntypedFormGroup {
     let controls = {}
@@ -168,6 +179,14 @@ export class CreateEpisodeComponent implements OnInit{
 
     this.loadRescueMeds();
     this.loadActivePrescriptionMeds();
+  }
+
+  onAutonomicOtherClick(value:string){
+    if (value == 'other') {
+      this.showAutonomicTextField = true;
+    }else{
+      this.showAutonomicTextField = false;
+    }
   }
 
   onMedToggleChange(value: boolean) {
@@ -239,7 +258,8 @@ export class CreateEpisodeComponent implements OnInit{
   onCreateEpisode() {
     const val = this.episodeForm.value;
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-                       "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness"]
+                       "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness",
+                       "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"]
     let symptoms : Episode['symptoms'] = {
       seizure: {},
       lossOfConsciousness:{},
@@ -250,14 +270,25 @@ export class CreateEpisodeComponent implements OnInit{
       leftLeg: {},
       rightArm: {},
       rightHand: {},
-      rightLeg: {}
+      rightLeg: {},
+      apnea_breathing: {},
+      autonomic_dysfunction: {},
+      swallowing_choking: {},
+      chorea_tremors: {},
     }
 
     for (let index in symptomKeys) {
       let symptom = {}
       if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness') {
+        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness' && symptomKeys[index] !=="apnea_breathing") {
+          if (symptomKeys[index] =="swallowing_choking" || symptomKeys[index] =="chorea_tremors") {
+            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+          }else{
+            if (symptomKeys[index] =="autonomic_dysfunction") {
+              symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+            }
             symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+          }
         } else {
           symptom['present'] = true;
         }

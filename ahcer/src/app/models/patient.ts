@@ -13,5 +13,6 @@ export interface Patient {
   otherDoctorInfo?: string,
   gene?: string,
   mutation?: string,
+  weight?: string,
   otherMutation?: string
 }

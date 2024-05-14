@@ -164,18 +164,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 // Theme Config
 
 body {
-  --primary-color: #99cc00;
-  --primary-lighter-color: #e0f0b3;
-  --primary-darker-color: #7cb900;
+  --primary-color: #4E108D;
+  --primary-lighter-color: #af7ce4;
+  --primary-darker-color: #42077d;
   --text-primary-color: #{$dark-primary-text};
   --text-primary-lighter-color: #{$dark-primary-text};
   --text-primary-darker-color: #{$dark-primary-text};
 }
 $mat-primary: (
-  main: #99cc00,
-  lighter: #e0f0b3,
-  darker: #7cb900,
-  200: #99cc00, // For slide toggle,
+  main: #4E108D,
+  lighter: #af7ce4,
+  darker: #42077d,
+  200: #4E108D, // For slide toggle,
   contrast : (
     main: $dark-primary-text,
     lighter: $dark-primary-text,
@@ -279,4 +279,8 @@ $altTheme: mat.define-dark-theme(
     font-family: 'Roboto';
   }
 }
+.mat-toolbar.mat-primary{
+  color: white !important;
+}
+
 

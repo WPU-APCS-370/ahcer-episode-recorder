@@ -31,6 +31,7 @@ export class EditPatientComponent implements OnInit {
       dateOfDiagnosis: (patient.dateOfDiagnosis)?patient.dateOfDiagnosis.toDate() : null,
       gene: patient.gene,
       mutation: patient.mutation,
+      weight: patient.weight,
       otherMutation: patient.otherMutation
     })
   }
