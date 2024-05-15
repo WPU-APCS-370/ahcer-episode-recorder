@@ -38,8 +38,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
   // }
 
   get isParent(){
-    const data = JSON.parse(localStorage.getItem('user'));
-    return data ? data.isParent : false;
+    if(localStorage.getItem('user')){
+      const data = JSON.parse(localStorage.getItem('user'));
+      if(data.isParent == undefined){
+        return true;
+      }
+      return data ? data.isParent : false;
+    }
+    else{
+      return true;
+    }
   }
   
   async logout() {
