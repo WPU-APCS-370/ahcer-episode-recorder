@@ -258,7 +258,7 @@ export class CreateEpisodeComponent implements OnInit{
   onCreateEpisode() {
     const val = this.episodeForm.value;
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-                       "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness",
+                       "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
                        "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"]
     let symptoms : Episode['symptoms'] = {
       seizure: {},
