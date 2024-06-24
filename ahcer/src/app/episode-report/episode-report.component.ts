@@ -142,7 +142,11 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         })
       )
       .subscribe(
-        episodes => {this.episodes = episodes}
+        episodes => {
+          this.episodes = episodes
+          console.log(episodes);
+          
+        }
       );
   }
 
@@ -190,15 +194,17 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       return "";
     }
     let symptomTexts = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-      "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"];
+      "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure", 
+      "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-      "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure"];
+      "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
+      "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"];
     let symptomStr = "";
     let numSymptoms = 0;
     for (let index in symptomKeys) {
       let symptomText = "";
       let symptom = symptoms[symptomKeys[index]];
-      if(symptom.type || symptom.present) {
+      if(symptom?.type || symptom?.present) {
         if(!showFullList && numSymptoms == 2) {
           symptomStr +=", ...";
           break;
