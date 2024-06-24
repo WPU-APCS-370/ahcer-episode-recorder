@@ -143,9 +143,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       )
       .subscribe(
         episodes => {
-          this.episodes = episodes
-          console.log(episodes);
-          
+          this.episodes = episodes;
         }
       );
   }
