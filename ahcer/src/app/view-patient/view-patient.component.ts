@@ -15,18 +15,16 @@ import { UsersService } from '../services/users.service';
   styleUrls: ['./view-patient.component.scss']
 })
 export class ViewPatientComponent implements OnInit {
-  isAdmin:boolean=false
   patients: Patient[]
   loading: boolean = false;
   activeMeds: Medication[][] = [];
   constructor(private dialog: MatDialog,
     private patientService: PatientServices,
     private medicationService: MedicationService,
-    private usersService: UsersService) { }
+    public usersService: UsersService) { }
 
   ngOnInit(): void {
     if (this.usersService.isAdmin) {
-      this.isAdmin=true
       this.loadAllPatients()
     }
     else {

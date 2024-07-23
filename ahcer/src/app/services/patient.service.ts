@@ -4,6 +4,7 @@ import { first, forkJoin, from, map, Observable, switchMap } from "rxjs";
 import { Patient } from "../models/patient";
 import { convertOneSnap, convertSnaps } from "./data-utils";
 import { UsersService } from "./users.service";
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,18 @@ import { UsersService } from "./users.service";
 export class PatientServices {
 
   constructor(private db: AngularFirestore,
+    private angularFireMessaging: AngularFireMessaging,
     private user: UsersService) { }
+    requestPermission(): void {
+      this.angularFireMessaging.requestToken.subscribe(
+        (token) => {
+          console.log("FCM token received: ", token);
+        },
+        (error) => {
+          console.error("Unable to get permission to notify.", error);
+        }
+      );
+    }
 
   createPatient(newPatient: Partial<Patient>): Observable<any> {
     let save$: Observable<any>;

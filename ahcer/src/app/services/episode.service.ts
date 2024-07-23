@@ -97,7 +97,6 @@ export class EpisodeService {
   }
 
   deleteEpisode(patientId: string, episodeId: string, UserId?: string): Observable<any> {
-    console.log(UserId)
     return this.user.userId$.pipe(
       switchMap(userId => {
         return from(this.db.doc(`users/${UserId ? UserId : userId}/patients/${patientId}/episodes/${episodeId}`).delete())

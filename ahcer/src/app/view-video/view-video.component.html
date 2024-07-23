@@ -4,7 +4,7 @@
     </div>
 
 
-    <div *ngIf="!loading && !fileUploading && !this.userService.isAdmin">
+    <div *ngIf="!loading && !fileUploading && !isAdmin">
       Upload New Video
       <button mat-mini-fab color="accent" (click)="uploadClick()">
         <mat-icon class="add-patient-btn">add</mat-icon>

@@ -1,101 +1,104 @@
 <h2 mat-dialog-title>Episode Details</h2>
 <mat-dialog-content>
-  <h3>Time</h3>
+  <h3><strong>Time</strong></h3>
   <p>Start Time: {{episode.startTime?.toDate()| date: 'MM/dd/yyyy HH:mm:ss'}}</p>
   <p>End Time: {{episode.endTime?.toDate()| date: 'MM/dd/yyyy HH:mm:ss'}}</p>
-  <div *ngIf="episode.symptoms">
-    <h3>Symptoms</h3>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.eyes)">
-      <b>Eyes ({{episode.symptoms.eyes.type}})</b>
-      at <u>{{episode.symptoms.eyes.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftArm)">
-      <b>Left Arm ({{episode.symptoms.leftArm.type}})</b>
-      at <u>{{episode.symptoms.leftArm.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftHand)">
-      <b>Left Hand ({{episode.symptoms.leftHand.type}})</b>
-      at <u>{{episode.symptoms.leftHand.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}})</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftLeg)">
-      <b>Left Leg ({{episode.symptoms.leftLeg.type}})</b>
-      at <u>{{episode.symptoms.leftLeg.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightArm)">
-      <b>Right Arm ({{episode.symptoms.rightArm.type}})</b>
-      at <u>{{episode.symptoms.rightArm.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightHand)">
-      <b>Right Hand ({{episode.symptoms.rightHand.type}})</b>
-      at <u>{{episode.symptoms.rightHand.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightLeg)">
-      <b>Right Leg ({{episode.symptoms.rightLeg.type}})</b>
-      at <u>{{episode.symptoms.rightLeg.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.fullBody)">
-      <b>Full Body ({{episode.symptoms.fullBody.type}})</b>
-      at <u>{{episode.symptoms.fullBody.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}})</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.seizure) &&
-              episode.symptoms.seizure.present">
-      <b>Seizure</b>
-      at <u>{{episode.symptoms.seizure.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.lossOfConsciousness) &&
-              episode.symptoms.lossOfConsciousness.present">
-      <b>Loss of Consciousness</b>
-      at <u>{{episode.symptoms.lossOfConsciousness.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.apnea_breathing) &&
-              episode.symptoms.apnea_breathing.present">
-      <b>Apnea/Breathing</b>
-      at <u>{{episode.symptoms.apnea_breathing.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.autonomic_dysfunction)">
-      <b>Autonomic Dysfunction</b>
-      at <u>{{episode.symptoms.autonomic_dysfunction.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.swallowing_choking)">
-      <b>Swallowing/Chocking</b>
-      at <u>{{episode.symptoms.swallowing_choking.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-    <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.chorea_tremors)">
-      <b>Chorea/Tremors</b>
-      at <u>{{episode.symptoms.chorea_tremors.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-    </p>
-  </div>
-  <div *ngIf="episode.behavior">
-    <h3>Other Behaviors</h3>
-    <p>{{episode.behavior}}</p>
-  </div>
-  <h3>Triggers</h3>
-  <p>Known Triggers: {{episode.knownTriggers? episode.knownTriggers : ""}}</p>
-  <p>Other Triggers: {{episode.otherTrigger? episode.otherTrigger : ""}}</p>
-  <p>Notes: {{episode.notes? episode.notes : ""}}</p>
-  <div *ngIf="episode.medications">
-    <h3>Medications</h3>
-    <div *ngIf="episode.medications.prescriptionMeds">
-      <h4>Prescription Medications</h4>
-      <ol>
-        <li *ngFor="let prescriptionMed of episode.medications.prescriptionMeds">
-          {{prescriptionMed.name}}, {{prescriptionMed.doseInfo.amount}} {{prescriptionMed.doseInfo.unit}}
-        </li>
-      </ol>
+  <p>Status: {{episode.status}}</p>
+  <ng-container *ngIf="episode.status != OFF_DAY && episode.status != NO_EPISODE_TODAY" >
+    <div *ngIf="episode.symptoms">
+      <h3><strong>Symptoms</strong></h3>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.eyes)">
+        <b>Eyes ({{episode.symptoms.eyes.type}})</b>
+        at <u>{{episode.symptoms.eyes.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftArm)">
+        <b>Left Arm ({{episode.symptoms.leftArm.type}})</b>
+        at <u>{{episode.symptoms.leftArm.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftHand)">
+        <b>Left Hand ({{episode.symptoms.leftHand.type}})</b>
+        at <u>{{episode.symptoms.leftHand.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}})</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.leftLeg)">
+        <b>Left Leg ({{episode.symptoms.leftLeg.type}})</b>
+        at <u>{{episode.symptoms.leftLeg.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightArm)">
+        <b>Right Arm ({{episode.symptoms.rightArm.type}})</b>
+        at <u>{{episode.symptoms.rightArm.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightHand)">
+        <b>Right Hand ({{episode.symptoms.rightHand.type}})</b>
+        at <u>{{episode.symptoms.rightHand.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.rightLeg)">
+        <b>Right Leg ({{episode.symptoms.rightLeg.type}})</b>
+        at <u>{{episode.symptoms.rightLeg.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.fullBody)">
+        <b>Full Body ({{episode.symptoms.fullBody.type}})</b>
+        at <u>{{episode.symptoms.fullBody.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}})</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.seizure) &&
+                episode.symptoms.seizure.present">
+        <b>Seizure</b>
+        at <u>{{episode.symptoms.seizure.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.lossOfConsciousness) &&
+                episode.symptoms.lossOfConsciousness.present">
+        <b>Loss of Consciousness</b>
+        at <u>{{episode.symptoms.lossOfConsciousness.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.apnea_breathing) &&
+                episode.symptoms.apnea_breathing.present">
+        <b>Apnea/Breathing</b>
+        at <u>{{episode.symptoms.apnea_breathing.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.autonomic_dysfunction)">
+        <b>Autonomic Dysfunction</b>
+        at <u>{{episode.symptoms.autonomic_dysfunction.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.swallowing_choking)">
+        <b>Swallowing/Chocking</b>
+        at <u>{{episode.symptoms.swallowing_choking.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.chorea_tremors)">
+        <b>Chorea/Tremors</b>
+        at <u>{{episode.symptoms.chorea_tremors.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
     </div>
-    <div *ngIf="!loadingMeds && rescueMeds.length > 0">
-      <h4>Rescue Medications</h4>
-      <ol>
-        <li *ngFor="let rescueMed of rescueMeds" [class]="(rescueMed.archived)? 'archived-med' : ''">
-          <b>{{rescueMed.name}}</b>
-          <i>({{rescueMedsDosesAndTimes[rescueMed.id].doseInfo.amount}}
-            {{rescueMedsDosesAndTimes[rescueMed.id].doseInfo.unit}})</i> at
-          <u>{{rescueMedsDosesAndTimes[rescueMed.id].time | date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
-          {{(rescueMed.archived)? "(Archived)" : ""}}
-        </li>
-      </ol>
+    <div *ngIf="episode.behavior">
+      <h3><strong>Other Behaviors</strong></h3>
+      <p>{{episode.behavior}}</p>
     </div>
-  </div>
+    <h3><strong>Triggers</strong></h3>
+    <p>Known Triggers: {{episode.knownTriggers? episode.knownTriggers : ""}}</p>
+    <p>Other Triggers: {{episode.otherTrigger? episode.otherTrigger : ""}}</p>
+    <p>Notes: {{episode.notes? episode.notes : ""}}</p>
+    <div *ngIf="episode.medications">
+      <h3><strong>Medications</strong></h3>
+      <div *ngIf="episode.medications.prescriptionMeds">
+        <h4><strong>Prescription Medications</strong></h4>
+        <ol>
+          <li *ngFor="let prescriptionMed of episode.medications.prescriptionMeds">
+            {{prescriptionMed.name}}, {{prescriptionMed.doseInfo.amount}} {{prescriptionMed.doseInfo.unit}}
+          </li>
+        </ol>
+      </div>
+      <div *ngIf="!loadingMeds && rescueMeds.length > 0">
+        <h4><strong>Rescue Medications</strong></h4>
+        <ol>
+          <li *ngFor="let rescueMed of rescueMeds" [class]="(rescueMed.archived)? 'archived-med' : ''">
+            <b>{{rescueMed.name}}</b>
+            <i>({{rescueMedsDosesAndTimes[rescueMed.id].doseInfo.amount}}
+              {{rescueMedsDosesAndTimes[rescueMed.id].doseInfo.unit}})</i> at
+            <u>{{rescueMedsDosesAndTimes[rescueMed.id].time | date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+            {{(rescueMed.archived)? "(Archived)" : ""}}
+          </li>
+        </ol>
+      </div>
+    </div>
+  </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="close()">Close</button>

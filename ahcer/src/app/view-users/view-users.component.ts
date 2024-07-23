@@ -10,12 +10,14 @@ import { MatDialog } from '@angular/material/dialog';
 export class ViewUsersComponent {
   children: any[]
   loading: boolean = false;
+  isAdmin:boolean=false
   constructor(
     private dialog: MatDialog,
-    public userService: UsersService,
+    private userService: UsersService,
   ) { }
   ngOnInit(): void {
     if (this.userService.isAdmin) {
+      this.isAdmin=true
       this.loadAllChildrens()
     } else {
       this.loadChildrens();

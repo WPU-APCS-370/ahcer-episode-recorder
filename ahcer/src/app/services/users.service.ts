@@ -84,6 +84,9 @@ export class UsersService {
     )
   }
 
+
+
+
   getUserVideos(): Observable<any> {
     return this.userId$.pipe(
       switchMap(resUserId =>
@@ -146,7 +149,7 @@ export class UsersService {
     return this.afAuth.signInWithEmailAndPassword(email, password)
   }
 
-  public get isAdmin() {
+  get isAdmin() {
     if (localStorage.getItem('user')) {
       const data = JSON.parse(localStorage.getItem('user'));
       return data ? data.isAdmin : false;

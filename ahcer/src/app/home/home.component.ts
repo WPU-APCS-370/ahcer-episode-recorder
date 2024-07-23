@@ -9,6 +9,9 @@ import { EditEpisodeComponent } from "../edit-episode/edit-episode.component";
 import { PatientServices } from "../services/patient.service";
 import { UsersService } from "../services/users.service";
 import { DeleteEpisodeComponent } from "../delete-episode/delete-episode.component";
+import firebase from "firebase/compat/app";
+import Timestamp = firebase.firestore.Timestamp;
+import { FreeDay } from '../models/freeday.enum';
 
 @Component({
   selector: 'app-home',
@@ -25,11 +28,18 @@ export class HomeComponent implements OnInit {
   episodes_count: number;
   records$: Observable<any[]>;
 
+  get NO_EPISODE_TODAY(){
+    return FreeDay.NO_EPISODE_TODAY.toString();
+  }
+
+  get OFF_DAY(){
+    return FreeDay.OFF_DAY.toString();
+  }
 
   constructor(private episodeService: EpisodeService,
     private dialog: MatDialog,
     private patientsService: PatientServices,
-    private usersService: UsersService) {
+    public usersService: UsersService) {
 
   }
 
@@ -38,7 +48,6 @@ export class HomeComponent implements OnInit {
     if (this.usersService.isAdmin) {
       this.records$ = this.patientsService.getAllRecords();
       this.records$.subscribe(records => {
-        console.log('All records:', records);
         this.patients = records
       });
       this.getLastViewd()
@@ -47,29 +56,53 @@ export class HomeComponent implements OnInit {
 
       this.patientsService.getPatients().subscribe(
         patients => {
-          console.log(patients);
           this.patients = patients
         }
       )
       this.getLastViewd()
     }
 
+this.patientsService.requestPermission()
 
 
   }
 
-  // getLastViewdAdmin(patients: any) {
-  //   let patientId = patients[0].id
-  //   let userId = patients[0].userId
-  //   if (patientId) {
-  //     this.loading = true;
-  //     this.loadPatient(patientId, userId);
-  //     this.loadEpisodes(patientId, userId);
-  //   } else {
-  //     this.loadingPatient = false;
-  //   }
-  // }
+  freeday(day: FreeDay): void {
+    const currentDate = Timestamp.fromDate(new Date());
+    const freeday: any = {
+      status: day,
+      startTime: currentDate,
+      endTime: currentDate
+    };
 
+    this.episodeService.getAllEpisodesByPatient(this.currentPatient.id,'desc').subscribe({
+      next: (episodes: any[]) => {
+        const dayExists = episodes.some(episode => {
+          const episodeDate = episode.startTime.toDate();
+          const currentDayDate = currentDate.toDate();
+
+          return episode.status == day && episodeDate.getDate() == currentDayDate.getDate();
+        });
+
+        if (dayExists) {
+          alert(`${day} has already been added.`);
+        } else {
+          this.episodeService.createEpisode(this.currentPatient.id, freeday).subscribe({
+            next: () => {
+              console.log(`${day} added successfully`);
+              this.loadEpisodes(this.currentPatient.id,this.currentPatient.userId);
+            },
+            error: (err) => {
+              console.error('Error creating freeday:', err);
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error loading episodes:', err);
+      }
+    });
+  }
 
   getLastViewd() {
     this.usersService.getLastViewedPatient().subscribe(
@@ -140,7 +173,6 @@ export class HomeComponent implements OnInit {
     let patientId = patient.id
     let userId = patient.userId
     this.usersService.changeLastViewedPatient(patientId, userId)
-
       .subscribe(() => {
         this.loadPatient(patientId, userId)
       })

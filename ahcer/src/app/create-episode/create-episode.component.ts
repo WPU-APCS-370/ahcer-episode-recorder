@@ -14,6 +14,7 @@ import {Medication} from "../models/medication";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {CreateMedicationComponent} from "../create-medication/create-medication.component";
 import {ErrorStateMatcher} from "@angular/material/core";
+import { FreeDay } from '../models/freeday.enum';
 
 export class formGroupErrorMatcher implements ErrorStateMatcher {
   isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null) {
@@ -41,6 +42,7 @@ export class CreateEpisodeComponent implements OnInit{
   rescueMedications: Medication[] = [];
   prescriptionMeds: Medication[] = [];
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
+  FreeDay = FreeDay;
 
   episodeForm =this.fb.group({
     startTime: [null, Validators.required],
@@ -360,6 +362,7 @@ export class CreateEpisodeComponent implements OnInit{
       medications['rescueMeds'] = rescueMeds;
 
     const newEpisode: Partial<Episode> = {
+      status:FreeDay.RECORDED,
       symptoms: symptoms,
       otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,

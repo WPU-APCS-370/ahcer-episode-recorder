@@ -1,9 +1,22 @@
 <div class="patients-panel">
   <h2 class="header" *ngIf="!loadingPatient && currentPatient">
     {{ currentPatient.firstName }} {{ currentPatient.lastName }}
-    <div class="button-container">
-      <button mat-fab aria-label="Add an episode" routerLink="/record-episode">
-        <mat-icon>add</mat-icon>
+    <div class="button-container" *ngIf="!this.usersService.isAdmin">
+      <button matTooltip="New recording"
+       mat-fab class="bg-red" aria-label="Add an episode" routerLink="/record-episode">
+        <!-- <mat-icon>add</mat-icon> --><strong>E</strong>
+      </button>
+      <button
+      (click)="freeday(OFF_DAY)"
+      [matTooltip]="OFF_DAY"
+       mat-fab class="bg-yellow" aria-label="Add an episode" >
+        <strong>OD</strong>
+      </button>
+      <button
+      (click)="freeday(NO_EPISODE_TODAY)"
+       [matTooltip]="NO_EPISODE_TODAY"
+       mat-fab class="bg-green" aria-label="Add an episode" >
+        <strong>NE</strong>
       </button>
     </div>
   </h2>
@@ -14,7 +27,7 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-form-field appearance="fill" *ngIf="patients && patients.length > 1">
+  <mat-form-field style="width: 100%;" appearance="fill" *ngIf="(patients && patients.length > 1) || (this.usersService.isAdmin && patients && patients.length >= 1)">
     <mat-label>Choose a different patient</mat-label>
     <mat-select (selectionChange)="changePatient($event.value)">
       <mat-option *ngFor="let patient of patients" [value]="patient">{{
@@ -55,7 +68,7 @@
         <button mat-icon-button (click)="onViewDetails(element)">
           <mat-icon>visibility</mat-icon>
         </button>
-        <button mat-icon-button (click)="editEpisode(element)">
+        <button mat-icon-button (click)="editEpisode(element)" *ngIf="element.status != OFF_DAY && element.status != NO_EPISODE_TODAY">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button (click)="deleteEpisode(element)" color="warn">
@@ -73,6 +86,6 @@
     </button>
   </div>
   <div *ngIf="episodes_count === 0">
-    No episodes found. Please enter one with the '+' button above.
+    No episodes found. Please enter one with the 'E' button above.
   </div>
 </div>

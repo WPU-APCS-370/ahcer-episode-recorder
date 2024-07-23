@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Episode} from "../models/episode";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
+import { FreeDay } from '../models/freeday.enum';
 
 @Component({
   selector: 'app-view-episode',
@@ -60,5 +61,13 @@ export class ViewEpisodeComponent implements OnInit {
 
   jsonObjectIsEmpty(object: Object) {
     return !object || (Object.keys(object).length <=0);
+  }
+
+  get NO_EPISODE_TODAY(){
+    return FreeDay.NO_EPISODE_TODAY.toString();
+  }
+
+  get OFF_DAY(){
+    return FreeDay.OFF_DAY.toString();
   }
 }

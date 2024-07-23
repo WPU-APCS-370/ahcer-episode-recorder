@@ -25,14 +25,16 @@ export class ViewVideoComponent {
   public fileUploading: boolean = false;
   public fileUploadMessage: string = '';
   public fileUploadError: string = '';
+  isAdmin:boolean=false
 
   constructor(private dialog: MatDialog,
     private patientService: PatientServices,
-    public userService: UsersService,
+    private userService: UsersService,
     private storage: AngularFireStorage
   ) { }
   ngOnInit(): void {
     if (this.userService.isAdmin) {
+      this.isAdmin=true
       this.loadAllVideos()
     } else {
       this.loadVideos();

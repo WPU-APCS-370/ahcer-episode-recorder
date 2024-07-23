@@ -20,6 +20,7 @@ export interface Episode {
   id: string,
   startTime?: Timestamp,
   endTime?: Timestamp,
+  status?:string,
   otherMedication?: string,
   otherTrigger?: string,
   knownTriggers?: [string],

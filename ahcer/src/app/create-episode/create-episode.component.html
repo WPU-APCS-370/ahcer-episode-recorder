@@ -2,7 +2,11 @@
   <div *ngIf="!loadingPatient">
     <h1>Record a New Episode for {{patient.firstName}} {{patient.lastName}}</h1>
 
-    <form [formGroup]="episodeForm">
+    <button *ngIf="!patient.firstName" matTooltip="Add new patient"
+      mat-fab  aria-label="Add new patient" routerLink="/add-patient">
+     <mat-icon>add</mat-icon>
+    </button>
+    <form *ngIf="patient.firstName" [formGroup]="episodeForm">
       <mat-form-field appearance="outline">
         <mat-label>Start Time</mat-label>
         <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
