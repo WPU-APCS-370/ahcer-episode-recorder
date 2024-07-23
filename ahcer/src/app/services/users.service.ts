@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { first, from, map, Observable, switchMap } from "rxjs";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {AngularFireAuth} from "@angular/fire/compat/auth";
-import {convertOneSnap } from "./data-utils";
-import {User} from "../models/user";
-import {Router} from "@angular/router";
+import { first, forkJoin, from, map, Observable, switchMap } from "rxjs";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { convertOneSnap, convertSnaps } from "./data-utils";
+import { User } from "../models/user";
+import { Router } from "@angular/router";
 import { environment } from 'src/environments/environment';
 import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword } from '@angular/fire/auth';
@@ -28,10 +28,10 @@ export class UsersService {
   ) {
     this.isLoggedIn$ = afAuth.authState.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
-    this.pictureUrl$ = afAuth.authState.pipe(map(user => user? user.photoURL : null));
-    this.newUserId$ = afAuth.authState.pipe(map(user => user? user.uid: null));
-    this.userId$ = this.getCurerntUser().pipe(map((user:any)=>{
-      return user ?user['parentId'] ?user['parentId'] :user.id : null
+    this.pictureUrl$ = afAuth.authState.pipe(map(user => user ? user.photoURL : null));
+    this.newUserId$ = afAuth.authState.pipe(map(user => user ? user.uid : null));
+    this.userId$ = this.getCurerntUser().pipe(map((user: any) => {
+      return user ? user['parentId'] ? user['parentId'] : user.id : null
     }));
   }
 
@@ -59,40 +59,48 @@ export class UsersService {
     return this.db.doc(`users/${userId}`).valueChanges();
   }
 
-  changeLastViewedPatient(patientId: string): Observable<any> {
+  changeLastViewedPatient(patientId: any, UserId?: any): Observable<any> {
     return this.userId$.pipe(
-      switchMap(userId =>
-        from(this.db.doc(`users/${userId}`).update({lastPatientViewed: patientId}))
-      ),
+      switchMap((userId:any)=> {
+        if(UserId){
+          return from(this.db.doc(`users/${userId}`).update({ lastPatientViewed: patientId,lastPatientViewdUserId: UserId }))
+        }
+        else{
+          return from(this.db.doc(`users/${userId}`).update({ lastPatientViewed: patientId }))
+        }
+      }),
       first()
-    )
+    );
+
   }
-  getLastViewedPatient(): Observable<string> {
+
+  getLastViewedPatient(UserId?: string): Observable<any> {
     return this.userId$.pipe(
       switchMap(userId =>
-        from(this.db.doc(`users/${userId}`).get())
+        from(this.db.doc(`users/${UserId ? UserId : userId}`).get())
       ),
       first(),
-      map(result => convertOneSnap<User>(result).lastPatientViewed)
+      map(result =>convertOneSnap<User>(result))
     )
   }
 
   getUserVideos(): Observable<any> {
     return this.userId$.pipe(
-      switchMap(resUserId => 
+      switchMap(resUserId =>
         this.db.doc(`users/${resUserId}`).get().pipe(
           map(snapshot => snapshot.data())
         )
       ),
       first()
     );
-  
+
   }
 
-  updateUserVideoArray(videos: any[]): Observable<any> {
+
+  updateUserVideoArray(videos: any[],UserId?:string): Observable<any> {
     return this.userId$.pipe(
       switchMap(userId =>
-        from(this.db.doc(`users/${userId}`).update({videos}))
+        from(this.db.doc(`users/${UserId ? UserId : userId}`).update({ videos }))
       ),
       first()
     )
@@ -104,14 +112,14 @@ export class UsersService {
     localStorage.removeItem('user')
   }
 
-  createUserByEmailPassword(email:string,password:string):Promise<any>{
+  createUserByEmailPassword(email: string, password: string): Promise<any> {
     const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     return createUserWithEmailAndPassword(detachedAuth, email, password)
   }
 
-  getUserChilds(parent_id: string){
-    return this.db.collection('users', ref => 
+  getUserChilds(parent_id: string) {
+    return this.db.collection('users', ref =>
       ref.where('parentId', '==', parent_id)
     ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
@@ -121,9 +129,31 @@ export class UsersService {
       }))
     );
   }
+  getAllUser() {
+    return this.db.collection('users', ref =>
+    ref.where('isRead', '==', true)).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data: {} = a.payload.doc.data();
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
 
-  loginWithEmail(email:string, password:string){
+
+
+  loginWithEmail(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
+  }
+
+  public get isAdmin() {
+    if (localStorage.getItem('user')) {
+      const data = JSON.parse(localStorage.getItem('user'));
+      return data ? data.isAdmin : false;
+    }
+    else {
+      return true;
+    }
   }
 
 }

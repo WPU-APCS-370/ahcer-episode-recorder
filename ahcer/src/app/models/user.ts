@@ -7,5 +7,6 @@ export interface User {
   emailAddress : string,
   id : string,
   lastPatientViewed: string,
-  videos: string[]
+  videos: string[],
+  lastPatientViewdUserId:string,
 }

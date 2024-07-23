@@ -28,28 +28,35 @@ export class DeletePatientComponent implements OnInit {
   }
 
   delete(): void {
-    this.patientService.deletePatient(this.patient.id)
-      .pipe(
-        switchMap(()=> this.usersService.getLastViewedPatient()),
-        switchMap(patientId => iif(() => (patientId == this.patient.id),
-                  this.patientService.getPatients(),
-                  of(null))),
-        switchMap(patients => iif(()=> patients!=null,
-                  this.usersService.changeLastViewedPatient(
-                    (patients.length>0)? patients[0].id : ""
-                  ),
-                  of(null))),
-        tap(() => {
-          console.log("Deleted patient: " + this.patient.firstName + " " + this.patient.lastName);
-          this.dialogRef.close(this.patient.id);
-        }),
-        catchError(err => {
-          console.log(err);
-          alert('could not delete patient.');
-          return throwError(err);
-        })
-      )
-      .subscribe()
-  }
+if(this.usersService.isAdmin){
+  this.patientService.deletePatient(this.patient.id,this.patient.userId).subscribe()
+  this.dialogRef.close(this.patient.id);
+}else{
+  this.patientService.deletePatient(this.patient.id,this.patient.userId)
+  .pipe(
+    switchMap(()=> this.usersService.getLastViewedPatient()),
+    switchMap(lastPatient => iif(() => (lastPatient.lastPatientViewed == this.patient.id),
+              this.patientService.getPatients(),
+              of(null))),
+    switchMap(patients => iif(()=> patients!=null,
+              this.usersService.changeLastViewedPatient(
+                (patients.length>0)? patients[0].id : ""
+              ),
+              of(null))),
+    tap(() => {
+      console.log("Deleted patient: " + this.patient.firstName + " " + this.patient.lastName);
+      this.dialogRef.close(this.patient.id);
+    }),
+    catchError(err => {
+      console.log(err);
+      alert('could not delete patient.');
+      return throwError(err);
+    })
+  )
+  .subscribe()
+}
+}
+
+
 
 }

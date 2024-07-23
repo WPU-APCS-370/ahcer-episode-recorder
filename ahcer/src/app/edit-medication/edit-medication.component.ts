@@ -56,7 +56,7 @@ export class EditMedicationComponent implements OnInit {
     }
 
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId=> this.medicationService.updateMedication(patientId, this.medication.id, updatedMedication)),
+      switchMap(lastPatient=> this.medicationService.updateMedication(lastPatient.lastPatientViewed, this.medication.id, updatedMedication,lastPatient.lastPatientViewdUserId)),
       first()
     ).subscribe(() => {
       this.dialogRef.close(updatedMedication);

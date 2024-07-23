@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {EpisodeService} from "../services/episode.service";
-import {finalize} from "rxjs";
-import {Episode} from "../models/episode";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ViewEpisodeComponent} from "../view-episode/view-episode.component";
-import {Patient} from "../models/patient";
-import {EditEpisodeComponent} from "../edit-episode/edit-episode.component";
-import {PatientServices} from "../services/patient.service";
-import {UsersService} from "../services/users.service";
-import {DeleteEpisodeComponent} from "../delete-episode/delete-episode.component";
+import { EpisodeService } from "../services/episode.service";
+import { finalize, Observable } from "rxjs";
+import { Episode } from "../models/episode";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { ViewEpisodeComponent } from "../view-episode/view-episode.component";
+import { Patient } from "../models/patient";
+import { EditEpisodeComponent } from "../edit-episode/edit-episode.component";
+import { PatientServices } from "../services/patient.service";
+import { UsersService } from "../services/users.service";
+import { DeleteEpisodeComponent } from "../delete-episode/delete-episode.component";
 
 @Component({
   selector: 'app-home',
@@ -21,36 +21,72 @@ export class HomeComponent implements OnInit {
   loadingPatient: boolean = false;
   episodes: Episode[];
   patients: Patient[];
-  currentPatient : Patient;
+  currentPatient: Patient;
   episodes_count: number;
+  records$: Observable<any[]>;
+
 
   constructor(private episodeService: EpisodeService,
-              private dialog: MatDialog,
-              private patientsService: PatientServices,
-              private usersService: UsersService) { }
+    private dialog: MatDialog,
+    private patientsService: PatientServices,
+    private usersService: UsersService) {
+
+  }
 
   ngOnInit(): void {
     this.loadingPatient = true;
+    if (this.usersService.isAdmin) {
+      this.records$ = this.patientsService.getAllRecords();
+      this.records$.subscribe(records => {
+        console.log('All records:', records);
+        this.patients = records
+      });
+      this.getLastViewd()
 
-    this.patientsService.getPatients().subscribe(
-      patients => {this.patients = patients}
-    )
+    } else {
+
+      this.patientsService.getPatients().subscribe(
+        patients => {
+          console.log(patients);
+          this.patients = patients
+        }
+      )
+      this.getLastViewd()
+    }
+
+
+
+  }
+
+  // getLastViewdAdmin(patients: any) {
+  //   let patientId = patients[0].id
+  //   let userId = patients[0].userId
+  //   if (patientId) {
+  //     this.loading = true;
+  //     this.loadPatient(patientId, userId);
+  //     this.loadEpisodes(patientId, userId);
+  //   } else {
+  //     this.loadingPatient = false;
+  //   }
+  // }
+
+
+  getLastViewd() {
     this.usersService.getLastViewedPatient().subscribe(
-      (patientId)  => {
-        if(patientId) {
+      (lastPatient) => {
+        if (lastPatient) {
           this.loading = true;
-          this.loadPatient(patientId);
-          this.loadEpisodes(patientId);
+          this.loadPatient(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
+          this.loadEpisodes(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
         }
         else {
           this.loadingPatient = false;
         }
       })
-
   }
 
-  loadEpisodes(patientId: string) {
-    this.episodeService.getLastFiveEpisodesByPatient(patientId, 'desc')
+  loadEpisodes(patientId: string, userId?: any) {
+    this.episodeService.getLastFiveEpisodesByPatient(patientId, 'desc', userId)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -58,24 +94,24 @@ export class HomeComponent implements OnInit {
         })
       )
       .subscribe(
-        episodes => {this.episodes = episodes}
+        episodes => { this.episodes = episodes }
       );
   }
 
-  onViewDetails(episode:Episode) {
+  onViewDetails(episode: Episode) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
-
-    dialogConfig.data = [episode, this.currentPatient.id];
+    let uid = this.usersService.isAdmin ? this.currentPatient.userId : null;
+    dialogConfig.data = [episode, this.currentPatient.id,uid];
     this.dialog
       .open(ViewEpisodeComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
         if (val) {
-         // this.loadPatients()
+          // this.loadPatients()
         }
       });
 
@@ -88,50 +124,56 @@ export class HomeComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
-
-    dialogConfig.data = [episode, this.currentPatient.id];
+    let uid = this.usersService.isAdmin ? this.currentPatient.userId : null;
+    dialogConfig.data = [episode, this.currentPatient.id, uid];
 
     this.dialog
       .open(EditEpisodeComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
         if (val)
-          this.loadEpisodes(this.currentPatient.id)
+          this.loadEpisodes(this.currentPatient.id, this.currentPatient.userId)
       });
   }
 
-  changePatient(patientId: string) {
-    this.usersService.changeLastViewedPatient(patientId)
-      .subscribe(()=> {
-        this.loadPatient(patientId)
+  changePatient(patient: any) {
+    let patientId = patient.id
+    let userId = patient.userId
+    this.usersService.changeLastViewedPatient(patientId, userId)
+
+      .subscribe(() => {
+        this.loadPatient(patientId, userId)
       })
   }
 
-  loadPatient(patientId: string) {
-    this.patientsService.getPatientById(patientId)
+  loadPatient(patientId: string, userId?: string) {
+    this.patientsService.getPatientById(patientId, userId)
       .pipe(
-        finalize(()=> this.loadingPatient = false)
+        finalize(() => this.loadingPatient = false)
       )
       .subscribe(patient => {
         this.currentPatient = patient;
-        this.loadEpisodes(patientId);
+        this.currentPatient.userId = userId
+        console.log(this.currentPatient);
+
+        this.loadEpisodes(patientId, userId);
       })
   }
 
-  deleteEpisode(episode: Episode){
+  deleteEpisode(episode: Episode) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
     dialogConfig.minWidth = '350px';
 
-    dialogConfig.data = episode;
+    dialogConfig.data = [episode, this.currentPatient.id,this.currentPatient.userId];
     this.dialog
       .open(DeleteEpisodeComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
         if (val) {
-          this.loadEpisodes(this.currentPatient.id)
+          this.loadEpisodes(this.currentPatient.id, this.currentPatient.userId)
         }
       });
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from "@angular/router";
-import {AngularFireAuth} from "@angular/fire/compat/auth";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
+import { Router } from "@angular/router";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
 // import { Authentication, GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Observable, from } from 'rxjs';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
@@ -26,11 +26,11 @@ export class LoginComponent implements OnInit {
     private db: AngularFirestore,
     private fb: FormBuilder,
     private userService: UsersService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  userForm =this.fb.group({
+  userForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required]
   });
@@ -40,37 +40,46 @@ export class LoginComponent implements OnInit {
       let uid = cred.auth().currentUser.uid;
       this.db.firestore.doc(`users/${uid}`)
         .get()
-        .then((doc)=> {
+        .then((doc) => {
           const data = doc.data();
-          localStorage.setItem('user', JSON.stringify(data))
-          return !doc.exists ?
-            this.db.collection(`users`).doc(uid).set({}) :
-            null;
+          if (!doc.exists) {
+            let obj = {
+              email: cred.auth().currentUser.email,
+              isParent: true,
+              password: '',
+              username: cred.auth().currentUser.displayName || ''
+            };
+            this.db.collection(`users`).doc(uid).set(obj);
+            localStorage.setItem('user', JSON.stringify(obj))
+          }
+          else {
+            localStorage.setItem('user', JSON.stringify(data))
+          }
+          this.router.navigateByUrl('/')
         });
     });
-    this.router.navigateByUrl('/')
   }
 
 
-  emailLogin(){
+  emailLogin() {
     const val = this.userForm.getRawValue();
 
-    this.userService.loginWithEmail(val.email, val.password).then((res)=>{
+    this.userService.loginWithEmail(val.email, val.password).then((res) => {
       this.onLoginSuccessful();
-    }).catch((error)=>{
+    }).catch((error) => {
       this.signInError = error;
       setTimeout(() => {
         this.signInError = '';
       }, 5000);
-        console.log(error);
+      console.log(error);
     })
   }
 
-  toggleEmailClicked(){
+  toggleEmailClicked() {
     this.signInClicked = !this.signInClicked
   }
 
-  signInWithEmail(){
+  signInWithEmail() {
     const val = this.userForm.value;
     // const newUserBody: {email:string,password:string} = {
     //   email: val.email,

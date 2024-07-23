@@ -30,7 +30,7 @@ export class DeleteMedicationComponent implements OnInit {
 
   delete(): void {
     this.userService.getLastViewedPatient().pipe(
-      switchMap((patientId) => this.medicationService.archiveMedication(patientId, this.medication.id)),
+      switchMap((lastPatient) => this.medicationService.archiveMedication(lastPatient.lastPatientViewed, this.medication.id,lastPatient.lastPatientViewdUserId)),
       tap(() => {
         console.log("Deleted medication for: " + this.medication);
         this.dialogRef.close(this.medication);

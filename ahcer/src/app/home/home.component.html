@@ -1,13 +1,15 @@
 <div class="patients-panel">
   <h2 class="header" *ngIf="!loadingPatient && currentPatient">
-    {{currentPatient.firstName}} {{currentPatient.lastName}}
+    {{ currentPatient.firstName }} {{ currentPatient.lastName }}
     <div class="button-container">
       <button mat-fab aria-label="Add an episode" routerLink="/record-episode">
         <mat-icon>add</mat-icon>
       </button>
     </div>
   </h2>
-  <p *ngIf="!loadingPatient && !currentPatient">No patients found. Please add one.</p>
+  <p *ngIf="!loadingPatient && !currentPatient">
+    No patients found. Please add one.
+  </p>
   <div class="spinner-container" *ngIf="loadingPatient || loading">
     <mat-spinner></mat-spinner>
   </div>
@@ -15,25 +17,35 @@
   <mat-form-field appearance="fill" *ngIf="patients && patients.length > 1">
     <mat-label>Choose a different patient</mat-label>
     <mat-select (selectionChange)="changePatient($event.value)">
-      <mat-option *ngFor="let patient of patients" [value]="patient.id">{{patient.firstName}}</mat-option>
+      <mat-option *ngFor="let patient of patients" [value]="patient">{{
+        patient.firstName
+      }}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <table mat-table [dataSource]="episodes" *ngIf="episodes_count > 0" class="mat-elevation-z8">
-
+  <table
+    mat-table
+    [dataSource]="episodes"
+    *ngIf="episodes_count > 0"
+    class="mat-elevation-z8"
+  >
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
     <!-- Position Column -->
     <ng-container matColumnDef="startTime">
-      <th mat-header-cell *matHeaderCellDef> Start Date </th>
-      <td mat-cell *matCellDef="let element"> {{element.startTime?.toDate()| date: 'MM/dd/yyyy'}} </td>
+      <th mat-header-cell *matHeaderCellDef>Start Date</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.startTime?.toDate() | date : "MM/dd/yyyy" }}
+      </td>
     </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="endTime">
-      <th mat-header-cell *matHeaderCellDef> End Date </th>
-      <td mat-cell *matCellDef="let element"> {{element.endTime?.toDate()| date: 'MM/dd/yyyy'}} </td>
+      <th mat-header-cell *matHeaderCellDef>End Date</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.endTime?.toDate() | date : "MM/dd/yyyy" }}
+      </td>
     </ng-container>
 
     <!-- Weight Column -->
@@ -53,10 +65,14 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
   <div *ngIf="episodes_count > 0" class="episode-button-container">
-    <button mat-raised-button color="primary" routerLink="/episodes">View More</button>
+    <button mat-raised-button color="primary" routerLink="/episodes">
+      View More
+    </button>
   </div>
-  <div *ngIf="episodes_count === 0">No episodes found. Please enter one with the '+' button above.</div>
+  <div *ngIf="episodes_count === 0">
+    No episodes found. Please enter one with the '+' button above.
+  </div>
 </div>

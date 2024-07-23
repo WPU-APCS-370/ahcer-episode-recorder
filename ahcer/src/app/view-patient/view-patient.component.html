@@ -58,7 +58,7 @@
   </mat-card-actions>
 
 </mat-card>
-  <div *ngIf="!loading">
+  <div *ngIf="!loading && !isAdmin">
   Add New Patient <button mat-mini-fab color="accent" routerLink="/add-patient">
   <mat-icon class="add-patient-btn">add</mat-icon>
 </button>

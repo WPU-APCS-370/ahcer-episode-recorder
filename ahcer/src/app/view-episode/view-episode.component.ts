@@ -12,15 +12,17 @@ import {Medication} from "../models/medication";
 export class ViewEpisodeComponent implements OnInit {
   episode: Episode;
   patientId: string;
+  userId:string;
   rescueMeds: Medication[]=[];
   rescueMedsDosesAndTimes: Object={};
   loadingMeds: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
+  constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId,userId]: [Episode, string,string],
               private dialogRef: MatDialogRef<ViewEpisodeComponent>,
               private medicationService: MedicationService) {
     this.episode = episode;
     this.patientId = patientId;
+    this.userId=userId
     this.loadRescueMeds()
   }
 
@@ -42,7 +44,7 @@ export class ViewEpisodeComponent implements OnInit {
           this.rescueMedsDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
         }
         this.medicationService.getMedicationsByIds(this.patientId,
-          medications.rescueMeds.map((x)=> x.id))
+          medications.rescueMeds.map((x)=> x.id),false,this.userId)
           .subscribe({
             next: (rescueMeds)=> {
               this.rescueMeds = this.rescueMeds.concat(rescueMeds)

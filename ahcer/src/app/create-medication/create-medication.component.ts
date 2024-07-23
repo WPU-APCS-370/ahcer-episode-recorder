@@ -53,7 +53,7 @@ export class CreateMedicationComponent implements OnInit {
     }
 
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId=> this.medicationService.createMedication(patientId, newMedication)),
+      switchMap(lastPatient=> this.medicationService.createMedication(lastPatient.lastPatientViewed, newMedication,lastPatient.lastPatientViewdUserId)),
       first(),
       tap((res) => this.dialogRef.close(res)),
       catchError(err => {

@@ -1,14 +1,14 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
-import {Episode} from "../models/episode";
-import {EpisodeService} from "../services/episode.service";
-import {MedicationService} from "../services/medication.service";
-import {Medication} from "../models/medication";
-import {CreateMedicationComponent} from "../create-medication/create-medication.component";
-import {formGroupErrorMatcher} from "../create-episode/create-episode.component";
+import { Episode } from "../models/episode";
+import { EpisodeService } from "../services/episode.service";
+import { MedicationService } from "../services/medication.service";
+import { Medication } from "../models/medication";
+import { CreateMedicationComponent } from "../create-medication/create-medication.component";
+import { formGroupErrorMatcher } from "../create-episode/create-episode.component";
 
 @Component({
   selector: 'app-edit-episode',
@@ -17,7 +17,8 @@ import {formGroupErrorMatcher} from "../create-episode/create-episode.component"
 })
 export class EditEpisodeComponent implements OnInit {
   patientId: string;
-  episode : Episode;
+  episode: Episode;
+  userId: string
 
   rescueMedications: Medication[] = [];
   prescriptionMeds: any[] = [];
@@ -32,22 +33,22 @@ export class EditEpisodeComponent implements OnInit {
     "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
     "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"];
 
-  episodeForm : UntypedFormGroup;
+  episodeForm: UntypedFormGroup;
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
   public showAutonomicTextField: boolean = false;
 
 
   symptomGroup(episode: Episode): UntypedFormGroup {
     let controls = {}
-    for(let index in this.symptomLabels) {
+    for (let index in this.symptomLabels) {
       let label = this.symptomLabels[index];
-      if(episode.symptoms && Object.keys(episode.symptoms[this.symptomKeys[index]]).length > 0) {
-        if(label!="Loss of Consciousness" && label!="Seizure" && label !=="Apnea/Breathing") {
+      if (episode.symptoms && Object.keys(episode.symptoms[this.symptomKeys[index]]).length > 0) {
+        if (label != "Loss of Consciousness" && label != "Seizure" && label !== "Apnea/Breathing") {
           controls[label + ' Checkbox'] = true;
-          if (label=="Swallowing/Choking" || label=="Chorea/Tremors") {
+          if (label == "Swallowing/Choking" || label == "Chorea/Tremors") {
             controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
-          }else{
-            if (label=="Autonomic Dysfunction") {
+          } else {
+            if (label == "Autonomic Dysfunction") {
               if (episode.symptoms[this.symptomKeys[index]]['type'] === 'other') {
                 this.showAutonomicTextField = true;
               }
@@ -63,11 +64,11 @@ export class EditEpisodeComponent implements OnInit {
       }
       else {
         controls[label + ' Checkbox'] = false;
-        if(label!="Loss of Consciousness" && label!="Seizure")
+        if (label != "Loss of Consciousness" && label != "Seizure")
           controls[label + ' Dropdown'] = [''];
         controls[label + ' Time'] = [null];
       }
-    }    
+    }
     // let options = {
     //   validators: (formGroup: UntypedFormGroup) => {
     //     let checked = 0;
@@ -106,22 +107,22 @@ export class EditEpisodeComponent implements OnInit {
   rescueMedGroup(episode: Episode): UntypedFormGroup {
     let controls = {}
     let rescueMedDosesAndTimes = {};
-    if(this.episode.medications && Object.keys(this.episode.medications).length > 0) {
+    if (this.episode.medications && Object.keys(this.episode.medications).length > 0) {
       let medications = episode.medications;
       if (medications.rescueMeds) {
         for (let med of medications.rescueMeds) {
-          rescueMedDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
+          rescueMedDosesAndTimes[med.id] = { doseInfo: med.doseInfo, time: med.time.toDate() };
         }
       }
     }
 
-    for(let i=0; i < this.rescueMedications.length; i++) {
+    for (let i = 0; i < this.rescueMedications.length; i++) {
       let medication = this.rescueMedications[i];
-      if(medication.id in rescueMedDosesAndTimes) {
-        controls['med-'+i+'-checkbox'] = true;
-        controls['med-'+i+'-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
-        controls['med-'+i+'-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
-        controls['med-'+i+'-time'] = [rescueMedDosesAndTimes[medication.id].time];
+      if (medication.id in rescueMedDosesAndTimes) {
+        controls['med-' + i + '-checkbox'] = true;
+        controls['med-' + i + '-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
+        controls['med-' + i + '-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
+        controls['med-' + i + '-time'] = [rescueMedDosesAndTimes[medication.id].time];
       }
       else {
         controls['med-' + i + '-checkbox'] = false;
@@ -130,13 +131,13 @@ export class EditEpisodeComponent implements OnInit {
         controls['med-' + i + '-time'] = null;
       }
     }
-    for(let i=0; i < this.archivedRescueMeds.length; i++) {
+    for (let i = 0; i < this.archivedRescueMeds.length; i++) {
       let medication = this.archivedRescueMeds[i];
       let controlIndex = i + this.rescueMedications.length;
-      controls['med-'+controlIndex+'-checkbox'] = true;
-      controls['med-'+controlIndex+'-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
-      controls['med-'+controlIndex+'-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
-      controls['med-'+controlIndex+'-time'] = [rescueMedDosesAndTimes[medication.id].time];
+      controls['med-' + controlIndex + '-checkbox'] = true;
+      controls['med-' + controlIndex + '-dose-amount'] = [rescueMedDosesAndTimes[medication.id].doseInfo.amount];
+      controls['med-' + controlIndex + '-dose-unit'] = [rescueMedDosesAndTimes[medication.id].doseInfo.unit];
+      controls['med-' + controlIndex + '-time'] = [rescueMedDosesAndTimes[medication.id].time];
 
     }
     let options = {
@@ -146,11 +147,10 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   rescueMedsValidator() {
-    return (formGroup: UntypedFormGroup) =>
-    {
+    return (formGroup: UntypedFormGroup) => {
       let checked = 0;
       let errors = {};
-      for (let i=0; i < this.rescueMedications.length; i++) {
+      for (let i = 0; i < this.rescueMedications.length; i++) {
         let checkbox = formGroup.controls['med-' + i + '-checkbox']
         let checkboxChecked = (checkbox?.value === true)
         let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
@@ -168,7 +168,7 @@ export class EditEpisodeComponent implements OnInit {
           requireCheckboxesToBeChecked: true
         };
       }
-      else if(Object.keys(errors).length > 0) {
+      else if (Object.keys(errors).length > 0) {
         return errors;
       }
 
@@ -178,7 +178,7 @@ export class EditEpisodeComponent implements OnInit {
 
   prescriptionMedGroup(): UntypedFormGroup {
     let controls = {};
-    for (let i=0; i < this.prescriptionMeds.length; i++) {
+    for (let i = 0; i < this.prescriptionMeds.length; i++) {
       controls[`med-${i}-name`] = [this.prescriptionMeds[i].name, Validators.required];
       controls[`med-${i}-dose-amount`] = [
         this.prescriptionMeds[i].doseInfo.amount,
@@ -211,20 +211,21 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   constructor(private dialogRef: MatDialogRef<EditEpisodeComponent>,
-              private fb: UntypedFormBuilder,
-              @Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
-              private episodeService: EpisodeService,
-              private medicationService: MedicationService,
-              private dialog: MatDialog) {
-    this.patientId = patientId;
+    private fb: UntypedFormBuilder,
+    @Inject(MAT_DIALOG_DATA) [episode, patient, userId]: [Episode, string, string],
+    private episodeService: EpisodeService,
+    private medicationService: MedicationService,
+    private dialog: MatDialog) {
+    this.patientId = patient;
+    this.userId = userId
     this.episode = episode;
-    
+
   }
 
   ngOnInit(): void {
-    if(this.episode.medications && this.episode.medications.prescriptionMeds) {
+    if (this.episode.medications && this.episode.medications.prescriptionMeds) {
       this.prescriptionMeds = [].concat(this.episode.medications.prescriptionMeds)
-        .sort((a,b) => (a.name<b.name)? -1: 1)
+        .sort((a, b) => (a.name < b.name) ? -1 : 1)
     }
 
     let triggerGroup = {
@@ -245,17 +246,17 @@ export class EditEpisodeComponent implements OnInit {
     }
 
     if (this.episode.knownTriggers && this.episode.knownTriggers[0]) {
-      for(let trigger of this.episode.knownTriggers) {
+      for (let trigger of this.episode.knownTriggers) {
         triggerGroup[trigger] = true;
       }
     }
-    if(this.episode.otherTrigger) {
+    if (this.episode.otherTrigger) {
       triggerGroup["additionalTriggers"] = this.episode.otherTrigger;
     }
 
-    this.episodeForm =this.fb.group({
+    this.episodeForm = this.fb.group({
       startTime: [this.episode.startTime.toDate(), Validators.required],
-      endTime: [(this.episode.endTime)? this.episode.endTime.toDate() : null],
+      endTime: [(this.episode.endTime) ? this.episode.endTime.toDate() : null],
       symptomGroup: this.symptomGroup(this.episode),
       trigger: Boolean((this.episode.knownTriggers && this.episode.knownTriggers[0]) ||
         this.episode.otherTrigger),
@@ -263,7 +264,7 @@ export class EditEpisodeComponent implements OnInit {
       rescueMedToggle: Boolean(this.episode.medications?.rescueMeds),
       rescueMedGroup: this.rescueMedGroup(this.episode),
       prescriptionMedGroup: this.prescriptionMedGroup(),
-      behavior: this.episode.behavior? this.episode.behavior: ""
+      behavior: this.episode.behavior ? this.episode.behavior : ""
     });
 
     this.loadRescueMeds();
@@ -272,43 +273,42 @@ export class EditEpisodeComponent implements OnInit {
 
   loadRescueMeds() {
     this.loadingRescueMeds = true;
-    this.medicationService.getMedicationsByType(this.patientId, true)
+    this.medicationService.getMedicationsByType(this.patientId,  true, false, false, this.userId)
       .subscribe(
-      medications => {
-        this.rescueMedications = medications;
-        this.episodeForm.removeControl("rescueMedGroup");
-        this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup(this.episode));
-        let medicationToggleInitiated: boolean =
-          (typeof this.episodeForm.value.medicationToggle != 'undefined')
-        let rescueMedicationPresent : boolean = medicationToggleInitiated?
-          this.episodeForm.value.medicationToggle :
-          Boolean(this.episode.medications?.rescueMeds);
+        medications => {
+          this.rescueMedications = medications;
+          this.episodeForm.removeControl("rescueMedGroup");
+          this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup(this.episode));
+          let medicationToggleInitiated: boolean =
+            (typeof this.episodeForm.value.medicationToggle != 'undefined')
+          let rescueMedicationPresent: boolean = medicationToggleInitiated ?
+            this.episodeForm.value.medicationToggle :
+            Boolean(this.episode.medications?.rescueMeds);
           this.onMedToggleChange(rescueMedicationPresent);
-        this.loadingRescueMeds = false;
-      }
-    )
+          this.loadingRescueMeds = false;
+        }
+      )
   }
 
   loadArchivedRescueMeds() {
-    if(this.episode.medications && Object.keys(this.episode.medications).length > 0)
-    {
+    if (this.episode.medications && Object.keys(this.episode.medications).length > 0) {
       let medications = this.episode.medications;
-      if(medications.rescueMeds) {
+      if (medications.rescueMeds) {
         this.loadingArchivedMeds = true;
         this.medicationService.getMedicationsByIds(this.patientId,
-          medications.rescueMeds.map((x)=> x.id),
+          medications.rescueMeds.map((x) => x.id),
           true)
           .subscribe({
-            next: (archivedMeds)=> {
+            next: (archivedMeds) => {
               this.archivedRescueMeds = this.archivedRescueMeds.concat(archivedMeds)
             },
             complete: () => {
-              this.archivedRescueMeds.sort((a, b) => ((a.name < b.name)? -1 : 1));
+              this.archivedRescueMeds.sort((a, b) => ((a.name < b.name) ? -1 : 1));
               this.episodeForm.removeControl("rescueMedGroup");
               this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup(this.episode));
               let medicationToggleInitiated: boolean =
                 (typeof this.episodeForm.value.medicationToggle != 'undefined')
-              let rescueMedicationPresent : boolean = medicationToggleInitiated?
+              let rescueMedicationPresent: boolean = medicationToggleInitiated ?
                 this.episodeForm.value.medicationToggle :
                 Boolean(this.episode.medications?.rescueMeds);
               this.onMedToggleChange(rescueMedicationPresent);
@@ -320,7 +320,7 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   onMedToggleChange(value: boolean) {
-    if(!value) {
+    if (!value) {
       this.episodeForm.get('rescueMedGroup').clearValidators();
       this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
@@ -337,7 +337,7 @@ export class EditEpisodeComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
 
-    dialogConfig.data = {isRescue: true};
+    dialogConfig.data = { isRescue: true };
 
     this.dialog
       .open(CreateMedicationComponent, dialogConfig)
@@ -356,9 +356,9 @@ export class EditEpisodeComponent implements OnInit {
   save(): void {
 
     const val = this.episodeForm.value;
-    let symptoms : Episode['symptoms']= {
+    let symptoms: Episode['symptoms'] = {
       seizure: {},
-      lossOfConsciousness:{},
+      lossOfConsciousness: {},
       fullBody: {},
       eyes: {},
       leftArm: {},
@@ -375,15 +375,15 @@ export class EditEpisodeComponent implements OnInit {
 
     for (let index in this.symptomKeys) {
       let symptom = {}
-      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
+      if (val.symptomGroup[this.symptomLabels[index] + ' Checkbox'] === true) {
         if (this.symptomKeys[index] != 'seizure' &&
-            this.symptomKeys[index] != 'lossOfConsciousness' &&
-            this.symptomKeys[index] !=="apnea_breathing"
+          this.symptomKeys[index] != 'lossOfConsciousness' &&
+          this.symptomKeys[index] !== "apnea_breathing"
         ) {
-          if (this.symptomKeys[index] =="swallowing_choking" || this.symptomKeys[index] =="chorea_tremors") {
+          if (this.symptomKeys[index] == "swallowing_choking" || this.symptomKeys[index] == "chorea_tremors") {
             symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
-          }else{
-            if (this.symptomKeys[index] =="autonomic_dysfunction") {
+          } else {
+            if (this.symptomKeys[index] == "autonomic_dysfunction") {
               symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
             }
             symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
@@ -392,7 +392,7 @@ export class EditEpisodeComponent implements OnInit {
         } else {
           symptom['present'] = true;
         }
-        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+        if (val.symptomGroup[this.symptomLabels[index] + ' Time'])
           symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time'])
         else
           symptom['time'] = Timestamp.fromDate(val.startTime);
@@ -400,14 +400,13 @@ export class EditEpisodeComponent implements OnInit {
       symptoms[this.symptomKeys[index]] = symptom;
     }
 
-    let triggers : [string] = ['']
+    let triggers: [string] = ['']
 
     if (val.trigger === true) {
       let firstValue = true;
       for (let key in val.triggerGroup) {
         if (val.triggerGroup[key] === true) {
-          if (firstValue)
-          {
+          if (firstValue) {
             triggers[0] = key;
             firstValue = false;
           }
@@ -419,15 +418,15 @@ export class EditEpisodeComponent implements OnInit {
 
     let rescueMeds = [];
 
-    for (let i=0; i< this.prescriptionMeds.length; i++) {
+    for (let i = 0; i < this.prescriptionMeds.length; i++) {
       this.prescriptionMeds[i].name = val.prescriptionMedGroup[`med-${i}-name`];
       this.prescriptionMeds[i].doseInfo.amount = val.prescriptionMedGroup[`med-${i}-dose-amount`];
       this.prescriptionMeds[i].doseInfo.unit = val.prescriptionMedGroup[`med-${i}-dose-unit`];
     }
 
     if (val.rescueMedToggle === true) {
-      for (let i=0; i < this.rescueMedications.length; i++) {
-        if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
+      for (let i = 0; i < this.rescueMedications.length; i++) {
+        if (val.rescueMedGroup['med-' + i + '-checkbox'] === true) {
           let medication = this.rescueMedications[i];
           let time: Timestamp;
           if (val.rescueMedGroup['med-' + i + '-time'])
@@ -455,27 +454,27 @@ export class EditEpisodeComponent implements OnInit {
 
     const updateEpisode: Partial<Episode> = {
       symptoms: symptoms,
-      otherMedication: (val.medication)? val.medicationGroup.additionalMedication : "",
-      otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
+      otherMedication: (val.medication) ? val.medicationGroup.additionalMedication : "",
+      otherTrigger: (val.trigger) ? val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,
       medications: medications,
-      behavior: val.behavior? val.behavior : ""
+      behavior: val.behavior ? val.behavior : ""
     };
 
     updateEpisode.startTime = Timestamp.fromDate(val.startTime);
-    if(val.endTime)
+    if (val.endTime)
       updateEpisode.endTime = Timestamp.fromDate(val.endTime);
-    
-    this.episodeService.updateEpisode(this.patientId, this.episode.id, updateEpisode)
+
+    this.episodeService.updateEpisode(this.patientId, this.episode.id, updateEpisode,this.userId)
       .subscribe(() => {
         this.dialogRef.close(updateEpisode);
-    });
+      });
   }
 
-  onAutonomicOtherClick(value:string){
+  onAutonomicOtherClick(value: string) {
     if (value == 'other') {
       this.showAutonomicTextField = true;
-    }else{
+    } else {
       this.showAutonomicTextField = false;
     }
   }

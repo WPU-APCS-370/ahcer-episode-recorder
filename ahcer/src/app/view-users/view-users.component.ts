@@ -10,29 +10,42 @@ import { MatDialog } from '@angular/material/dialog';
 export class ViewUsersComponent {
   children: any[]
   loading: boolean = false;
-
   constructor(
     private dialog: MatDialog,
-    private userService: UsersService,
+    public userService: UsersService,
   ) { }
-  
   ngOnInit(): void {
-    this.loadChildrens();
+    if (this.userService.isAdmin) {
+      this.loadAllChildrens()
+    } else {
+      this.loadChildrens();
+    }
+
   }
 
   loadChildrens() {
     let currentUser: any;
     this.loading = true;
-    this.userService.getCurerntUser().subscribe((res)=>{
-      currentUser = res;  
-      this.userService.getUserChilds(currentUser.id).subscribe((res:any)=>{
+    this.userService.getCurerntUser().subscribe((res) => {
+      currentUser = res;
+      this.userService.getUserChilds(currentUser.id).subscribe((res: any) => {
         this.loading = false;
         this.children = res;
         console.log(res, 'childs of arra');
-        
+
       })
     })
   }
+  loadAllChildrens() {
+    this.loading = true;
+    this.userService.getAllUser().subscribe((res: any) => {
+      this.loading = false;
+      this.children = res;
+      console.log(res, 'all childs of arra');
+
+    })
+  }
+
 
   // onDeletePatient(patient: Patient) {
   //   const dialogConfig = new MatDialogConfig();

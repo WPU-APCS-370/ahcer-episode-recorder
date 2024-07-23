@@ -48,7 +48,7 @@ export class EditPatientComponent implements OnInit {
     if (this.form.value.dateOfDiagnosis)
       this.form.value.dateOfDiagnosis = Timestamp.fromDate(this.form.value.dateOfDiagnosis);
     const changes = this.form.value;
-    this.patientsService.updatePatient(this.patient.id, changes).subscribe(() => {
+    this.patientsService.updatePatient(this.patient.id, changes,this.patient.userId).subscribe(() => {
       this.dialogRef.close(changes);
     });
   }

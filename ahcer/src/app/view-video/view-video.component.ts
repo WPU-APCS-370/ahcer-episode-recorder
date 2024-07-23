@@ -11,6 +11,7 @@ import { DeletePatientComponent } from '../delete-patient/delete-patient.compone
 import { UsersService } from '../services/users.service';
 import { error } from 'console';
 import { Observable } from 'rxjs';
+import { user } from 'rxfire/auth';
 
 @Component({
   selector: 'app-view-video',
@@ -26,13 +27,17 @@ export class ViewVideoComponent {
   public fileUploadError: string = '';
 
   constructor(private dialog: MatDialog,
-              private patientService: PatientServices,
-              private userService: UsersService,
-              private storage: AngularFireStorage
-            ) { }
-
+    private patientService: PatientServices,
+    public userService: UsersService,
+    private storage: AngularFireStorage
+  ) { }
   ngOnInit(): void {
-    this.loadVideos();
+    if (this.userService.isAdmin) {
+      this.loadAllVideos()
+    } else {
+      this.loadVideos();
+    }
+
   }
 
   loadVideos() {
@@ -47,15 +52,53 @@ export class ViewVideoComponent {
       .subscribe(
         (result) => {
           if (result.videos) {
-            this.videos= result.videos;
+            this.videos = result.videos;
             if (result.videos.length > 0) {
-              this.videos = result.videos.sort().reverse()  ?? [];
+              this.videos = result.videos.sort().reverse() ?? [];
             }
-          }else{
+          } else {
             this.videos = [];
           }
         }
       )
+  }
+
+  loadAllVideos(): void {
+    this.loading = true;
+    this.userService.getAllUser()
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe(
+        (users: any) => {
+          console.log(users);
+
+          this.videos = [];
+          users.forEach(user => {
+            if (user.videos) {
+              user.videos.forEach(video => {
+                video.userId = user.id;
+                this.videos.push(video);
+              });
+            }
+          });
+          this.videos.sort((a, b) => {
+            if (a.name < b.name) return 1;
+            if (a.name > b.name) return -1;
+            return 0;
+          });
+
+          this.loading = false;
+        },
+        error => {
+          console.error('Error loading videos:', error);
+          this.loading = false;
+        }
+
+
+      );
   }
 
   deleteFile(filePath: string): Observable<any> {
@@ -63,24 +106,24 @@ export class ViewVideoComponent {
     return fileRef.delete();
   }
 
-  deleteVideoFromUser(videoIndex: number){
+  deleteVideoFromUser(videoIndex: number,userId?:string) {
     if (videoIndex !== -1) {
       this.videos.splice(videoIndex, 1);
     }
-    this.userService.updateUserVideoArray(this.videos).subscribe(()=>{
+    this.userService.updateUserVideoArray(this.videos,userId).subscribe(() => {
       this.fileUploadMessage = 'Video Deleted Successfully'
       // this.loadVideos();
-    }, (error)=>{
+    }, (error) => {
       this.setFileUploadError('Some error occured');
     })
   }
 
-  onDeleteVideo(videoIndex: number, videoLink:string) {
+  onDeleteVideo(videoIndex: number, videoLink: string,userId?:string) {
     const filePath = videoLink;
     this.deleteFile(filePath).subscribe(
       () => {
         this.fileUploadMessage = 'File deleted successfully';
-        this.deleteVideoFromUser(videoIndex)
+        this.deleteVideoFromUser(videoIndex,userId)
       },
       (error) => {
         this.fileUploadError = 'Error deleting file:';
@@ -95,12 +138,12 @@ export class ViewVideoComponent {
   }
 
   uploadFile(event) {
-    this.fileUploadError='';
-    this.fileUploadMessage='';
+    this.fileUploadError = '';
+    this.fileUploadMessage = '';
     this.fileUploading = true;
 
     const file = event.target.files[0];
-    
+
     // Check if the selected file is a video
     if (file.type.startsWith('video/')) {
       const filePath = 'videos/' + file.name;
@@ -123,13 +166,13 @@ export class ViewVideoComponent {
             const list = this.videos;
             list.push({
               name: file.name,
-              link:  downloadURL,
+              link: downloadURL,
               id: randomId
             });
             this.videos = this.videos.sort().reverse();
-            this.userService.updateUserVideoArray(list).subscribe(()=>{
+            this.userService.updateUserVideoArray(list).subscribe(() => {
               this.fileUploadMessage = 'Video Uploaded Successfully'
-            }, (error)=>{
+            }, (error) => {
               console.log(error);
               this.setFileUploadError('Some error occured');
             })
@@ -141,15 +184,15 @@ export class ViewVideoComponent {
         })
       ).subscribe();
     } else {
-      this.fileUploading= false;
+      this.fileUploading = false;
       this.setFileUploadError('Invalid file format. Please select a video file.');
     }
   }
 
-  setFileUploadError(error:string){
+  setFileUploadError(error: string) {
     this.fileUploadError = error;
-      setTimeout(() => {
-        this.fileUploadError=''
-      }, 5000);
+    setTimeout(() => {
+      this.fileUploadError = ''
+    }, 5000);
   }
 }

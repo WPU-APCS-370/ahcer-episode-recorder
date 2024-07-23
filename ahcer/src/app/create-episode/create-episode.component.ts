@@ -32,7 +32,7 @@ export class formGroupErrorMatcher implements ErrorStateMatcher {
 })
 export class CreateEpisodeComponent implements OnInit{
   symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure", 
+                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure",
                    "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
   loadingPatient: boolean = false;
   loadingRescueMeds: boolean = false;
@@ -170,7 +170,7 @@ export class CreateEpisodeComponent implements OnInit{
     this.loadingPatient = true;
     usersService.getLastViewedPatient()
       .pipe(
-        switchMap(patientId => patientService.getPatientById(patientId))
+        switchMap(lastPatient => patientService.getPatientById(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId))
       )
       .subscribe( (patient) => {
         this.patient = patient;
@@ -206,12 +206,13 @@ export class CreateEpisodeComponent implements OnInit{
   loadRescueMeds() {
     this.loadingRescueMeds = true;
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId =>
-        this.medicationService.getMedicationsByType(patientId, true)
+      switchMap(lastPatient =>
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true,false,false,lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
       medications => {
+        // console.log(medications);
         this.rescueMedications = medications;
         this.episodeForm.removeControl("rescueMedGroup");
         this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup())
@@ -224,8 +225,8 @@ export class CreateEpisodeComponent implements OnInit{
   loadActivePrescriptionMeds() {
     this.loadingPrescriptionMeds = true;
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId =>
-        this.medicationService.getMedicationsByType(patientId, false, true)
+      switchMap(lastPatient =>
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true,false,lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
@@ -372,7 +373,7 @@ export class CreateEpisodeComponent implements OnInit{
       newEpisode.medications = medications
 
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId=> this.episodeService.createEpisode(patientId, newEpisode)),
+      switchMap(lastPatient=> this.episodeService.createEpisode(lastPatient.lastPatientViewed, newEpisode,lastPatient.lastPatientViewdUserId)),
       first(),
       tap(() => this.router.navigateByUrl('/')),
       catchError(err => {

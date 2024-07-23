@@ -22,6 +22,7 @@ export class ViewEpisodesComponent implements OnInit {
   patientId: string = '';
   lastStartTime : Timestamp;
   episodes_count: number;
+  userId: string = '';
 
   completelyLoaded: boolean = false;
   loading: boolean = false;
@@ -40,9 +41,10 @@ export class ViewEpisodesComponent implements OnInit {
   loadFirst20() {
     this.loading = true;
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId => {
-        this.patientId = patientId;
-        return this.episodeServices.get20EpisodesByPatient(this.patientId, 'desc')
+      switchMap(lastPatient => {
+        this.patientId = lastPatient.lastPatientViewed;
+        this.userId = lastPatient.lastPatientViewdUserId;
+        return this.episodeServices.get20EpisodesByPatient(this.patientId, 'desc',null,this.userId)
       }),
       first(),
       finalize(() => {
@@ -91,7 +93,8 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
 
-    dialogConfig.data = [episode, this.patientId];
+    let uid = this.usersService.isAdmin ? this.userId : null;
+    dialogConfig.data = [episode, this.patientId,uid];
     this.dialog
       .open(ViewEpisodeComponent, dialogConfig)
       .afterClosed()
@@ -109,8 +112,9 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.minWidth = '350px';
     dialogConfig.maxWidth = '350px';
+    let uid = this.usersService.isAdmin ? this.userId : null;
 
-    dialogConfig.data = [episode, this.patientId];
+    dialogConfig.data = [episode, this.patientId, uid];
 
     this.dialog
       .open(EditEpisodeComponent, dialogConfig)
@@ -128,7 +132,7 @@ export class ViewEpisodesComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.minWidth = '350px';
 
-    dialogConfig.data = episode;
+    dialogConfig.data = [episode, this.patientId,this.userId];
     this.dialog
       .open(DeleteEpisodeComponent, dialogConfig)
       .afterClosed()

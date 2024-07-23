@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {PatientServices} from "../services/patient.service";
-import {UsersService} from "../services/users.service";
-import {finalize, first, switchMap, tap} from "rxjs";
-import {Medication} from "../models/medication";
-import {MedicationService} from "../services/medication.service";
-import {Patient} from "../models/patient";
-import {CreateMedicationComponent} from "../create-medication/create-medication.component";
-import {DeleteMedicationComponent} from "../delete-medication/delete-medication.component";
-import {EditMedicationComponent} from "../edit-medication/edit-medication.component";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { PatientServices } from "../services/patient.service";
+import { UsersService } from "../services/users.service";
+import { finalize, first, last, switchMap, tap } from "rxjs";
+import { Medication } from "../models/medication";
+import { MedicationService } from "../services/medication.service";
+import { Patient } from "../models/patient";
+import { CreateMedicationComponent } from "../create-medication/create-medication.component";
+import { DeleteMedicationComponent } from "../delete-medication/delete-medication.component";
+import { EditMedicationComponent } from "../edit-medication/edit-medication.component";
+import { user } from 'rxfire/auth';
 
 @Component({
   selector: 'app-view-medication',
@@ -20,7 +21,8 @@ export class ViewMedicationComponent implements OnInit {
   medications: Medication[];
   patients: Patient[];
   patientId: string = '';
-  currentPatient : Patient;
+  userId:string
+  currentPatient: Patient;
   medications_count: number;
 
   completelyLoaded: boolean = false;
@@ -29,39 +31,55 @@ export class ViewMedicationComponent implements OnInit {
   displayedColumns = ['name', 'dose', 'type', 'active', 'buttons'];
 
   constructor(private dialog: MatDialog,
-              private medicationService: MedicationService,
-              private patientsService: PatientServices,
-              private usersService: UsersService) { }
-
+    private medicationService: MedicationService,
+    private patientsService: PatientServices,
+    private usersService: UsersService) { }
   ngOnInit(): void {
     this.loadingPatient = true;
 
-    this.patientsService.getPatients().subscribe(
-      patients => {this.patients = patients}
-    )
+    if (this.usersService.isAdmin) {
+      this.patientsService.getAllRecords().subscribe(
+        patients => {
+          this.patients = patients
+          console.log(patients);
+
+          // this.loadForAdmin(patients)
+        }
+      )
+    } else {
+      this.patientsService.getPatients().subscribe(
+        patients => { this.patients = patients }
+      )
+    }
     this.load()
   }
 
   load() {
-    this.medications=[];
+    this.medications = [];
     this.medications_count = 0;
     this.loading = true;
+
     this.usersService.getLastViewedPatient().pipe(
-      tap(patientId => {
-        if(!patientId) {
-          this.loadingPatient=false;
+      tap(lastPatient => {
+        if (!lastPatient) {
+          this.loadingPatient = false;
           this.loading = false;
         }
-    }),
-      switchMap(patientId => this.patientsService.getPatientById(patientId)),
+        this.userId=lastPatient.lastPatientViewdUserId
+        // console.log(this.userId);
+      }),
+      switchMap(lastPatient => this.patientsService.getPatientById(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId)),
       first(),
       tap(patient => {
+        // console.log(patient);
+
         this.patientId = patient.id;
         this.loadingPatient = false;
         this.currentPatient = patient;
       }),
       switchMap(patient => {
-        return this.medicationService.getMedicationsByPatient(patient.id)
+
+        return this.medicationService.getMedicationsByPatient(patient.id,this.userId)
       }),
       first(),
       finalize(() => {
@@ -76,10 +94,13 @@ export class ViewMedicationComponent implements OnInit {
       );
   }
 
-  changePatient(patientId: string) {
-    this.usersService.changeLastViewedPatient(patientId)
-      .subscribe(()=> {
-        this.load()
+  changePatient(patient: any) {
+
+    const patientId = patient.id
+    const userId = patient.userId
+    this.usersService.changeLastViewedPatient(patientId, userId)
+      .subscribe(() => {
+        this.load();
       })
   }
 
@@ -94,9 +115,7 @@ export class ViewMedicationComponent implements OnInit {
       .open(CreateMedicationComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
-        if (val) {
-          this.load()
-        }
+        this.load();
       });
   }
 
@@ -113,12 +132,12 @@ export class ViewMedicationComponent implements OnInit {
       .open(EditMedicationComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
-        if(val)
+        if (val)
           this.load();
       });
   }
 
-  deleteMedication(medication: Medication){
+  deleteMedication(medication: Medication) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = false;
