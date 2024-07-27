@@ -72,6 +72,11 @@
           <span> Reports</span>
         </a>
 
+        <a mat-list-item routerLink="settings" *ngIf="user.isLoggedIn$ | async">
+          <mat-icon>build</mat-icon>
+          <span>Settings</span>
+        </a>
+
         <a mat-list-item routerLink="help" *ngIf="user.isLoggedIn$ | async">
           <mat-icon>help</mat-icon>
           <span> Help</span>

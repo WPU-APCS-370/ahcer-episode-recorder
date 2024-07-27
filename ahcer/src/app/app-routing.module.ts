@@ -19,6 +19,7 @@ import {first} from "rxjs";
 import { ViewVideoComponent } from './view-video/view-video.component';
 import { ViewUsersComponent } from './view-users/view-users.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 
@@ -113,6 +114,11 @@ const routes: Routes = [
   {
     path: 'episode-report',
     component: EpisodeReportComponent,
+   ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
    ...canActivate(redirectUnauthorizedToLogin)
   },
   {

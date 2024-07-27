@@ -15,15 +15,26 @@ export class PatientServices {
   constructor(private db: AngularFirestore,
     private angularFireMessaging: AngularFireMessaging,
     private user: UsersService) { }
-    requestPermission(): void {
-      this.angularFireMessaging.requestToken.subscribe(
-        (token) => {
-          console.log("FCM token received: ", token);
-        },
-        (error) => {
-          console.error("Unable to get permission to notify.", error);
-        }
-      );
+    
+    getFCMToken(): Observable<string> {
+      return new Observable((observer) => {
+        this.angularFireMessaging.requestToken.subscribe(
+          (token) => {
+            if (token == null) {
+              localStorage.removeItem('fcmToken');
+              console.log('FCM token removed');
+            } else {
+              console.log('FCM token received: ', token);
+            }
+            observer.next(token);
+            observer.complete();
+          },
+          (error) => {
+            console.error('Unable to get FCM token.', error);
+            observer.error(error);
+          }
+        );
+      });
     }
 
   createPatient(newPatient: Partial<Patient>): Observable<any> {

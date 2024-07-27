@@ -70,6 +70,7 @@ import { getAuth } from 'firebase/auth';
 import { provideAuth } from '@angular/fire/auth';
 import { initializeApp } from 'firebase/app';
 import { provideFirebaseApp } from '@angular/fire/app';
+import { SettingsComponent } from './settings/settings.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -110,7 +111,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     ViewVideoComponent,
     RecordVideoComponent,
     ViewUsersComponent,
-    SignUpComponent
+    SignUpComponent,
+    SettingsComponent
   ],
     imports: [
         BrowserModule,

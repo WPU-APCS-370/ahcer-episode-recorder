@@ -1,0 +1,15 @@
+.setting{
+  max-width: 400px;
+  margin: 20px auto 10px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  button{
+    background-color: rgb(129, 123, 214);
+  }
+  p{
+    font-weight: bold;
+    margin-top: 10px;
+  }
+}

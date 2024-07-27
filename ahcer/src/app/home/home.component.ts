@@ -62,8 +62,6 @@ export class HomeComponent implements OnInit {
       this.getLastViewd()
     }
 
-this.patientsService.requestPermission()
-
 
   }
 

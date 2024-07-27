@@ -1,3 +1,4 @@
 {
-  "gcm_sender_id":"503871560040"
+  "gcm_sender_id":"503871560040",
+  "display": "standalone"
 }
