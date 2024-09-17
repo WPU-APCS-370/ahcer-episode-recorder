@@ -46,8 +46,9 @@ export class UsersService {
   }
 
   logout() {
-    this.afAuth.signOut();
-    this.router.navigateByUrl('/login');
+    this.afAuth.signOut().then(
+      () => this.router.navigateByUrl('/login')
+    );
   }
 
 }

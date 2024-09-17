@@ -9,8 +9,8 @@ import {LoginComponent} from "./login/login.component";
 import {CreateEpisodeComponent} from "./create-episode/create-episode.component";
 import {ViewEpisodesComponent} from "./view-episodes/view-episodes.component";
 import {ViewMedicationComponent} from "./view-medication/view-medication.component";
-import {redirectUnauthorizedTo} from "@angular/fire/auth-guard";
-import { canActivate } from '@angular/fire/compat/auth-guard';
+import {redirectUnauthorizedTo, redirectLoggedInTo} from "@angular/fire/auth-guard";
+import {AuthPipeGenerator, canActivate} from '@angular/fire/compat/auth-guard';
 import {HelpComponent} from "./help/help.component";
 import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component";
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
@@ -19,36 +19,40 @@ import {first} from "rxjs";
 
 
 
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+const redirectUnauthorizedToLogin: AuthPipeGenerator = () => redirectUnauthorizedTo(['login']);
+const redirectLoggedInToHome: AuthPipeGenerator = () => redirectLoggedInTo(['']);
 
+function customPayload(title: string, authPipe?: AuthPipeGenerator) {
+  let payload: {canActivate?: any[], data: {title?: string, authGuardPipe?: AuthPipeGenerator}} = {data: { }};
+  if(authPipe) {
+    payload = canActivate(authPipe);
+  }
+  payload.data.title = title;
+  return payload;
+}
 
 const routes: Routes = [
 
   { path: '',
     component: HomeComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Home", redirectUnauthorizedToLogin)
   },
   {
     path: 'patients',
     component: ViewPatientComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Patient Listing", redirectUnauthorizedToLogin)
 
   },
   {
     path: 'add-patient',
     component: CreatePatientComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Add Patient", redirectUnauthorizedToLogin)
 
   },
   {
     path: 'about',
-    component: AboutComponent
-  },
-  {
-    path: 'add-patient',
-    component: CreatePatientComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
-
+    component: AboutComponent,
+    ...customPayload("About")
   },
   {
     path: 'view-profile',
@@ -56,45 +60,46 @@ const routes: Routes = [
     resolve: {
       userId: () => inject(UsersService).userId$.pipe(first()),
     },
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("User Profile", redirectUnauthorizedToLogin)
   },
   {
     path: 'help',
     component: HelpComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
-  {
-    path: 'patients',
-    component: ViewPatientComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Help", redirectUnauthorizedToLogin)
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    ...customPayload("Login", redirectLoggedInToHome)
   },
   {
     path: 'record-episode',
     component: CreateEpisodeComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Record Episode", redirectUnauthorizedToLogin)
   },
   {
     path: 'episodes',
     component: ViewEpisodesComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Episode Listing", redirectUnauthorizedToLogin)
   },
   {
     path: 'medications',
     component: ViewMedicationComponent,
-    ...canActivate(redirectUnauthorizedToLogin)
+    ...customPayload("Manage Medications", redirectUnauthorizedToLogin)
   },
   {
     path: 'episode-report',
     component: EpisodeReportComponent,
-   ...canActivate(redirectUnauthorizedToLogin)
+   ...customPayload("Episode Report", redirectUnauthorizedToLogin)
   },
   {
     path: 'privacy-policy',
-    component: PrivacyPolicyComponent
+    component: PrivacyPolicyComponent,
+    ...customPayload("Privacy Policy")
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];
 
