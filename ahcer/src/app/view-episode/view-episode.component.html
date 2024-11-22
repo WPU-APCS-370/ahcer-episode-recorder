@@ -4,6 +4,7 @@
   <p>Start Time: {{episode.startTime?.toDate()| date: 'MM/dd/yyyy HH:mm:ss'}}</p>
   <p>End Time: {{episode.endTime?.toDate()| date: 'MM/dd/yyyy HH:mm:ss'}}</p>
   <p>Status: {{episode.status}}</p>
+  <p *ngIf="!(episode.status == 'Recorded')">Notes: {{episode.notes}}</p>
   <ng-container *ngIf="episode.status != OFF_DAY && episode.status != NO_EPISODE_TODAY" >
     <div *ngIf="episode.symptoms">
       <h3><strong>Symptoms</strong></h3>
@@ -65,6 +66,10 @@
       <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.chorea_tremors)">
         <b>Chorea/Tremors</b>
         at <u>{{episode.symptoms.chorea_tremors.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
+      </p>
+      <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.behavior)">
+        <b>Behavior</b>
+        : <u>{{episode.symptoms.behavior.text}}</u>
       </p>
     </div>
     <div *ngIf="episode.behavior">

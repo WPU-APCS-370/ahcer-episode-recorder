@@ -15,5 +15,6 @@ export interface Patient {
   mutation?: string,
   weight?: string,
   otherMutation?: string,
-  userId?: string
+  userId?: string,
+  startEpisode?: Timestamp
 }

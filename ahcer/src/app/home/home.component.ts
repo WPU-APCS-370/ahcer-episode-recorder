@@ -12,6 +12,8 @@ import { DeleteEpisodeComponent } from "../delete-episode/delete-episode.compone
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import { FreeDay } from '../models/freeday.enum';
+import { EditEpisodeFreeDayComponent } from '../edit-episode-free-day/edit-episode-free-day.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,7 @@ import { FreeDay } from '../models/freeday.enum';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['startTime', 'endTime', 'id'];
+  displayedColumns: string[] = ['startTime', 'endTime', 'status', 'id'];
   loading: boolean = false;
   loadingPatient: boolean = false;
   episodes: Episode[];
@@ -27,7 +29,11 @@ export class HomeComponent implements OnInit {
   currentPatient: Patient;
   episodes_count: number;
   records$: Observable<any[]>;
-
+  isAdd:boolean=false
+  day:string=''
+  notes:string=''
+  timer: string = '00:00:00';
+  private timerInterval: any;
   get NO_EPISODE_TODAY(){
     return FreeDay.NO_EPISODE_TODAY.toString();
   }
@@ -39,7 +45,8 @@ export class HomeComponent implements OnInit {
   constructor(private episodeService: EpisodeService,
     private dialog: MatDialog,
     private patientsService: PatientServices,
-    public usersService: UsersService) {
+    public usersService: UsersService,
+    private router: Router,) {
 
   }
 
@@ -62,13 +69,43 @@ export class HomeComponent implements OnInit {
       this.getLastViewd()
     }
 
+  }
+  startTimer(): void {
+    const startDate = this.currentPatient.startEpisode.toDate();
+    this.timerInterval = setInterval(() => {
+      const currentTime = new Date();
+      const elapsedTime = currentTime.getTime() - startDate.getTime();
 
+      const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+      this.timer = `${this.padZero(hours)}:${this.padZero(minutes)}:${this.padZero(seconds)}`;
+    }, 1000);
   }
 
-  freeday(day: FreeDay): void {
+  padZero(num: number): string {
+    return num < 10 ? `0${num}` : `${num}`;
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  freeDay(day: FreeDay){
+    if(this.day==day){
+      this.isAdd = !this.isAdd
+    }
+     this.day = day
+  }
+
+   createFreeDay(){
     const currentDate = Timestamp.fromDate(new Date());
     const freeday: any = {
-      status: day,
+      status: this.day,
+      notes:this.notes,
       startTime: currentDate,
       endTime: currentDate
     };
@@ -79,27 +116,40 @@ export class HomeComponent implements OnInit {
           const episodeDate = episode.startTime.toDate();
           const currentDayDate = currentDate.toDate();
 
-          return episode.status == day && episodeDate.getDate() == currentDayDate.getDate();
+          return episode.status == this.day && episodeDate.getDate() == currentDayDate.getDate();
         });
 
         if (dayExists) {
-          alert(`${day} has already been added.`);
+          alert(`${this.day} has already been added.`);
+          this.isAdd = false
+          this.day = ''
+          this.notes = ''
         } else {
           this.episodeService.createEpisode(this.currentPatient.id, freeday).subscribe({
             next: () => {
-              console.log(`${day} added successfully`);
+              console.log(`${this.day} added successfully`);
               this.loadEpisodes(this.currentPatient.id,this.currentPatient.userId);
+              this.isAdd = false
+              this.day = ''
+              this.notes = ''
             },
             error: (err) => {
               console.error('Error creating freeday:', err);
+              this.isAdd = false
+              this.day = ''
+              this.notes = ''
             }
           });
         }
       },
       error: (err) => {
         console.error('Error loading episodes:', err);
+        this.isAdd = false
+        this.day = ''
+        this.notes = ''
       }
     });
+
   }
 
   getLastViewd() {
@@ -149,7 +199,32 @@ export class HomeComponent implements OnInit {
 
   }
 
-  editEpisode(episode: Episode): void {
+  editEpisode(episode: Episode): void{
+    if (episode.status === 'Recorded'){
+      this.editEpisodes(episode)
+    }else{
+      this.editEpisodeFreeDay(episode)
+    }
+  }
+  editEpisodeFreeDay(episode: Episode): void{
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '350px';
+    let uid = this.usersService.isAdmin ? this.currentPatient.userId : null;
+    dialogConfig.data = [episode, this.currentPatient.id, uid];
+
+    this.dialog
+      .open(EditEpisodeFreeDayComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((val) => {
+        if (val)
+          this.loadEpisodes(this.currentPatient.id, this.currentPatient.userId)
+      });
+  }
+
+  editEpisodes(episode: Episode): void {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
@@ -172,6 +247,9 @@ export class HomeComponent implements OnInit {
     let userId = patient.userId
     this.usersService.changeLastViewedPatient(patientId, userId)
       .subscribe(() => {
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+        }
         this.loadPatient(patientId, userId)
       })
   }
@@ -185,7 +263,9 @@ export class HomeComponent implements OnInit {
         this.currentPatient = patient;
         this.currentPatient.userId = userId
         console.log(this.currentPatient);
-
+        if (this.currentPatient?.startEpisode) {
+          this.startTimer();
+        }
         this.loadEpisodes(patientId, userId);
       })
   }
@@ -206,5 +286,29 @@ export class HomeComponent implements OnInit {
           this.loadEpisodes(this.currentPatient.id, this.currentPatient.userId)
         }
       });
+  }
+  startEpisode(){
+    let changes = this.currentPatient
+    if (!changes.userId) {
+      delete changes.userId;
+    }
+    if(changes.startEpisode==null){
+      changes.startEpisode = Timestamp.fromDate(new Date());
+    }else{
+      var startDate = changes.startEpisode.toDate().toISOString()
+      changes.startEpisode = null
+    }
+    if (this.currentPatient?.startEpisode) {
+      this.startTimer();
+    }
+    this.patientsService.updatePatient(this.currentPatient.id, changes, this.currentPatient.userId).subscribe(() => {
+      // this.loadPatient(this.currentPatient.id, this.currentPatient.userId)
+      if (!this.currentPatient?.startEpisode) {
+        this.router.navigate(['/record-episode'], {
+          queryParams: { date: startDate }
+        });
+      }
+    });
+
   }
 }

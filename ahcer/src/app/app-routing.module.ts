@@ -60,7 +60,7 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
 
   },
-  { 
+  {
     path: 'view-profile',
     component: ViewProfileComponent,
     resolve: {

@@ -1,91 +1,128 @@
 <div class="patients-panel">
-  <h2 class="header" *ngIf="!loadingPatient && currentPatient">
+
+  <h2 *ngIf="!loadingPatient && currentPatient && !loading">
     {{ currentPatient.firstName }} {{ currentPatient.lastName }}
+    <span *ngIf="currentPatient?.startEpisode" style="color: #32a3ff;">
+      {{timer}}
+    </span>
+  </h2>
+  <div class="header" *ngIf="!loadingPatient && currentPatient && !loading">
     <div class="button-container" *ngIf="!this.usersService.isAdmin">
-      <button matTooltip="New recording"
-       mat-fab class="bg-red" aria-label="Add an episode" routerLink="/record-episode">
+      <button matTooltip="New recording" mat-fab class="bg-red" aria-label="Add an episode"
+        routerLink="/record-episode">
         <!-- <mat-icon>add</mat-icon> --><strong>E</strong>
       </button>
-      <button
-      (click)="freeday(OFF_DAY)"
-      [matTooltip]="OFF_DAY"
-       mat-fab class="bg-yellow" aria-label="Add an episode" >
+      <button (click)="freeDay(OFF_DAY)" [matTooltip]="OFF_DAY" mat-fab class="bg-yellow" aria-label="Add an episode">
         <strong>OD</strong>
       </button>
-      <button
-      (click)="freeday(NO_EPISODE_TODAY)"
-       [matTooltip]="NO_EPISODE_TODAY"
-       mat-fab class="bg-green" aria-label="Add an episode" >
+      <button (click)="freeDay(NO_EPISODE_TODAY)" [matTooltip]="NO_EPISODE_TODAY" mat-fab class="bg-green"
+        aria-label="Add an episode">
         <strong>NE</strong>
       </button>
+      <button matTooltip="Start recording" mat-fab class="bg-blue" aria-label="Add an episode" (click)="startEpisode()">
+        <strong>{{currentPatient?.startEpisode? 'Stop':'Start'}} </strong>
+      </button>
     </div>
-  </h2>
-  <p *ngIf="!loadingPatient && !currentPatient">
+  </div>
+  <p *ngIf="!loadingPatient && !currentPatient && !loading">
     No patients found. Please add one.
   </p>
   <div class="spinner-container" *ngIf="loadingPatient || loading">
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-form-field style="width: 100%;" appearance="fill" *ngIf="(patients && patients.length > 1) || (this.usersService.isAdmin && patients && patients.length >= 1)">
+  <!-- <div class="start-episode" >
+
+    <button matTooltip="Mark as Start recording" mat-fab class="bg-blue" aria-label="Add an episode" >
+     <strong>Mark<br>S</strong>
+    </button>
+  </div> -->
+
+  <div class="input-button-container" *ngIf="isAdd">
+    <div class="input-notes">
+      <mat-form-field appearance="outline">
+        <mat-label>Enter Notes</mat-label>
+        <textarea [(ngModel)]="notes" matInput placeholder="Type something"></textarea>
+      </mat-form-field>
+    </div>
+
+    <button mat-fab color="primary" (click)="createFreeDay()" [ngClass]="{
+      'bg-yellow': day === OFF_DAY,
+      'bg-green': day === NO_EPISODE_TODAY
+    }"
+   [matTooltip]="day === OFF_DAY ? 'Mark as Off Day' : day === NO_EPISODE_TODAY ? 'Mark as No Episode Today' : ''"
+    >
+      <strong>Mark <br> {{ day === OFF_DAY ? 'OD' : 'NE' }}</strong>
+    </button>
+
+  </div>
+
+
+  <mat-form-field style="width: 70%;text-align: center;" appearance="fill"
+    *ngIf="(patients && !loading && patients.length > 1) || (this.usersService.isAdmin && patients && patients.length >= 1)">
     <mat-label>Choose a different patient</mat-label>
     <mat-select (selectionChange)="changePatient($event.value)">
       <mat-option *ngFor="let patient of patients" [value]="patient">{{
         patient.firstName
-      }}</mat-option>
+        }}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <table
-    mat-table
-    [dataSource]="episodes"
-    *ngIf="episodes_count > 0"
-    class="mat-elevation-z8"
-  >
-    <!--- Note that these columns can be defined in any order.
+  <div>
+    <table mat-table [dataSource]="episodes" *ngIf="episodes_count > 0" class="mat-elevation-z8">
+      <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
-    <!-- Position Column -->
-    <ng-container matColumnDef="startTime">
-      <th mat-header-cell *matHeaderCellDef>Start Date</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.startTime?.toDate() | date : "MM/dd/yyyy" }}
-      </td>
-    </ng-container>
+      <!-- Position Column -->
+      <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef>Start Date</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.startTime?.toDate() | date : "MM/dd/yyyy" }}
+        </td>
+      </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="endTime">
-      <th mat-header-cell *matHeaderCellDef>End Date</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.endTime?.toDate() | date : "MM/dd/yyyy" }}
-      </td>
-    </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef>End Date</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.endTime?.toDate() | date : "MM/dd/yyyy" }}
+        </td>
+      </ng-container>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef>Buttons</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button (click)="onViewDetails(element)">
-          <mat-icon>visibility</mat-icon>
-        </button>
-        <button mat-icon-button (click)="editEpisode(element)" *ngIf="element.status != OFF_DAY && element.status != NO_EPISODE_TODAY">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteEpisode(element)" color="warn">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.status }}
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  <div *ngIf="episodes_count > 0" class="episode-button-container">
-    <button mat-raised-button color="primary" routerLink="/episodes">
-      View More
-    </button>
+      <!-- Weight Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Buttons</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="onViewDetails(element)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <!-- *ngIf="element.status != OFF_DAY && element.status != NO_EPISODE_TODAY" -->
+          <button mat-icon-button (click)="editEpisode(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteEpisode(element)" color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <div *ngIf="episodes_count > 0" class="episode-button-container">
+      <button mat-raised-button color="primary" routerLink="/episodes">
+        View More
+      </button>
+    </div>
+    <div *ngIf="episodes_count === 0">
+      No episodes found. Please enter one with the 'E' button above.
+    </div>
   </div>
-  <div *ngIf="episodes_count === 0">
-    No episodes found. Please enter one with the 'E' button above.
-  </div>
-</div>

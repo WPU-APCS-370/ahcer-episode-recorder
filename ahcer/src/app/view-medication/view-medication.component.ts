@@ -54,6 +54,49 @@ export class ViewMedicationComponent implements OnInit {
     this.load()
   }
 
+  // loadForAdmin(patients: any[]) {
+  //   if (!patients || patients.length === 0) {
+  //     console.error("No patients provided");
+  //     return;
+  //   }
+
+  //   this.currentPatient = patients[0]
+  //   const patientId = patients[0].id;
+  //   const userId = patients[0].userId;
+
+  //   this.medications = [];
+  //   this.medications_count = 0;
+
+  //   this.loadMedications(patientId, userId);
+  // }
+
+  // loadMedications(patientId: string, userId: string) {
+  //   this.medications = [];
+  //   this.medications_count = 0;
+  //   this.loading = true;
+  //   this.loadingPatient = true;
+
+  //   this.medicationService.getMedicationsByPatient(patientId, userId).pipe(
+  //     first(),
+  //     finalize(() => {
+  //       this.loadingPatient = false;
+  //       this.loading = false;
+  //       this.medications_count = this.medications.length;
+  //     })
+  //   ).subscribe(
+  //     medications => {
+  //       this.medications = medications;
+  //     },
+  //     error => {
+  //       console.error("Error loading medications", error);
+  //       this.loadingPatient = false;
+  //       this.loading = false;
+  //     }
+  //   );
+  // }
+
+
+
   load() {
     this.medications = [];
     this.medications_count = 0;
@@ -100,7 +143,13 @@ export class ViewMedicationComponent implements OnInit {
     const userId = patient.userId
     this.usersService.changeLastViewedPatient(patientId, userId)
       .subscribe(() => {
-        this.load();
+        this.load()
+        // if (this.usersService.isAdmin) {
+        //   this.currentPatient = patient
+        //   this.loadMedications(patientId, userId)
+        // } else {
+        //   this.load()
+        // }
       })
   }
 
@@ -115,7 +164,14 @@ export class ViewMedicationComponent implements OnInit {
       .open(CreateMedicationComponent, dialogConfig)
       .afterClosed()
       .subscribe((val) => {
-        this.load();
+        this.load()
+        // if (val) {
+        //   if (this.usersService.isAdmin){
+        //     this.loadForAdmin(this.patients)
+        //   }else{
+        //     this.load()
+        //   }
+        // }
       });
   }
 

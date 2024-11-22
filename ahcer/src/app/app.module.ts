@@ -17,7 +17,7 @@ import { CreatePatientComponent } from './create-patient/create-patient.componen
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatDatepickerModule} from "@angular/material/datepicker";
@@ -71,6 +71,8 @@ import { provideAuth } from '@angular/fire/auth';
 import { initializeApp } from 'firebase/app';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { SettingsComponent } from './settings/settings.component';
+import { EditEpisodeFreeDayComponent } from './edit-episode-free-day/edit-episode-free-day.component';
+
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -112,7 +114,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     RecordVideoComponent,
     ViewUsersComponent,
     SignUpComponent,
-    SettingsComponent
+    SettingsComponent,
+    EditEpisodeFreeDayComponent
   ],
     imports: [
         BrowserModule,
@@ -130,6 +133,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
         MatSidenavModule,
         MatListModule,
         ReactiveFormsModule,
+         FormsModule,
         MatFormFieldModule,
         MatSelectModule,
         MatDatepickerModule,

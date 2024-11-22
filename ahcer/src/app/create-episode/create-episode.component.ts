@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
 import {PatientServices} from "../services/patient.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
 import {catchError, first, switchMap, tap, throwError} from "rxjs";
@@ -32,9 +32,10 @@ export class formGroupErrorMatcher implements ErrorStateMatcher {
   styleUrls: ['./create-episode.component.scss']
 })
 export class CreateEpisodeComponent implements OnInit{
-  symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure",
-                   "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
+  symptomLabels = ["Apnea/Breathing", "Autonomic Dysfunction", "Behavior", "Chorea/Tremors", "Eyes",
+                    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Loss of Consciousness",
+                    "Right Arm", "Right Hand", "Right Leg", "Seizure", "Swallowing/Choking"]
+;
   loadingPatient: boolean = false;
   loadingRescueMeds: boolean = false;
   loadingPrescriptionMeds: boolean = false;
@@ -74,9 +75,9 @@ export class CreateEpisodeComponent implements OnInit{
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
-      if (label!="Seizure" && label!="Loss of Consciousness" && label!="Apnea/Breathing" && label !=="Swallowing/Choking" && label !=="Chorea/Tremors")
+      if (label != "Seizure" && label != "Loss of Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Behavior" && label !=="Chorea/Tremors")
         controls[label+' Dropdown'] = ['']
-      if (label=="Swallowing/Choking" || label=="Chorea/Tremors" || label=="Autonomic Dysfunction")
+      if (label == "Swallowing/Choking" || label == "Chorea/Tremors" || label == "Autonomic Dysfunction" || label == "Behavior")
         controls[label+' TextBox'] = ['']
       controls[label+' Time'] = null
     }
@@ -88,7 +89,7 @@ export class CreateEpisodeComponent implements OnInit{
           let checkbox = formGroup.controls[label+' Checkbox']
           let checkboxChecked = (checkbox.value === true)
           let dropdownValueEmpty = false;
-          if (label!="Seizure" && label!="Loss of Consciousness" && label!="Apnea/Breathing" && label !=="Swallowing/Choking" && label !=="Chorea/Tremors") {
+          if (label != "Seizure" && label != "Loss of Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Chorea/Tremors" && label !== "Behavior") {
             let dropdown = formGroup.controls[label + ' Dropdown']
             dropdownValueEmpty = (dropdown.value === '')
           }
@@ -168,7 +169,8 @@ export class CreateEpisodeComponent implements OnInit{
               private usersService: UsersService,
               private medicationService: MedicationService,
               private router: Router,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+            private route: ActivatedRoute,) {
     this.loadingPatient = true;
     usersService.getLastViewedPatient()
       .pipe(
@@ -203,6 +205,16 @@ export class CreateEpisodeComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      let startDate = params['date'];
+      if(startDate){
+        let dateObj = new Date(startDate)
+        this.episodeForm.patchValue({
+          startTime: dateObj,
+          endTime: new Date()
+        });
+      }
+    })
   }
 
   loadRescueMeds() {
@@ -260,14 +272,14 @@ export class CreateEpisodeComponent implements OnInit{
 
   onCreateEpisode() {
     const val = this.episodeForm.value;
-    let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-                       "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
-                       "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"]
+    let symptomKeys = ["apnea_breathing", "autonomic_dysfunction", "behavior", "chorea_tremors", "eyes", "fullBody", "leftArm", "leftHand", "leftLeg", "lossOfConsciousness", "rightArm", "rightHand", "rightLeg", "seizure", "swallowing_choking"]
+
     let symptoms : Episode['symptoms'] = {
       seizure: {},
       lossOfConsciousness:{},
       fullBody: {},
       eyes: {},
+      behavior:{},
       leftArm: {},
       leftHand: {},
       leftLeg: {},
@@ -283,22 +295,26 @@ export class CreateEpisodeComponent implements OnInit{
     for (let index in symptomKeys) {
       let symptom = {}
       if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness' && symptomKeys[index] !=="apnea_breathing") {
+        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness' && symptomKeys[index] !== "apnea_breathing") {
           if (symptomKeys[index] =="swallowing_choking" || symptomKeys[index] =="chorea_tremors") {
             symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
           }else{
-            if (symptomKeys[index] =="autonomic_dysfunction") {
+            if (symptomKeys[index] == "autonomic_dysfunction" || symptomKeys[index] == "behavior") {
               symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
             }
-            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            if (symptomKeys[index] != "behavior"){
+              symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            }
           }
         } else {
           symptom['present'] = true;
         }
-        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
-          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
-        else
-          symptom['time'] = Timestamp.fromDate(val.startTime);
+        if (symptomKeys[index] !== 'behavior') {
+          if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+            symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
+          else
+            symptom['time'] = Timestamp.fromDate(val.startTime);
+        }
       }
       symptoms[symptomKeys[index]] = symptom;
     }

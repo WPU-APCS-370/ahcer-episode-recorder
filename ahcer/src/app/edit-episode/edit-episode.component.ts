@@ -26,12 +26,11 @@ export class EditEpisodeComponent implements OnInit {
   loadingRescueMeds: boolean = false;
   loadingArchivedMeds: boolean = false;
 
-  symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-    "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure",
-    "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
-  symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-    "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
-    "apnea_breathing", "autonomic_dysfunction", "swallowing_choking", "chorea_tremors"];
+  symptomLabels = ["Apnea/Breathing", "Autonomic Dysfunction", "Behavior", "Chorea/Tremors", "Eyes",
+    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Loss of Consciousness",
+    "Right Arm", "Right Hand", "Right Leg", "Seizure", "Swallowing/Choking"]
+  symptomKeys = ["apnea_breathing", "autonomic_dysfunction", "behavior", "chorea_tremors", "eyes", "fullBody", "leftArm", "leftHand", "leftLeg", "lossOfConsciousness", "rightArm", "rightHand", "rightLeg", "seizure", "swallowing_choking"]
+
 
   episodeForm: UntypedFormGroup;
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
@@ -48,25 +47,29 @@ export class EditEpisodeComponent implements OnInit {
           if (label == "Swallowing/Choking" || label == "Chorea/Tremors") {
             controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
           } else {
-            if (label == "Autonomic Dysfunction") {
+            if (label == "Autonomic Dysfunction" || label == 'Behavior') {
               if (episode.symptoms[this.symptomKeys[index]]['type'] === 'other') {
                 this.showAutonomicTextField = true;
               }
               controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['text']];
             }
-            controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+            if (label !='Behavior'){
+              controls[label + ' Dropdown'] = [episode.symptoms[this.symptomKeys[index]]['type']];
+            }
           }
         }
         else {
           controls[label + ' Checkbox'] = [episode.symptoms[this.symptomKeys[index]]['time']];
         }
-        controls[label + ' Time'] = [episode.symptoms[this.symptomKeys[index]]['time'].toDate()];
+        if (label != 'Behavior') {
+          controls[label + ' Time'] = [episode.symptoms[this.symptomKeys[index]]['time'].toDate()];
+        }
       }
       else {
         controls[label + ' Checkbox'] = false;
-        if (label != "Loss of Consciousness" && label != "Seizure")
-          controls[label + ' Dropdown'] = [''];
+        controls[label + ' Dropdown'] = [''];
         controls[label + ' Time'] = [null];
+        controls[label + ' TextBox'] = [null];
       }
     }
     // let options = {
@@ -361,6 +364,7 @@ export class EditEpisodeComponent implements OnInit {
       lossOfConsciousness: {},
       fullBody: {},
       eyes: {},
+      behavior:{},
       leftArm: {},
       leftHand: {},
       leftLeg: {},
@@ -383,19 +387,24 @@ export class EditEpisodeComponent implements OnInit {
           if (this.symptomKeys[index] == "swallowing_choking" || this.symptomKeys[index] == "chorea_tremors") {
             symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
           } else {
-            if (this.symptomKeys[index] == "autonomic_dysfunction") {
+            if (this.symptomKeys[index] == "autonomic_dysfunction" || this.symptomKeys[index] == "behavior") {
               symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
             }
-            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            if (this.symptomKeys[index] != "behavior"){
+              symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            }
           }
           // symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
         } else {
           symptom['present'] = true;
         }
-        if (val.symptomGroup[this.symptomLabels[index] + ' Time'])
-          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time'])
-        else
-          symptom['time'] = Timestamp.fromDate(val.startTime);
+
+        if (this.symptomKeys[index] != "behavior"){
+          if (val.symptomGroup[this.symptomLabels[index] + ' Time'])
+            symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time'])
+          else
+            symptom['time'] = Timestamp.fromDate(val.startTime);
+        }
       }
       symptoms[this.symptomKeys[index]] = symptom;
     }

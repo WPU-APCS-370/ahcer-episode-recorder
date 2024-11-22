@@ -1,23 +1,28 @@
 .patients-panel {
-  max-width: 400px;
+  max-width: 550px;
   margin: 20px auto 10px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .header {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 }
 
-.episode-button-container{
+.episode-button-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 10px;
 }
 
-.button-container{
-  margin-left: 10px;
+.button-container {
+  // margin-left: 10px;
   display: flex;
   gap: 5px;
   font-weight: bolder !important;
@@ -26,6 +31,7 @@
 table {
   width: 100%;
 }
+
 .spinner-container {
   height: 360px;
   width: 390px;
@@ -33,5 +39,35 @@ table {
 }
 
 .spinner-container mat-spinner {
-  margin: 130px auto 0 auto;
+  margin: 230px auto 0 auto;
+}
+
+.input-button-container {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+
+  .input-notes {
+    width: 315px !important;
+    // margin-left: 35px;
+
+    mat-form-field {
+      flex-direction: row !important;
+      width: 195% !important;
+    }
+  }
+
+  button {
+    color: black;
+  }
+}
+
+.start-episode {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: center;
 }

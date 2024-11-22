@@ -14,6 +14,7 @@ export interface Episode {
     rightLeg: {type?: string, time?: Timestamp},
     apnea_breathing: {time?: Timestamp},
     autonomic_dysfunction: {type?: string, text?:string, time?: Timestamp},
+    behavior?: {text?:string},
     swallowing_choking: {type?: string, time?: Timestamp},
     chorea_tremors: {type?: string, time?: Timestamp},
   },

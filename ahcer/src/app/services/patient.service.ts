@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { first, forkJoin, from, map, Observable, switchMap } from "rxjs";
+import { BehaviorSubject, first, forkJoin, from, map, Observable, switchMap } from "rxjs";
 import { Patient } from "../models/patient";
 import { convertOneSnap, convertSnaps } from "./data-utils";
 import { UsersService } from "./users.service";
@@ -11,11 +11,10 @@ import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 })
 
 export class PatientServices {
-
   constructor(private db: AngularFirestore,
     private angularFireMessaging: AngularFireMessaging,
     private user: UsersService) { }
-    
+
     getFCMToken(): Observable<string> {
       return new Observable((observer) => {
         this.angularFireMessaging.requestToken.subscribe(

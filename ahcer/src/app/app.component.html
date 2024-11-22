@@ -65,16 +65,17 @@
           <span> Manage Medications</span>
         </a>
 
+        <a mat-list-item routerLink="settings" *ngIf="user.isLoggedIn$ | async">
+
+          <mat-icon>build</mat-icon>
+
+          <span>Settings</span>
+        </a>
         <a mat-list-item routerLink="episode-report" *ngIf="user.isLoggedIn$ | async">
 
           <mat-icon>library_books</mat-icon>
 
           <span> Reports</span>
-        </a>
-
-        <a mat-list-item routerLink="settings" *ngIf="user.isLoggedIn$ | async">
-          <mat-icon>build</mat-icon>
-          <span>Settings</span>
         </a>
 
         <a mat-list-item routerLink="help" *ngIf="user.isLoggedIn$ | async">

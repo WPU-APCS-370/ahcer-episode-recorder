@@ -25,6 +25,7 @@ export class CreateMedicationComponent implements OnInit {
       doseAmount: ["", Validators.required],
       doseUnit:["", Validators.required],
       type: [(data?.isRescue)? "Rescue" : "", Validators.required],
+      frequency: ['', Validators.required],
       active: false
     })
   }
@@ -38,6 +39,7 @@ export class CreateMedicationComponent implements OnInit {
 
   add(): void {
     const val = this.medicationForm.value;
+
     const newMedication: Partial<Medication> = {
       name: val.name,
       doseInfo: {
@@ -45,6 +47,7 @@ export class CreateMedicationComponent implements OnInit {
         unit: val.doseUnit
       },
       type: val.type,
+      frequency: val.frequency,
       archived: false
     };
 

@@ -5,7 +5,7 @@
   <p *ngIf="!loadingPatient && !currentPatient">
     No patients found. Please add one.
   </p>
-  <mat-form-field appearance="fill" *ngIf="patients && patients.length > 1">
+  <mat-form-field style="margin-left: 100px !important;" appearance="fill" *ngIf="patients && patients.length > 1">
     <mat-label>Choose a different patient</mat-label>
     <mat-select (selectionChange)="changePatient($event.value)">
       <mat-option *ngFor="let patient of patients" [value]="patient">{{
@@ -31,8 +31,12 @@
     </ng-container>
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let result">{{ result.type }}</td>
+      <td mat-cell *matCellDef="let result">{{ result.type }}({{ result.frequency }})</td>
     </ng-container>
+    <!-- <ng-container matColumnDef="frequency">
+      <th mat-header-cell *matHeaderCellDef>Frequency</th>
+      <td mat-cell *matCellDef="let result">{{ result.frequency }}</td>
+    </ng-container> -->
     <ng-container matColumnDef="active">
       <th mat-header-cell *matHeaderCellDef>Active</th>
       <td mat-cell *matCellDef="let result">

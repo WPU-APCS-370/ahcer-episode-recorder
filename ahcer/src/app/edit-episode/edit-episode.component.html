@@ -25,7 +25,7 @@
                           'checkbox-error' : ''">
           {{symptom}}
         </mat-checkbox>
-        <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure' && symptom !== 'Apnea/Breathing'"
+        <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure' && symptom !== 'Apnea/Breathing' && symptom != 'Behavior'"
                          [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
           <mat-label *ngIf="symptom!='Eyes' && symptom !='Autonomic Dysfunction' && symptom != 'Swallowing/Choking' && symptom != 'Chorea/Tremors'">Type of Action</mat-label>
           <mat-select *ngIf="symptom!='Eyes' && symptom !='Autonomic Dysfunction' && symptom != 'Swallowing/Choking' && symptom != 'Chorea/Tremors'" [formControlName]="symptom+' Dropdown'"
@@ -54,18 +54,22 @@
               <mat-label *ngIf="symptom == 'Chorea/Tremors' || symptom == 'Swallowing/Choking' || (symptom =='Autonomic Dysfunction' && showAutonomicTextField)">Type of Action</mat-label>
               <input *ngIf="symptom == 'Chorea/Tremors' || symptom == 'Swallowing/Choking' || (symptom =='Autonomic Dysfunction' && showAutonomicTextField)" matInput [formControlName]="symptom+' TextBox'">
         </mat-form-field>
-        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure'"
+        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure' || symptom == 'Behavior'"
                         class="invisible" style="width: 0;">
           <input matInput>
         </mat-form-field>
       </div>
-      <mat-form-field appearance="fill" *ngIf="(checkbox.checked)">
+      <mat-form-field appearance="fill" *ngIf="(checkbox.checked && symptom != 'Behavior')">
         <mat-label>Time</mat-label>
         <input matInput [ngxMatDatetimePicker]="SymptomTimePicker" [formControlName]="symptom+' Time'" />
         <mat-datepicker-toggle matSuffix [for]="SymptomTimePicker"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #SymptomTimePicker [showSeconds]="true" [enableMeridian]="true">
         </ngx-mat-datetime-picker>
         <mat-hint>Leave this field blank to use <i>Start Time</i>.</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="fill" *ngIf="(checkbox.checked && symptom == 'Behavior')">
+        <mat-label>Behavior</mat-label>
+        <input matInput [formControlName]="symptom+' TextBox'" />
       </mat-form-field>
     </div>
   </div>
