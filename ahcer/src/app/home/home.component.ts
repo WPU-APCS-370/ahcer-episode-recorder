@@ -14,6 +14,7 @@ import Timestamp = firebase.firestore.Timestamp;
 import { FreeDay } from '../models/freeday.enum';
 import { EditEpisodeFreeDayComponent } from '../edit-episode-free-day/edit-episode-free-day.component';
 import { Router } from '@angular/router';
+import { comparTwoDates } from '../services/data-utils';
 
 @Component({
   selector: 'app-home',
@@ -113,10 +114,7 @@ export class HomeComponent implements OnInit {
     this.episodeService.getAllEpisodesByPatient(this.currentPatient.id,'desc').subscribe({
       next: (episodes: any[]) => {
         const dayExists = episodes.some(episode => {
-          const episodeDate = episode.startTime.toDate();
-          const currentDayDate = currentDate.toDate();
-
-          return episode.status == this.day && episodeDate.getDate() == currentDayDate.getDate();
+          return episode.startTime && episode.status == this.day ? comparTwoDates(episode.startTime,currentDate) : false;
         });
 
         if (dayExists) {
@@ -134,7 +132,7 @@ export class HomeComponent implements OnInit {
               this.notes = ''
             },
             error: (err) => {
-              console.error('Error creating freeday:', err);
+              console.error('Error creating free day:', err);
               this.isAdd = false
               this.day = ''
               this.notes = ''
