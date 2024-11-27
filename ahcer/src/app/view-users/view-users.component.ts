@@ -48,6 +48,31 @@ export class ViewUsersComponent {
     })
   }
 
+  async deleteUser(id: string) {
+    try {
+      const response:any = await this.userService.deleteAccount(id)
+      console.log(response);
+
+      await this.userService.deleteUserDoc(id);
+      this.loadChildrens();
+      alert(response.message);
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('There was an error deleting the user. Please try again later.');
+    }
+  }
+
+  resetPassword(email:string){
+    this.userService.passwordRest(email).then((res) => {
+      alert('To reset password email has been sent.')
+    }).catch((error) => {
+      console.error(error)
+    })
+
+  }
+
+
 
   // onDeletePatient(patient: Patient) {
   //   const dialogConfig = new MatDialogConfig();

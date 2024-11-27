@@ -64,7 +64,7 @@ const routes: Routes = [
     path: 'view-profile',
     component: ViewProfileComponent,
     resolve: {
-      userId: () => inject(UsersService).userId$.pipe(first()),
+      userId: () => inject(UsersService).ThisUserId$.pipe(first()),
     },
     ...canActivate(redirectUnauthorizedToLogin)
   },

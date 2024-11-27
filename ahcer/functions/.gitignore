@@ -7,6 +7,4 @@ typings/
 
 # Node.js dependency directory
 node_modules/
-
-# Service account key
-scripts/wpu-ahcer*.json
+*.local

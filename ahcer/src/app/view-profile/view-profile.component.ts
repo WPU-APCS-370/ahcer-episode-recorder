@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {Observable} from "rxjs";
+import {first, Observable} from "rxjs";
 import {User} from "../models/user";
 import {UsersService} from "../services/users.service";
 import {Patient} from "../models/patient";
@@ -15,6 +15,8 @@ export class ViewProfileComponent implements OnInit {
   private userId: string;
   user$: Observable<User>;
   patients$: Observable<Patient[]>;
+  resetError:string
+  chalidUserId:string
 
   constructor(private route: ActivatedRoute,
               private usersService: UsersService,
@@ -24,9 +26,29 @@ export class ViewProfileComponent implements OnInit {
     this.userId = this.route.snapshot.data.userId;
     this.user$ = this.usersService.getUserById(this.userId);
     this.patients$ = this.patientService.getPatients();
+
+
   }
 
   async logout() {
     this.usersService.logout();
   }
+  async passwordReset(){
+    this.user$.pipe(first()).subscribe(user => {
+      this.usersService.passwordRest(user?.email).then((res) => {
+        alert('To reset password email has been sent.')
+        this.logout()
+      }).catch((error) => {
+        this.resetError = error;
+        setTimeout(() => {
+          this.resetError = '';
+        }, 5000);
+        console.log(error);
+      })
+    });
+
+  }
+  // deleteAcount(){
+  //   this.usersService.deleteUser(this.userId)
+  // }
 }

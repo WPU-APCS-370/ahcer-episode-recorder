@@ -12,7 +12,8 @@ export const environment = {
     authDomain: 'wpu-ahcer.firebaseapp.com',
     messagingSenderId: '503871560040',
   },
-  production: false
+  production: false,
+  deleteAccountUrl: 'http://127.0.0.1:5001/ahcr-38258/us-central1/deleteAccount'
 };
 
 /*

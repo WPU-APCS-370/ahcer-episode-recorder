@@ -7,8 +7,9 @@ import { User } from "../models/user";
 import { Router } from "@angular/router";
 import { environment } from 'src/environments/environment';
 import { initializeApp } from 'firebase/app';
-import { createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { getAuth } from 'firebase/auth';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,14 @@ export class UsersService {
   pictureUrl$: Observable<string>;
   newUserId$: Observable<string>;
   userId$: Observable<any>;
+  ThisUserId$: Observable<any>;
+
 
   constructor(
     private db: AngularFirestore,
     private afAuth: AngularFireAuth,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.isLoggedIn$ = afAuth.authState.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
@@ -32,6 +36,9 @@ export class UsersService {
     this.newUserId$ = afAuth.authState.pipe(map(user => user ? user.uid : null));
     this.userId$ = this.getCurerntUser().pipe(map((user: any) => {
       return user ? user['parentId'] ? user['parentId'] : user.id : null
+    }));
+    this.ThisUserId$ = this.getCurerntUser().pipe(map((user: any) => {
+      return user ?  user.id : null
     }));
   }
 
@@ -85,7 +92,10 @@ export class UsersService {
   }
 
 
-
+  deleteAccount(uid: string) {
+    const url = environment.deleteAccountUrl;
+    return this.http.post(url, { uid }).toPromise();
+  }
 
   getUserVideos(): Observable<any> {
     return this.userId$.pipe(
@@ -119,6 +129,19 @@ export class UsersService {
     const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     return createUserWithEmailAndPassword(detachedAuth, email, password)
+  }
+
+  passwordRest(email: string): Promise<void> {
+    const firebaseApp = initializeApp(environment.firebase, 'authApp');
+    const detachedAuth = getAuth(firebaseApp);
+    return sendPasswordResetEmail(detachedAuth, email)
+  }
+
+
+
+
+  deleteUserDoc(uid: string) {
+    return this.db.doc(`users/${uid}`).delete();
   }
 
   getUserChilds(parent_id: string) {

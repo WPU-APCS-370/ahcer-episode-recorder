@@ -89,4 +89,20 @@ export class LoginComponent implements OnInit {
     const newUser = this.userService.createUserByEmailPassword(val.email, val.password);
     this.onLoginSuccessful();
   }
+
+  passwordReset(){
+   let  {email}=this.userForm.value
+   if (email) {
+     this.userService.passwordRest(email).then((res) => {
+      alert('Check Email and reset password')
+     }).catch((error) => {
+       this.signInError = error;
+       setTimeout(() => {
+         this.signInError = '';
+       }, 5000);
+       console.log(error);
+     })
+
+   }
+  }
 }

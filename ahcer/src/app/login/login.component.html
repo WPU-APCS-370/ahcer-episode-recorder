@@ -1,5 +1,5 @@
 <div class="login">
-  
+
   <ng-container *ngIf="!signInClicked; else elseTemplate">
     <h2>Sign Up/Login</h2>
     <button class="login-btn new-account" mat-raised-button routerLink="/signup">Create new Account</button>
@@ -11,7 +11,7 @@
   <ng-template #elseTemplate>
     <div class="create-user">
       <h1>Login With Email</h1>
-    
+
       <form [formGroup]="userForm">
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
@@ -25,6 +25,9 @@
           <button mat-raised-button color="primary" [disabled]="!userForm.valid" (click)="emailLogin()">
             Login
           </button>
+          <!-- <button mat-raised-button color="primary" [disabled]="!userForm.get('email')?.valid"   (click)="passwordReset()">
+          Password Reset
+          </button> -->
           <button mat-raised-button color="warn" (click)="toggleEmailClicked()">
             Cancel
           </button>
@@ -35,6 +38,6 @@
       </form>
     </div>
   </ng-template>
-  
+
 </div>
 

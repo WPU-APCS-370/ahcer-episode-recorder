@@ -18,10 +18,18 @@
 
     </mat-card-header>
     <mat-card-content>
-      <h4>
-        <b>{{child.email}} </b>
-      </h4>
-    </mat-card-content>
+        <div class="children-container">
+        <span>
+          <b>{{child.email}} </b>
+        </span>
+        <div class="btn">
+          <button mat-mini-fab color="accent" (click)="resetPassword(child.email)"><mat-icon
+            class="add-children-btn">password</mat-icon></button>
+            <button mat-mini-fab color="accent" (click)="deleteUser(child.id)"><mat-icon
+                class="add-children-btn">delete</mat-icon></button>
+          </div>
+      </div>
+      </mat-card-content>
 
     <!-- <mat-card-actions class="children-actions">
       <button mat-button (click)="editPatient(children)">Edit</button>

@@ -12,5 +12,10 @@
       <p *ngFor="let patient of patients$ | async">{{patient.firstName}} {{patient.lastName}} <a routerLink="/patients">View Details</a></p>
     </mat-card-content>
   </mat-card>
+  <button mat-stroked-button color="warn" (click)="passwordReset()">Password Reset</button>
+  <div style="margin-top: 10px;">
+    <span class="error">{{resetError}} </span>
+  </div>
   <button mat-stroked-button color="warn" (click)="logout()">Log Out</button>
+  <!-- <button mat-stroked-button color="warn" (click)="deleteAcount()">Delete Acount</button> -->
 </div>

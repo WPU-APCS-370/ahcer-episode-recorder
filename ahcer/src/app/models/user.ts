@@ -9,4 +9,5 @@ export interface User {
   lastPatientViewed: string,
   videos: string[],
   lastPatientViewdUserId:string,
+  email?:string
 }

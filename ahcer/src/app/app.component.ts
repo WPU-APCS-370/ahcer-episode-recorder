@@ -22,11 +22,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
   ngAfterContentInit(): void {
     // this.getCurrentUser();
   }
-  
+
   ngOnInit(): void {
     // this.getCurrentUser();
   }
-  
+
   // getCurrentUser(){
   //   this.unsubscribe.push(
   //     this.user.getCurerntUser().subscribe((res: User)=>{
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
       return true;
     }
   }
-  
+
   async logout() {
     this.user.logout();
     localStorage.removeItem('user')

@@ -72,7 +72,7 @@ import { initializeApp } from 'firebase/app';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { SettingsComponent } from './settings/settings.component';
 import { EditEpisodeFreeDayComponent } from './edit-episode-free-day/edit-episode-free-day.component';
-
+import { HttpClientModule } from '@angular/common/http';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -118,6 +118,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     EditEpisodeFreeDayComponent
   ],
     imports: [
+      HttpClientModule,
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
