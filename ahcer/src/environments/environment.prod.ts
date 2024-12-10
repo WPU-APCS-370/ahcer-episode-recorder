@@ -9,5 +9,5 @@ export const environment = {
     messagingSenderId: '503871560040',
   },
   production: true,
-  deleteAccountUrl: 'http://127.0.0.1:5001/ahcr-38258/us-central1/deleteAccount'
+  deleteAccountUrl: 'https://us-central1-wpu-ahcer.cloudfunctions.net/deleteAccount'
 };
