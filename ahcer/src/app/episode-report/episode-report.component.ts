@@ -22,7 +22,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 export class EpisodeReportComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['startTime', 'endTime','status','duration', 'symptoms',
-    'rescueMeds', 'prescriptionMeds', 'triggers'];
+    'rescueMeds', 'prescriptionMeds', 'triggers', 'behavior'];
   loadingPatient: boolean = false;
   loadingEpisodes: boolean = false;
   loadingRescueMeds: boolean = false;
@@ -411,10 +411,11 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       episodeData['prescriptionMeds'] = prescriptionMeds ? prescriptionMeds : null;
       let triggers = this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true);
       episodeData['triggers'] = triggers ? triggers : null;
+      episodeData['behavior'] = episode.behavior ? episode.behavior : null;
       data.push(episodeData);
     }
     let headers = ['Start Time', 'End Time', 'Status','Duration', 'Symptoms',
-      'Rescue Medications', 'Prescription Medications', 'Triggers'];
+      'Rescue Medications', 'Prescription Medications', 'Triggers','Behavior'];
     new AngularCsv(data,
       "Complete-Episode-List",
       {

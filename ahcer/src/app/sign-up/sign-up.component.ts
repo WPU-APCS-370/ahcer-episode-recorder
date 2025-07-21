@@ -5,6 +5,8 @@ import { UsersService } from '../services/users.service';
 import { first, switchMap } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { StudyService } from '../services/study.service';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,7 +15,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class SignUpComponent {
   public signUpError: string = '';
-
+  studies:any=[]
   userForm =this.fb.group({
     username: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -25,11 +27,18 @@ export class SignUpComponent {
     private afAuth: AngularFireAuth,
     private db: AngularFirestore,
     private userService: UsersService,
+    private studyService: StudyService,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-  }
+
+ngOnInit(): void {
+  this.studyService.getStudiesForToday().subscribe(data => {
+    this.studies = data;
+    console.log(this.studies);
+  });
+}
+
 
   async onCreateUser() {
     const val = this.userForm.value;
@@ -44,9 +53,10 @@ export class SignUpComponent {
               .then((doc)=> {
                 const body = {
                   isParent: parentId ? false : true,
-                  username:val.username, 
+                  username:val.username,
                   email: val.email,
-                  password:val.password
+                  password:val.password,
+                  study:this.studies[0].id
                 }
                 if (parentId) {
                   body['parentId'] =  parentId;

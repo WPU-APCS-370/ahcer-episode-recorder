@@ -73,6 +73,8 @@ import { provideFirebaseApp } from '@angular/fire/app';
 import { SettingsComponent } from './settings/settings.component';
 import { EditEpisodeFreeDayComponent } from './edit-episode-free-day/edit-episode-free-day.component';
 import { HttpClientModule } from '@angular/common/http';
+import { StudyFormComponent } from './settings/components/study-form/study-form.component';
+import { DeleteConfirmationComponent } from './settings/components/delete-confirmation/delete-confirmation.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -115,7 +117,9 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     ViewUsersComponent,
     SignUpComponent,
     SettingsComponent,
-    EditEpisodeFreeDayComponent
+    EditEpisodeFreeDayComponent,
+    StudyFormComponent,
+    DeleteConfirmationComponent
   ],
     imports: [
       HttpClientModule,

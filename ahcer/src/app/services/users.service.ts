@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { first, forkJoin, from, map, Observable, switchMap } from "rxjs";
+import { first, forkJoin, from, map, Observable, of, switchMap } from "rxjs";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { convertOneSnap, convertSnaps } from "./data-utils";
@@ -10,6 +10,7 @@ import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { getAuth } from 'firebase/auth';
 import { HttpClient } from '@angular/common/http';
+import { StudyService } from './study.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class UsersService {
   pictureUrl$: Observable<string>;
   newUserId$: Observable<string>;
   userId$: Observable<any>;
+  study$: Observable<any>;
   ThisUserId$: Observable<any>;
 
 
@@ -36,6 +38,9 @@ export class UsersService {
     this.newUserId$ = afAuth.authState.pipe(map(user => user ? user.uid : null));
     this.userId$ = this.getCurerntUser().pipe(map((user: any) => {
       return user ? user['parentId'] ? user['parentId'] : user.id : null
+    }));
+    this.study$ = this.getCurerntUser().pipe(map((user: any) => {
+      return user ? user['study'] ? user['study'] : user.study : null
     }));
     this.ThisUserId$ = this.getCurerntUser().pipe(map((user: any) => {
       return user ?  user.id : null
@@ -156,15 +161,25 @@ export class UsersService {
     );
   }
   getAllUser() {
-    return this.db.collection('users', ref =>
-    ref.where('isRead', '==', true)).snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data: {} = a.payload.doc.data();
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
+    return this.study$.pipe(
+      switchMap(studyId => {
+        if (!studyId) return of([]);
+
+        return this.db.collection('users', ref =>
+          ref.where('study', '==', studyId)
+        ).snapshotChanges().pipe(
+          map(actions =>
+            actions.map(a => {
+              const data = a.payload.doc.data() as any;
+              const id = a.payload.doc.id;
+              return { id, ...data };
+            })
+          )
+        );
+      })
     );
   }
+
 
 
 

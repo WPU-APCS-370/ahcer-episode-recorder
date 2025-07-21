@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators, FormGroup} from "@angular/forms";
 import {PatientServices} from "../services/patient.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import firebase from "firebase/compat/app";
@@ -203,7 +203,7 @@ export class CreateEpisodeComponent implements OnInit{
       this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
   }
-
+  validatorsCleared:any = false;
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       let startDate = params['date'];
@@ -215,13 +215,33 @@ export class CreateEpisodeComponent implements OnInit{
         });
       }
     })
+
+const behaviorControl = this.episodeForm.get('behavior');
+
+if (behaviorControl) {
+  behaviorControl.valueChanges.subscribe(value => {
+    const lowerValue = (value || '').toString().toLowerCase().trim();
+    if (lowerValue && !this.validatorsCleared) {
+      this.validatorsCleared = true;
+      Object.keys(this.episodeForm.controls).forEach(field => {
+        if (field !== 'startTime' && field !== 'endTime') {
+          const control = this.episodeForm.get(field);
+          control?.clearValidators();
+          control?.updateValueAndValidity({ emitEvent: false });
+        }
+      });
+    }
+  });
+}
+
+
   }
 
   loadRescueMeds() {
     this.loadingRescueMeds = true;
     this.usersService.getLastViewedPatient().pipe(
       switchMap(lastPatient =>
-        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true,false,false,lastPatient.lastPatientViewdUserId)
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true,false,true,lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
@@ -240,7 +260,7 @@ export class CreateEpisodeComponent implements OnInit{
     this.loadingPrescriptionMeds = true;
     this.usersService.getLastViewedPatient().pipe(
       switchMap(lastPatient =>
-        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true,false,lastPatient.lastPatientViewdUserId)
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, false,true,true,lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
@@ -402,6 +422,7 @@ export class CreateEpisodeComponent implements OnInit{
       })
     ).subscribe();
   }
+
 
 }
 

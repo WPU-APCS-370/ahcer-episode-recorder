@@ -2,12 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-// import { Authentication, GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { Observable, from } from 'rxjs';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { Platform } from '@angular/cdk/platform';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UsersService } from '../services/users.service';
+import { StudyService } from '../services/study.service';
 
 
 @Component({
@@ -18,17 +16,23 @@ import { UsersService } from '../services/users.service';
 export class LoginComponent implements OnInit {
   public signInClicked: boolean = false;
   public signInError: string = '';
-
+  studies:any=[]
   constructor(
     private afAuth: AngularFireAuth,
     public platform: Platform,
     private router: Router,
     private db: AngularFirestore,
     private fb: FormBuilder,
+    private studyService: StudyService,
     private userService: UsersService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit(): void {
+    this.studyService.getStudiesForToday().subscribe(data => {
+      this.studies = data;
+      console.log(this.studies);
+    });
+  }
 
   userForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -46,6 +50,7 @@ export class LoginComponent implements OnInit {
             let obj = {
               email: cred.auth().currentUser.email,
               isParent: true,
+              study:this.studies[0].id,
               password: '',
               username: cred.auth().currentUser.displayName || ''
             };

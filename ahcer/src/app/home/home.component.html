@@ -19,7 +19,7 @@
         aria-label="Add an episode">
         <strong>NE</strong>
       </button>
-      <button matTooltip="Start recording" mat-fab class="bg-blue" aria-label="Add an episode" (click)="startEpisode()">
+      <button matTooltip="Start recording" [disabled]="!currentPatient" mat-fab class="bg-blue" aria-label="Add an episode" (click)="startEpisode()">
         <strong>{{currentPatient?.startEpisode? 'Stop':'Start'}} </strong>
       </button>
     </div>

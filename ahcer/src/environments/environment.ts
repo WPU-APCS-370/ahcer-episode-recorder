@@ -4,13 +4,13 @@
 
 export const environment = {
   firebase: {
-    projectId: 'wpu-ahcer',
-    appId: '1:503871560040:web:b9d5945d8ece53d2241edd',
-    storageBucket: 'wpu-ahcer.appspot.com',
-    locationId: 'us-central',
-    apiKey: 'AIzaSyAnC2nU3mtFKZd12PFk1TQkXRsR4aA0JL8',
-    authDomain: 'wpu-ahcer.firebaseapp.com',
-    messagingSenderId: '503871560040',
+    apiKey: "AIzaSyCJgOmvxW0I0yXWr7agpeYO5i0Fr4xO3M4",
+    authDomain: "wpu-ahcer-b5e94.firebaseapp.com",
+    projectId: "wpu-ahcer-b5e94",
+    storageBucket: "wpu-ahcer-b5e94.firebasestorage.app",
+    messagingSenderId: "474802796977",
+    appId: "1:474802796977:web:bab6174938b4c2ce966590",
+    measurementId: "G-0DGLWD6ELW",
   },
   production: false,
   deleteAccountUrl: 'http://127.0.0.1:5001/ahcr-38258/us-central1/deleteAccount'
