@@ -130,10 +130,12 @@ export class UsersService {
     localStorage.removeItem('user')
   }
 
-  createUserByEmailPassword(email: string, password: string): Promise<any> {
+ async createUserByEmailPassword(email: string, password: string): Promise<any> {
     const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
-    return createUserWithEmailAndPassword(detachedAuth, email, password)
+    let user = await createUserWithEmailAndPassword(detachedAuth, email, password);
+    await this.loginWithEmail(email, password);
+    return user;
   }
 
   passwordRest(email: string): Promise<void> {
