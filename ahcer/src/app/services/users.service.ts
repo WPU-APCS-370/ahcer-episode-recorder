@@ -193,7 +193,7 @@ export class UsersService {
       return data ? data.isAdmin : false;
     }
     else {
-      return true;
+      return false;
     }
   }
 
