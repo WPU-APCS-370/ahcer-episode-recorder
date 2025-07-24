@@ -16,7 +16,7 @@ import { StudyService } from '../services/study.service';
 export class LoginComponent implements OnInit {
   public signInClicked: boolean = false;
   public signInError: string = '';
-  studies:any=[]
+  study:string = '';
   constructor(
     private afAuth: AngularFireAuth,
     public platform: Platform,
@@ -29,8 +29,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.studyService.getStudiesForToday().subscribe(data => {
-      this.studies = data;
-      console.log(this.studies);
+      this.study = data && data.length > 0 ? data[0]?.id : '';
     });
   }
 
@@ -50,7 +49,7 @@ export class LoginComponent implements OnInit {
             let obj = {
               email: cred.auth().currentUser.email,
               isParent: true,
-              study:this.studies[0].id,
+              study:this.study,
               password: '',
               username: cred.auth().currentUser.displayName || ''
             };

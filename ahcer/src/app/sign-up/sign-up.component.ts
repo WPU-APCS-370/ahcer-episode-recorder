@@ -15,7 +15,7 @@ import { Timestamp } from 'firebase/firestore';
 })
 export class SignUpComponent {
   public signUpError: string = '';
-  studies:any=[]
+  study:string = '';
   userForm =this.fb.group({
     username: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -34,8 +34,7 @@ export class SignUpComponent {
 
 ngOnInit(): void {
   this.studyService.getStudiesForToday().subscribe(data => {
-    this.studies = data;
-    console.log(this.studies);
+    this.study = data.length > 0 && data[0]?.id ? data[0].id : '';
   });
 }
 
@@ -56,7 +55,7 @@ ngOnInit(): void {
                   username:val.username,
                   email: val.email,
                   password:val.password,
-                  study:this.studies[0].id
+                  study:this.study,
                 }
                 if (parentId) {
                   body['parentId'] =  parentId;
