@@ -134,7 +134,6 @@ export class UsersService {
     const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     let user = await createUserWithEmailAndPassword(detachedAuth, email, password);
-    await this.loginWithEmail(email, password);
     return user;
   }
 
@@ -197,6 +196,31 @@ export class UsersService {
     else {
       return false;
     }
+  }
+  onLoginSuccessful(study: string = '') {
+    this.afAuth.app.then(cred => {
+      let uid = cred.auth().currentUser.uid;
+      this.db.firestore.doc(`users/${uid}`)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          if (!doc.exists) {
+            let obj = {
+              email: cred.auth().currentUser.email,
+              isParent: true,
+              study:study,
+              password: '',
+              username: cred.auth().currentUser.displayName || ''
+            };
+            this.db.collection(`users`).doc(uid).set(obj);
+            localStorage.setItem('user', JSON.stringify(obj))
+          }
+          else {
+            localStorage.setItem('user', JSON.stringify(data))
+          }
+          this.router.navigateByUrl('/')
+        });
+    });
   }
 
 }

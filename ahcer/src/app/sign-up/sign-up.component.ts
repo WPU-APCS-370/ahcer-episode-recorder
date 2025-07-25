@@ -47,6 +47,14 @@ ngOnInit(): void {
       this.userService
         .createUserByEmailPassword(val.email, val.password).then((res:any)=>{
           const childId = res.user.uid;
+          if (!parentId) {
+            this.userService.loginWithEmail(val.email, val.password).then((res) => {
+              this.userService.onLoginSuccessful(this.study);
+            }).catch((error) => {
+              console.log(error);
+            });
+            return;
+          }
             this.db.firestore.doc(`users/${childId}`)
               .get()
               .then((doc)=> {

@@ -7,7 +7,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UsersService } from '../services/users.service';
 import { StudyService } from '../services/study.service';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -24,7 +23,7 @@ export class LoginComponent implements OnInit {
     private db: AngularFirestore,
     private fb: FormBuilder,
     private studyService: StudyService,
-    private userService: UsersService
+    public userService: UsersService
   ) { }
 
   ngOnInit(): void {
@@ -38,38 +37,12 @@ export class LoginComponent implements OnInit {
     password: ['', Validators.required]
   });
 
-  onLoginSuccessful() {
-    this.afAuth.app.then(cred => {
-      let uid = cred.auth().currentUser.uid;
-      this.db.firestore.doc(`users/${uid}`)
-        .get()
-        .then((doc) => {
-          const data = doc.data();
-          if (!doc.exists) {
-            let obj = {
-              email: cred.auth().currentUser.email,
-              isParent: true,
-              study:this.study,
-              password: '',
-              username: cred.auth().currentUser.displayName || ''
-            };
-            this.db.collection(`users`).doc(uid).set(obj);
-            localStorage.setItem('user', JSON.stringify(obj))
-          }
-          else {
-            localStorage.setItem('user', JSON.stringify(data))
-          }
-          this.router.navigateByUrl('/')
-        });
-    });
-  }
-
 
   emailLogin() {
     const val = this.userForm.getRawValue();
 
     this.userService.loginWithEmail(val.email, val.password).then((res) => {
-      this.onLoginSuccessful();
+      this.userService.onLoginSuccessful(this.study);
     }).catch((error) => {
       this.signInError = error;
       setTimeout(() => {
@@ -81,17 +54,6 @@ export class LoginComponent implements OnInit {
 
   toggleEmailClicked() {
     this.signInClicked = !this.signInClicked
-  }
-
-  signInWithEmail() {
-    const val = this.userForm.value;
-    // const newUserBody: {email:string,password:string} = {
-    //   email: val.email,
-    //   password: val.password
-    // };
-
-    const newUser = this.userService.createUserByEmailPassword(val.email, val.password);
-    this.onLoginSuccessful();
   }
 
   passwordReset(){
@@ -108,5 +70,8 @@ export class LoginComponent implements OnInit {
      })
 
    }
+  }
+  loginWithGmail(){
+    this.userService.onLoginSuccessful(this.study)
   }
 }
