@@ -2,11 +2,8 @@ import { Component } from '@angular/core';
 import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsersService } from '../services/users.service';
-import { first, switchMap } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { StudyService } from '../services/study.service';
-import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-sign-up',
@@ -27,15 +24,11 @@ export class SignUpComponent {
     private afAuth: AngularFireAuth,
     private db: AngularFirestore,
     private userService: UsersService,
-    private studyService: StudyService,
     private router: Router
   ) { }
 
 
 ngOnInit(): void {
-  this.studyService.getStudiesForToday().subscribe(data => {
-    this.study = data.length > 0 && data[0]?.id ? data[0].id : '';
-  });
 }
 
 
@@ -49,7 +42,7 @@ ngOnInit(): void {
           const childId = res.user.uid;
           if (!parentId) {
             this.userService.loginWithEmail(val.email, val.password).then((res) => {
-              this.userService.onLoginSuccessful(this.study);
+              this.userService.onLoginSuccessful();
             }).catch((error) => {
               console.log(error);
             });
@@ -63,7 +56,7 @@ ngOnInit(): void {
                   username:val.username,
                   email: val.email,
                   password:val.password,
-                  study:this.study,
+                  study:'',
                 }
                 if (parentId) {
                   body['parentId'] =  parentId;

@@ -18,7 +18,7 @@
 
     </mat-card-header>
     <mat-card-content>
-        <div class="children-container">
+        <div class="children-container" [ngClass]="{'disable': this.currentUser?.id == child.id}">
         <span>
           <b>{{child.email}} </b>
         </span>

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { first, forkJoin, from, map, Observable, of, switchMap } from "rxjs";
+import { first, from, map, Observable, of, switchMap } from "rxjs";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { convertOneSnap, convertSnaps } from "./data-utils";
+import { convertOneSnap } from "./data-utils";
 import { User } from "../models/user";
 import { Router } from "@angular/router";
 import { environment } from 'src/environments/environment';
@@ -10,7 +10,6 @@ import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { getAuth } from 'firebase/auth';
 import { HttpClient } from '@angular/common/http';
-import { StudyService } from './study.service';
 
 @Injectable({
   providedIn: 'root'
@@ -197,7 +196,7 @@ export class UsersService {
       return false;
     }
   }
-  onLoginSuccessful(study: string = '') {
+  onLoginSuccessful() {
     this.afAuth.app.then(cred => {
       let uid = cred.auth().currentUser.uid;
       this.db.firestore.doc(`users/${uid}`)
@@ -208,7 +207,7 @@ export class UsersService {
             let obj = {
               email: cred.auth().currentUser.email,
               isParent: true,
-              study:study,
+              study:'',
               password: '',
               username: cred.auth().currentUser.displayName || ''
             };

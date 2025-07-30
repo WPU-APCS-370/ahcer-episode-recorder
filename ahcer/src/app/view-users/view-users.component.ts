@@ -11,6 +11,7 @@ export class ViewUsersComponent {
   children: any[]
   loading: boolean = false;
   isAdmin:boolean=false
+  currentUser: any;
   constructor(
     private dialog: MatDialog,
     private userService: UsersService,
@@ -26,11 +27,10 @@ export class ViewUsersComponent {
   }
 
   loadChildrens() {
-    let currentUser: any;
     this.loading = true;
     this.userService.getCurerntUser().subscribe((res) => {
-      currentUser = res;
-      this.userService.getUserChilds(currentUser.id).subscribe((res: any) => {
+      this.currentUser = res;
+      this.userService.getUserChilds(this.currentUser.id).subscribe((res: any) => {
         this.loading = false;
         this.children = res;
         console.log(res, 'childs of arra');
@@ -40,12 +40,16 @@ export class ViewUsersComponent {
   }
   loadAllChildrens() {
     this.loading = true;
-    this.userService.getAllUser().subscribe((res: any) => {
-      this.loading = false;
-      this.children = res;
-      console.log(res, 'all childs of arra');
-
-    })
+    this.userService.getCurerntUser().subscribe((res) => {
+      this.currentUser = res;
+      this.userService.getAllUser().subscribe((res: any) => {
+        this.loading = false;
+        this.children = res;
+        console.log(res, 'all childs of arra');
+  
+      });
+    });
+    
   }
 
   async deleteUser(id: string) {
