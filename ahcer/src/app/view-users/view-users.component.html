@@ -1,5 +1,5 @@
 <div class="children-view">
-  <div *ngIf="!loading && !isAdmin">
+  <div *ngIf="!loading && !isAdmin && !isPIuser">
     Add New User <button mat-mini-fab color="accent" routerLink="/add-user">
     <mat-icon class="add-children-btn">add</mat-icon>
   </button>

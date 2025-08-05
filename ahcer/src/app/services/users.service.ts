@@ -160,13 +160,13 @@ export class UsersService {
       }))
     );
   }
-  getAllUser() {
+  getAllUser(piUser?:string) {
     return this.study$.pipe(
       switchMap(studyId => {
         if (!studyId) return of([]);
 
         return this.db.collection('users', ref =>
-          ref.where('study', '==', studyId)
+          ref.where('study', '==', piUser ? piUser:studyId)
         ).snapshotChanges().pipe(
           map(actions =>
             actions.map(a => {
@@ -179,6 +179,21 @@ export class UsersService {
       })
     );
   }
+
+  getAllUsers() {
+    return this.db.collection('users')
+      .snapshotChanges()
+      .pipe(
+        map(actions =>
+          actions.map(a => {
+            const data = a.payload.doc.data() as any;
+            const id = a.payload.doc.id;
+            return { id, ...data };
+          })
+        )
+      );
+  }
+
 
 
 
@@ -196,6 +211,17 @@ export class UsersService {
       return false;
     }
   }
+
+  get piUser(){
+    if (localStorage.getItem('user')) {
+      const data = JSON.parse(localStorage.getItem('user'));
+      return data ? data.PI : false;
+    }
+    else {
+      return false;
+    }
+  }
+
   onLoginSuccessful() {
     this.afAuth.app.then(cred => {
       let uid = cred.auth().currentUser.uid;

@@ -4,7 +4,7 @@ import { Patient } from "../models/patient";
 import { EpisodeService } from "../services/episode.service";
 import { PatientServices } from "../services/patient.service";
 import { UsersService } from "../services/users.service";
-import { finalize } from "rxjs";
+import { forkJoin, of, finalize, catchError, Subject } from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import { MedicationService } from "../services/medication.service";
@@ -13,6 +13,9 @@ import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { AngularCsv } from "angular-csv-ext/dist/Angular-csv";
 import { MatTooltip } from "@angular/material/tooltip";
+import { debounceTime } from 'rxjs/operators';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-episode-report',
@@ -20,8 +23,10 @@ import { MatTooltip } from "@angular/material/tooltip";
   styleUrls: ['./episode-report.component.scss']
 })
 export class EpisodeReportComponent implements OnInit, AfterViewInit {
-
-  displayedColumns: string[] = ['startTime', 'endTime','status','duration', 'symptoms',
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  private patientSelection$ = new Subject<any[]>();
+  displayedColumns: string[] = ['patientName', 'startTime', 'endTime', 'status', 'duration', 'symptoms',
     'rescueMeds', 'prescriptionMeds', 'triggers', 'behavior'];
   loadingPatient: boolean = false;
   loadingEpisodes: boolean = false;
@@ -34,6 +39,8 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<Episode> = new MatTableDataSource<Episode>();
   filters: Object = {};
   filterChipData: { key: string, label: string }[] = [];
+  loadedPatientsData: Patient[] = [];
+  loadedPatientIds: string[] = [];
 
   constructor(private medicationService: MedicationService,
     private episodeService: EpisodeService,
@@ -48,25 +55,39 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         patients => {
           this.patients = patients
           // this.loadForAdmin(patients)
+          this.loadingPatient = false
         }
       )
-    } else {
+
+    } else if (this.usersService.piUser) {
+      this.patientsService.getAllRecords(this.usersService.piUser).subscribe(
+        patients => {
+          this.patients = patients
+          // this.loadForAdmin(patients)
+          this.loadingPatient = false
+        })
+    }
+    else {
       this.patientsService.getPatients().subscribe(
-        patients => { this.patients = patients }
-      )
+        patients => { this.patients = patients })
+      this.loadingPatient = false
     }
     this.load()
+    this.patientSelection$
+      .pipe(debounceTime(1200)) // Adjust the debounce delay as needed
+      .subscribe(selectedPatients => {
+        this.changePatient(selectedPatients);
+      });
 
   }
-
 
   load() {
     this.usersService.getLastViewedPatient().subscribe(
       (lastPatient) => {
         if (lastPatient) {
-          this.loadPatient(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
-          this.loadEpisodes(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
-          this.loadRescueMeds(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
+          this.loadPatient(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
+          // this.loadEpisodes(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
+          // this.loadRescueMeds(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
         }
         else {
           this.loadingPatient = false;
@@ -74,8 +95,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       })
   }
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+
 
   sortingDataAccessor = (item: Episode, property: string) => {
     switch (property) {
@@ -146,6 +166,75 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     this.reloadDataSource();
   }
 
+  onPatientSelectionChange(patients: any[]) {
+    this.patientSelection$.next(patients);
+  }
+
+  changePatient(patients: any[]) {
+    this.episodes = [];
+    this.episodes_count = 0;
+    this.rescueMedNames = {}; // optional reset
+    this.loadedPatientsData = patients;
+
+    this.loadingEpisodes = true;
+    this.loadingRescueMeds = true;
+
+    const episodesObservables = patients.map(patient =>
+      this.episodeService.getAllEpisodesByPatient(patient.id, 'desc', patient.userId).pipe(
+        catchError(error => {
+          console.error(`Episodes load failed for patient ${patient.id}`, error);
+          return of([]);
+        })
+      )
+    );
+
+    const rescueMedsObservables = patients.map(patient =>
+      this.medicationService.getMedicationsByType(patient.id, true, false, false, patient.userId).pipe(
+        catchError(error => {
+          console.error(`Rescue meds load failed for patient ${patient.id}`, error);
+          return of([]);
+        })
+      )
+    );
+
+    forkJoin([...episodesObservables, ...rescueMedsObservables])
+  .pipe(
+    finalize(() => {
+      this.loadingEpisodes = false;
+      this.loadingRescueMeds = false;
+    })
+  )
+  .subscribe(results => {
+    const episodesResults = results.slice(0, patients.length);
+    const rescueMedsResults = results.slice(patients.length);
+
+    let  allEpisodes = []; // Clear before appending
+
+    episodesResults.forEach((episodes, index) => {
+      const patient = patients[index];
+      const taggedEpisodes = episodes.map(ep => ({
+        ...ep,
+        patientId: patient.id,
+        patientName: this.getPatientName(patient.id) || 'Unknown'
+      }));
+       allEpisodes = [...allEpisodes, ...taggedEpisodes];
+    });
+    this.episodes = allEpisodes;
+    // Update rescue meds
+    rescueMedsResults.forEach(medications => {
+      for (let med of medications) {
+        this.rescueMedNames[med.id] = med.name;
+      }
+    });
+
+    this.episodes_count = this.episodes.length;
+    this.reloadDataSource();
+  });
+
+  }
+
+
+
   loadEpisodes(patientId: string, userId?: string) {
     this.loadingEpisodes = true;
     this.episodeService.getAllEpisodesByPatient(patientId, 'desc', userId)
@@ -156,37 +245,17 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
           this.reloadDataSource();
         })
       )
-      .subscribe(
-        episodes => {
-          this.episodes = episodes;
-        }
-      );
-  }
+      .subscribe(episodes => {
 
-  changePatient(patient: any) {
-    console.log(patient);
-    let patientId = patient.id
-    let userId = patient.userId
+        const taggedEpisodes = episodes.map(ep => ({
+          ...ep,
+          patientId,
+          patientName: this.getPatientName(patientId) || 'Unknown'
+        }));
 
-    this.usersService.changeLastViewedPatient(patientId, userId)
-      .subscribe(() => {
-        this.loadPatient(patientId, userId)
-      })
-  }
+        this.episodes = [...this.episodes, ...taggedEpisodes];
+      });
 
-  loadPatient(patientId: string, userId?: string) {
-    if (patientId == this.currentPatient?.id) {
-      return
-    }
-    this.patientsService.getPatientById(patientId, userId)
-      .pipe(
-        finalize(() => this.loadingPatient = false)
-      )
-      .subscribe(patient => {
-        this.currentPatient = patient;
-        this.loadEpisodes(patientId, userId);
-        this.loadRescueMeds(patientId, userId);
-      })
   }
 
   loadRescueMeds(patientId: string, userId?: string) {
@@ -200,6 +269,34 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         }
       })
   }
+
+  getPatientName(id: string): string {
+    const selected = this.loadedPatientsData.find(p => p.id === id);
+    return selected?.firstName || 'Unknown';
+  }
+
+
+
+  loadPatient(patientId: string, userId?: string) {
+    if (patientId == this.currentPatient?.id) {
+      return
+    }
+    this.patientsService.getPatientById(patientId, userId)
+      .pipe(
+        finalize(() => this.loadingPatient = false)
+      )
+      .subscribe(patient => {
+        this.loadedPatientsData.push(patient)
+        this.patientSelection$.next(this.loadedPatientsData);
+        // this.currentPatient = patient;
+        // this.loadedPatientsData.push(patient);
+        // this.loadEpisodes(patientId, userId);
+        // this.loadRescueMeds(patientId, userId);
+        // this.loadedPatientIds.push(patientId);
+      })
+  }
+
+
 
   calculateDuration(startTime: Timestamp, endTime: Timestamp) {
     return this.episodeService.calculateDuration(startTime, endTime);
@@ -391,38 +488,82 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  exportToCSV() {
-    let data = [];
+  // exportToCSV() {
+  //   let data = [];
 
-    for (let index = 0; index < this.episodes.length; index++) {
-      let episode = this.episodes[index];
-      let episodeData = {};
-      episodeData['startTime'] = episode.startTime.toDate().toLocaleString();
-      episodeData['endTime'] = (episode.endTime) ? episode.endTime.toDate().toLocaleString() : null;
-      episodeData['status']=episode.status
-      episodeData['duration'] = this.episodeService.calculateDuration(episode.startTime, episode.endTime);
-      let symptoms = this.displaySymptomsString(episode.symptoms, true);
-      episodeData['symptoms'] = symptoms ? symptoms : null;
-      let rescueMeds = this.displayRescueMedsString(episode.medications?.rescueMeds, true);
-      episodeData['rescueMeds'] = rescueMeds ? rescueMeds : null;
-      let prescriptionMeds = this.displayPrescriptionMedsString(
-        episode.medications?.prescriptionMeds, true
-      );
-      episodeData['prescriptionMeds'] = prescriptionMeds ? prescriptionMeds : null;
-      let triggers = this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true);
-      episodeData['triggers'] = triggers ? triggers : null;
-      episodeData['behavior'] = episode.behavior ? episode.behavior : null;
-      data.push(episodeData);
-    }
-    let headers = ['Start Time', 'End Time', 'Status','Duration', 'Symptoms',
-      'Rescue Medications', 'Prescription Medications', 'Triggers','Behavior'];
-    new AngularCsv(data,
-      "Complete-Episode-List",
-      {
-        showLabels: true,
-        nullToEmptyString: true,
-        headers
-      });
+  //   for (let index = 0; index < this.episodes.length; index++) {
+  //     let episode = this.episodes[index];
+  //     let episodeData = {};
+  //     episodeData['startTime'] = episode.startTime.toDate().toLocaleString();
+  //     episodeData['endTime'] = (episode.endTime) ? episode.endTime.toDate().toLocaleString() : null;
+  //     episodeData['status'] = episode.status
+  //     episodeData['duration'] = this.episodeService.calculateDuration(episode.startTime, episode.endTime);
+  //     let symptoms = this.displaySymptomsString(episode.symptoms, true);
+  //     episodeData['symptoms'] = symptoms ? symptoms : null;
+  //     let rescueMeds = this.displayRescueMedsString(episode.medications?.rescueMeds, true);
+  //     episodeData['rescueMeds'] = rescueMeds ? rescueMeds : null;
+  //     let prescriptionMeds = this.displayPrescriptionMedsString(
+  //       episode.medications?.prescriptionMeds, true
+  //     );
+  //     episodeData['prescriptionMeds'] = prescriptionMeds ? prescriptionMeds : null;
+  //     let triggers = this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true);
+  //     episodeData['triggers'] = triggers ? triggers : null;
+  //     episodeData['behavior'] = episode.behavior ? episode.behavior : null;
+  //     data.push(episodeData);
+  //   }
+  //   let headers = ['Start Time', 'End Time', 'Status', 'Duration', 'Symptoms',
+  //     'Rescue Medications', 'Prescription Medications', 'Triggers', 'Behavior'];
+  //   new AngularCsv(data,
+  //     "Complete-Episode-List",
+  //     {
+  //       showLabels: true,
+  //       nullToEmptyString: true,
+  //       headers
+  //     });
+  // }
+
+
+
+exportToExcel() {
+  const groupedEpisodes = this.groupEpisodesByPatient();
+  const workbook = XLSX.utils.book_new();
+
+  for (const patientId in groupedEpisodes) {
+    const patientEpisodes = groupedEpisodes[patientId];
+    const patientName = patientEpisodes[0].patientName || 'Unknown';
+
+    const data = patientEpisodes.map(episode => ({
+      'Start Time': episode.startTime.toDate().toLocaleString(),
+      'End Time': episode.endTime ? episode.endTime.toDate().toLocaleString() : '',
+      'Status': episode.status,
+      'Duration': this.episodeService.calculateDuration(episode.startTime, episode.endTime),
+      'Symptoms': this.displaySymptomsString(episode.symptoms, true) || '',
+      'Rescue Medications': this.displayRescueMedsString(episode.medications?.rescueMeds, true) || '',
+      'Prescription Medications': this.displayPrescriptionMedsString(episode.medications?.prescriptionMeds, true) || '',
+      'Triggers': this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true) || '',
+      'Behavior': episode.behavior || ''
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const sheetName = patientName.length > 31 ? patientName.substring(0, 31) : patientName; // Excel limit
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
   }
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  FileSaver.saveAs(blob, 'Complete-Episode-List.xlsx');
+}
+
+private groupEpisodesByPatient() {
+  const grouped = {};
+  for (let ep of this.episodes as any) {
+    if (!grouped[ep.patientId]) {
+      grouped[ep.patientId] = [];
+    }
+    grouped[ep.patientId].push(ep);
+  }
+  return grouped;
+}
+
 }
 

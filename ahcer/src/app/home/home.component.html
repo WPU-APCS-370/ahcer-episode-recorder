@@ -7,7 +7,7 @@
     </span>
   </h2>
   <div class="header" *ngIf="!loadingPatient && currentPatient && !loading">
-    <div class="button-container" *ngIf="!this.usersService.isAdmin">
+    <div class="button-container" *ngIf="!usersService.isAdmin && !usersService.isPIuser">
       <button matTooltip="New recording" mat-fab class="bg-red" aria-label="Add an episode"
         routerLink="/record-episode">
         <!-- <mat-icon>add</mat-icon> --><strong>E</strong>

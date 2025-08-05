@@ -30,16 +30,16 @@ export class HomeComponent implements OnInit {
   currentPatient: Patient;
   episodes_count: number;
   records$: Observable<any[]>;
-  isAdd:boolean=false
-  day:string=''
-  notes:string=''
+  isAdd: boolean = false
+  day: string = ''
+  notes: string = ''
   timer: string = '00:00:00';
   private timerInterval: any;
-  get NO_EPISODE_TODAY(){
+  get NO_EPISODE_TODAY() {
     return FreeDay.NO_EPISODE_TODAY.toString();
   }
 
-  get OFF_DAY(){
+  get OFF_DAY() {
     return FreeDay.OFF_DAY.toString();
   }
 
@@ -60,6 +60,12 @@ export class HomeComponent implements OnInit {
       });
       this.getLastViewd()
 
+    } else if (this.usersService.piUser) {
+      this.records$ = this.patientsService.getAllRecords(this.usersService.piUser);
+      this.records$.subscribe(records => {
+        this.patients = records
+      });
+      this.getLastViewd()
     } else {
 
       this.patientsService.getPatients().subscribe(
@@ -95,26 +101,26 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  freeDay(day: FreeDay){
-    if(this.day==day){
+  freeDay(day: FreeDay) {
+    if (this.day == day) {
       this.isAdd = !this.isAdd
     }
-     this.day = day
+    this.day = day
   }
 
-   createFreeDay(){
+  createFreeDay() {
     const currentDate = Timestamp.fromDate(new Date());
     const freeday: any = {
       status: this.day,
-      notes:this.notes,
+      notes: this.notes,
       startTime: currentDate,
       endTime: currentDate
     };
 
-    this.episodeService.getAllEpisodesByPatient(this.currentPatient.id,'desc').subscribe({
+    this.episodeService.getAllEpisodesByPatient(this.currentPatient.id, 'desc').subscribe({
       next: (episodes: any[]) => {
         const dayExists = episodes.some(episode => {
-          return episode.startTime && episode.status == this.day ? comparTwoDates(episode.startTime,currentDate) : false;
+          return episode.startTime && episode.status == this.day ? comparTwoDates(episode.startTime, currentDate) : false;
         });
 
         if (dayExists) {
@@ -126,7 +132,7 @@ export class HomeComponent implements OnInit {
           this.episodeService.createEpisode(this.currentPatient.id, freeday).subscribe({
             next: () => {
               console.log(`${this.day} added successfully`);
-              this.loadEpisodes(this.currentPatient.id,this.currentPatient.userId);
+              this.loadEpisodes(this.currentPatient.id, this.currentPatient.userId);
               this.isAdd = false
               this.day = ''
               this.notes = ''
@@ -155,8 +161,8 @@ export class HomeComponent implements OnInit {
       (lastPatient) => {
         if (lastPatient) {
           this.loading = true;
-          this.loadPatient(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
-          this.loadEpisodes(lastPatient.lastPatientViewed,lastPatient.lastPatientViewdUserId);
+          this.loadPatient(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
+          this.loadEpisodes(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
         }
         else {
           this.loadingPatient = false;
@@ -184,7 +190,7 @@ export class HomeComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
     let uid = this.usersService.isAdmin ? this.currentPatient.userId : null;
-    dialogConfig.data = [episode, this.currentPatient.id,uid];
+    dialogConfig.data = [episode, this.currentPatient.id, uid];
     this.dialog
       .open(ViewEpisodeComponent, dialogConfig)
       .afterClosed()
@@ -197,14 +203,14 @@ export class HomeComponent implements OnInit {
 
   }
 
-  editEpisode(episode: Episode): void{
-    if (episode.status === 'Recorded'){
+  editEpisode(episode: Episode): void {
+    if (episode.status === 'Recorded') {
       this.editEpisodes(episode)
-    }else{
+    } else {
       this.editEpisodeFreeDay(episode)
     }
   }
-  editEpisodeFreeDay(episode: Episode): void{
+  editEpisodeFreeDay(episode: Episode): void {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
@@ -275,7 +281,7 @@ export class HomeComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.minWidth = '350px';
 
-    dialogConfig.data = [episode, this.currentPatient.id,this.currentPatient.userId];
+    dialogConfig.data = [episode, this.currentPatient.id, this.currentPatient.userId];
     this.dialog
       .open(DeleteEpisodeComponent, dialogConfig)
       .afterClosed()
@@ -285,14 +291,14 @@ export class HomeComponent implements OnInit {
         }
       });
   }
-  startEpisode(){
+  startEpisode() {
     let changes = this.currentPatient
     if (!changes.userId) {
       delete changes.userId;
     }
-    if(changes.startEpisode==null){
+    if (changes.startEpisode == null) {
       changes.startEpisode = Timestamp.fromDate(new Date());
-    }else{
+    } else {
       var startDate = changes.startEpisode.toDate().toISOString()
       changes.startEpisode = null
     }

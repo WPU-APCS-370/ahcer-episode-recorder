@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 export interface Study {
   id?: string;
   name: string;
+  users: string[];
+  PI: string;
   startDate: Date;
   endDate: Date;
   isDeleted?: boolean;
@@ -66,4 +68,33 @@ export class StudyService {
       study: study
     });
   }
+  async updateUsersAndPI(studyId: string, userIds: string[], piId: string) {
+    const batch = this.firestore.firestore.batch();
+
+    for (const userId of userIds) {
+      const userRef = this.firestore.doc(`users/${userId}`).ref;
+      batch.update(userRef, { study: studyId });
+    }
+
+    const piRef = this.firestore.doc(`users/${piId}`).ref;
+    batch.update(piRef, { PI: studyId });
+
+    await batch.commit();
+  }
+  removeUsersAndPI(userIds: string[], piId: string): Promise<void> {
+    const batch = this.firestore.firestore.batch();
+
+    for (const userId of userIds) {
+      const userRef = this.firestore.doc(`users/${userId}`).ref;
+      batch.update(userRef, { study: '' });
+    }
+
+    if (piId) {
+      const piRef = this.firestore.doc(`users/${piId}`).ref;
+      batch.update(piRef, { PI: '' });
+    }
+
+    return batch.commit();
+  }
+
 }

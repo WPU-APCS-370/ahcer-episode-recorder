@@ -17,18 +17,24 @@ import { UsersService } from '../services/users.service';
 export class ViewPatientComponent implements OnInit {
   patients: Patient[]
   loading: boolean = false;
+  isAdmin:boolean=false
+  isPIuser:boolean=false
   activeMeds: Medication[][] = [];
   constructor(private dialog: MatDialog,
     private patientService: PatientServices,
     private medicationService: MedicationService,
-    public usersService: UsersService) { }
+    private usersService: UsersService) { }
 
   ngOnInit(): void {
-    if (this.usersService.isAdmin) {
-      this.loadAllPatients()
-    }
-    else {
-      this.loadPatients();
+    const { isAdmin, piUser } = this.usersService;
+    if (isAdmin) {
+      this.isAdmin = true;
+      this.loadAllPatients();
+    } else if (piUser) {
+      this.isPIuser = true;
+      this.loadAllPatients(piUser);
+    } else {
+      this.loadAllPatients();
     }
   }
 
@@ -58,10 +64,10 @@ export class ViewPatientComponent implements OnInit {
         }
       )
   }
-  loadAllPatients() {
+  loadAllPatients(piUser?: string) {
     this.loading = true;
 
-    this.patientService.getAllRecords()
+    this.patientService.getAllRecords(piUser)
       .pipe(
         finalize(() => {
           this.loading = false;

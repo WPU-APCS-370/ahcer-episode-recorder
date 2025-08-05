@@ -67,16 +67,30 @@ export class SettingsComponent implements OnInit {
       data: { study }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(async result => {
       if (result) {
-        if (study && study.id) {
-          this.studyService.updateStudy(study.id, result);
-        } else {
-          this.studyService.addStudy(result);
+        try {
+          let studyId = '';
+
+          if (study && study.id) {
+            await this.studyService.updateStudy(study.id, result.formValue);
+            studyId = study.id;
+          } else {
+            const docRef = await this.studyService.addStudy(result.formValue);
+            studyId = docRef.id;
+          }
+
+          await this.studyService.updateUsersAndPI(studyId, result.formValue.users, result.formValue.PI);
+          await this.studyService.removeUsersAndPI(result.removeUsers, result.removePI);
+
+        } catch (error) {
+          console.error('Error saving study and updating users:', error);
         }
       }
     });
+
   }
+
 
   deleteStudy(data: any) {
     const dialogRef = this.dialog.open(DeleteConfirmationComponent, {

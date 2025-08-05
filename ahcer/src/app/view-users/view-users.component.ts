@@ -11,20 +11,26 @@ export class ViewUsersComponent {
   children: any[]
   loading: boolean = false;
   isAdmin:boolean=false
+  isPIuser:boolean=false
   currentUser: any;
   constructor(
     private dialog: MatDialog,
     private userService: UsersService,
   ) { }
   ngOnInit(): void {
-    if (this.userService.isAdmin) {
-      this.isAdmin=true
-      this.loadAllChildrens()
+    const { isAdmin, piUser } = this.userService;
+
+    if (isAdmin) {
+      this.isAdmin = true;
+      this.loadAllChildrens();
+    } else if (piUser) {
+      this.isPIuser = true;
+      this.loadAllChildrens(piUser);
     } else {
       this.loadChildrens();
     }
-
   }
+
 
   loadChildrens() {
     this.loading = true;
@@ -38,18 +44,18 @@ export class ViewUsersComponent {
       })
     })
   }
-  loadAllChildrens() {
+  loadAllChildrens(piUser?:string) {
     this.loading = true;
     this.userService.getCurerntUser().subscribe((res) => {
       this.currentUser = res;
-      this.userService.getAllUser().subscribe((res: any) => {
+      this.userService.getAllUser(piUser).subscribe((res: any) => {
         this.loading = false;
         this.children = res;
         console.log(res, 'all childs of arra');
-  
+
       });
     });
-    
+
   }
 
   async deleteUser(id: string) {

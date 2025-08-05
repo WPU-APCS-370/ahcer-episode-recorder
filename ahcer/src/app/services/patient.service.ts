@@ -77,13 +77,13 @@ export class PatientServices {
     }
   }
 
-  getAllRecords(): Observable<any[]> {
+  getAllRecords(piUser?:string): Observable<any[]> {
     return this.user.study$.pipe(
       switchMap((studyId: string | null) => {
         if (!studyId) return of([]);
 
         return this.db.collection('users', ref =>
-          ref.where('study', '==', studyId)
+          ref.where('study', '==', piUser ? piUser:studyId)
         ).get().pipe(
           switchMap((querySnapshot: any) => {
             const observables = querySnapshot.docs.map((doc: any) => {
