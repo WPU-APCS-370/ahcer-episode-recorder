@@ -34,7 +34,7 @@ export class ViewPatientComponent implements OnInit {
       this.isPIuser = true;
       this.loadAllPatients(piUser);
     } else {
-      this.loadAllPatients();
+      this.loadPatients();
     }
   }
 

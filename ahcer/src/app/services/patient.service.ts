@@ -77,27 +77,32 @@ export class PatientServices {
     }
   }
 
-  getAllRecords(piUser?:string): Observable<any[]> {
+  getAllRecords(piUser?: string): Observable<any[]> {
     return this.user.study$.pipe(
       switchMap((studyId: string | null) => {
-        if (!studyId) return of([]);
+        const studyToUse = piUser || studyId;
+        let userQuery$: Observable<any>;
+        if (!studyToUse) {
+          userQuery$ = this.db.collection('users').get();
+        } else {
+          userQuery$ = this.db.collection('users', ref =>
+            ref.where('study', '==', studyToUse)
+          ).get();
+        }
 
-        return this.db.collection('users', ref =>
-          ref.where('study', '==', piUser ? piUser:studyId)
-        ).get().pipe(
+        return userQuery$.pipe(
           switchMap((querySnapshot: any) => {
             const observables = querySnapshot.docs.map((doc: any) => {
               const userId = doc.id;
-              return this.db.collection(`users/${userId}/patients`).get()
-                .pipe(
-                  map((patientsSnapshot: any) => {
-                    return patientsSnapshot.docs.map((patientDoc: any) => ({
-                      id: patientDoc.id,
-                      userId: userId,
-                      ...patientDoc.data()
-                    }));
-                  })
-                );
+              return this.db.collection(`users/${userId}/patients`).get().pipe(
+                map((patientsSnapshot: any) => {
+                  return patientsSnapshot.docs.map((patientDoc: any) => ({
+                    id: patientDoc.id,
+                    userId: userId,
+                    ...patientDoc.data()
+                  }));
+                })
+              );
             });
 
             return forkJoin(observables);
@@ -107,6 +112,7 @@ export class PatientServices {
       })
     );
   }
+
 
 
 

@@ -75,6 +75,7 @@ import { EditEpisodeFreeDayComponent } from './edit-episode-free-day/edit-episod
 import { HttpClientModule } from '@angular/common/http';
 import { StudyFormComponent } from './settings/components/study-form/study-form.component';
 import { DeleteConfirmationComponent } from './settings/components/delete-confirmation/delete-confirmation.component';
+import { UpdateModalComponent } from './view-profile/update-modal/update-modal.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -119,7 +120,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     SettingsComponent,
     EditEpisodeFreeDayComponent,
     StudyFormComponent,
-    DeleteConfirmationComponent
+    DeleteConfirmationComponent,
+    UpdateModalComponent
   ],
     imports: [
       HttpClientModule,

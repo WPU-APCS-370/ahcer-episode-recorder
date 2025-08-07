@@ -163,10 +163,12 @@ export class UsersService {
   getAllUser(piUser?:string) {
     return this.study$.pipe(
       switchMap(studyId => {
-        if (!studyId) return of([]);
-
+        const studyToUse = piUser || studyId;
+        if (!studyToUse) {
+          return  this.getAllUsers()
+        }
         return this.db.collection('users', ref =>
-          ref.where('study', '==', piUser ? piUser:studyId)
+          ref.where('study', '==', studyToUse)
         ).snapshotChanges().pipe(
           map(actions =>
             actions.map(a => {
@@ -222,7 +224,7 @@ export class UsersService {
     }
   }
 
-  onLoginSuccessful() {
+  onLoginSuccessful(username?:string) {
     this.afAuth.app.then(cred => {
       let uid = cred.auth().currentUser.uid;
       this.db.firestore.doc(`users/${uid}`)
@@ -235,7 +237,7 @@ export class UsersService {
               isParent: true,
               study:'',
               password: '',
-              username: cred.auth().currentUser.displayName || ''
+              username: username ? username : cred.auth().currentUser.displayName || ''
             };
             this.db.collection(`users`).doc(uid).set(obj);
             localStorage.setItem('user', JSON.stringify(obj))
@@ -246,6 +248,9 @@ export class UsersService {
           this.router.navigateByUrl('/')
         });
     });
+  }
+  updateUser(username: any,userId:string): Promise<void> {
+    return this.db.doc(`users/${userId}`).update(username);
   }
 
 }

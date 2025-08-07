@@ -31,13 +31,19 @@ export class StudyFormComponent {
     this.loading = true;
     this.userService.getAllUsers().subscribe((res: any) => {
       this.loading = false;
-      this.users = res.filter((user: any) => user.study === data.study?.id || !user.study);
-      this.piUsers = res.filter((user: any) =>
-        (!user.PI || user.PI === data.study?.id) &&
-        (user.study === data.study?.id || !user.study)
+
+      this.users = res.filter((user: any) =>
+        (user.study === data.study?.id || !user.study) &&
+        !user.parentId
       );
 
+      this.piUsers = res.filter((user: any) =>
+        (!user.PI || user.PI === data.study?.id) &&
+        (user.study === data.study?.id || !user.study) &&
+        !user.parentId
+      );
     });
+
 
     this.studyForm.get('PI')?.valueChanges.subscribe((selectedPI: string) => {
       const usersControl = this.studyForm.get('users');

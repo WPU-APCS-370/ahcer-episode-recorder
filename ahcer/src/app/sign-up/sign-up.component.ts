@@ -42,7 +42,7 @@ ngOnInit(): void {
           const childId = res.user.uid;
           if (!parentId) {
             this.userService.loginWithEmail(val.email, val.password).then((res) => {
-              this.userService.onLoginSuccessful();
+              this.userService.onLoginSuccessful(val.username);
             }).catch((error) => {
               console.log(error);
             });
