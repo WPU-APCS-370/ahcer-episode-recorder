@@ -65,7 +65,9 @@ export class StudyService {
   }
   updateUserStudy(study: string,userId:string): Promise<void> {
     return this.firestore.doc(`users/${userId}`).update({
-      study: study
+      study: study,
+      lastPatientViewed: '',
+      lastPatientViewdUserId: ''
     });
   }
   async updateUsersAndPI(studyId: string, userIds: string[], piId: string) {

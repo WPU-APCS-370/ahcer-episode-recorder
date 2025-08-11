@@ -56,6 +56,8 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
           this.patients = patients
           // this.loadForAdmin(patients)
           this.loadingPatient = false
+      this.load()
+
         }
       )
 
@@ -65,14 +67,16 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
           this.patients = patients
           // this.loadForAdmin(patients)
           this.loadingPatient = false
+      this.load()
+
         })
     }
     else {
       this.patientsService.getPatients().subscribe(
         patients => { this.patients = patients })
       this.loadingPatient = false
+      this.load()
     }
-    this.load()
     this.patientSelection$
       .pipe(debounceTime(1200)) // Adjust the debounce delay as needed
       .subscribe(selectedPatients => {
@@ -85,7 +89,16 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     this.usersService.getLastViewedPatient().subscribe(
       (lastPatient) => {
         if (lastPatient) {
-          this.loadPatient(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
+          const selectedPatient = this.patients?.find(
+            p =>
+              p.id === lastPatient.lastPatientViewed &&
+              p.userId === lastPatient.lastPatientViewdUserId
+          );
+          if (selectedPatient) {
+            // Since mat-select multiple expects an array
+            this.patientSelection$.next([selectedPatient]);
+          }
+          // this.loadPatient(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
           // this.loadEpisodes(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
           // this.loadRescueMeds(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId);
         }
