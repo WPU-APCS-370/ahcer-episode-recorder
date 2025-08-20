@@ -33,7 +33,7 @@ export class formGroupErrorMatcher implements ErrorStateMatcher {
 })
 export class CreateEpisodeComponent implements OnInit{
   symptomLabels = ["Apnea/Breathing", "Autonomic Dysfunction", "Behavior", "Chorea/Tremors", "Eyes",
-                    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Loss of Consciousness",
+                    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Reduced Consciousness",
                     "Right Arm", "Right Hand", "Right Leg", "Seizure", "Swallowing/Choking"]
 ;
   loadingPatient: boolean = false;
@@ -75,7 +75,7 @@ export class CreateEpisodeComponent implements OnInit{
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
-      if (label != "Seizure" && label != "Loss of Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Behavior" && label !=="Chorea/Tremors")
+      if (label != "Seizure" && label != "Reduced Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Behavior" && label !=="Chorea/Tremors")
         controls[label+' Dropdown'] = ['']
       if (label == "Swallowing/Choking" || label == "Chorea/Tremors" || label == "Autonomic Dysfunction" || label == "Behavior")
         controls[label+' TextBox'] = ['']
@@ -89,7 +89,7 @@ export class CreateEpisodeComponent implements OnInit{
           let checkbox = formGroup.controls[label+' Checkbox']
           let checkboxChecked = (checkbox.value === true)
           let dropdownValueEmpty = false;
-          if (label != "Seizure" && label != "Loss of Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Chorea/Tremors" && label !== "Behavior") {
+          if (label != "Seizure" && label != "Reduced Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Chorea/Tremors" && label !== "Behavior") {
             let dropdown = formGroup.controls[label + ' Dropdown']
             dropdownValueEmpty = (dropdown.value === '')
           }

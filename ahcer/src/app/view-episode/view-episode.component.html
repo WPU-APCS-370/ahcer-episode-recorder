@@ -47,7 +47,7 @@
       </p>
       <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.lossOfConsciousness) &&
                 episode.symptoms.lossOfConsciousness.present">
-        <b>Loss of Consciousness</b>
+        <b>Reduced Consciousness</b>
         at <u>{{episode.symptoms.lossOfConsciousness.time.toDate()| date: 'HH:mm:ss on MM/dd/yyyy'}}</u>
       </p>
       <p *ngIf="!jsonObjectIsEmpty(episode.symptoms.apnea_breathing) &&

@@ -27,7 +27,7 @@ export class EditEpisodeComponent implements OnInit {
   loadingArchivedMeds: boolean = false;
 
   symptomLabels = ["Apnea/Breathing", "Autonomic Dysfunction", "Behavior", "Chorea/Tremors", "Eyes",
-    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Loss of Consciousness",
+    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Reduced Consciousness",
     "Right Arm", "Right Hand", "Right Leg", "Seizure", "Swallowing/Choking"]
   symptomKeys = ["apnea_breathing", "autonomic_dysfunction", "behavior", "chorea_tremors", "eyes", "fullBody", "leftArm", "leftHand", "leftLeg", "lossOfConsciousness", "rightArm", "rightHand", "rightLeg", "seizure", "swallowing_choking"]
 
@@ -42,7 +42,7 @@ export class EditEpisodeComponent implements OnInit {
     for (let index in this.symptomLabels) {
       let label = this.symptomLabels[index];
       if (episode.symptoms && Object.keys(episode.symptoms[this.symptomKeys[index]]).length > 0) {
-        if (label != "Loss of Consciousness" && label != "Seizure" && label !== "Apnea/Breathing") {
+        if (label != "Reduced Consciousness" && label != "Seizure" && label !== "Apnea/Breathing") {
           controls[label + ' Checkbox'] = true;
           if (label == "Swallowing/Choking" || label == "Chorea/Tremors") {
             controls[label + ' TextBox'] = [episode.symptoms[this.symptomKeys[index]]['type']];
@@ -80,7 +80,7 @@ export class EditEpisodeComponent implements OnInit {
     //       let checkbox = formGroup.controls[label+' Checkbox']
     //       let checkboxChecked = (checkbox.value === true)
     //       let dropdownValueEmpty = false;
-    //       if (label!="Seizure" && label!="Loss of Consciousness" && label !== "Apnea/Breathing") {
+    //       if (label!="Seizure" && label!="Reduced Consciousness" && label !== "Apnea/Breathing") {
     //         let dropdown = formGroup.controls[label + ' Dropdown']
     //         dropdownValueEmpty = (dropdown.value === '')
     //       }

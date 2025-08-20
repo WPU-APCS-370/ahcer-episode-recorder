@@ -321,7 +321,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       return "";
     }
     let symptomTexts = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-      "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure",
+      "Left Hand", "Right Hand", "Eyes", "Reduced Consciousness", "Seizure",
       "Apnea/Breathing", "Autonomic Dysfunction", "Swallowing/Choking", "Chorea/Tremors"];
     let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
       "leftHand", "rightHand", "eyes", "lossOfConsciousness", "seizure",
