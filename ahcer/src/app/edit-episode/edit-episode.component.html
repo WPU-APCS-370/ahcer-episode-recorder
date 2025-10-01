@@ -25,7 +25,7 @@
                           'checkbox-error' : ''">
           {{symptom}}
         </mat-checkbox>
-        <mat-form-field  *ngIf="symptom != 'Loss of Consciousness' && symptom != 'Seizure' && symptom !== 'Apnea/Breathing' && symptom != 'Behavior'"
+        <mat-form-field  *ngIf="symptom != 'Reduced Consciousness' && symptom != 'Seizure' && symptom !== 'Apnea/Breathing' && symptom != 'Behavior'"
                          [class]="(checkbox.checked)? '': 'invisible'" appearance="fill">
           <mat-label *ngIf="symptom!='Eyes' && symptom !='Autonomic Dysfunction' && symptom != 'Swallowing/Choking' && symptom != 'Chorea/Tremors'">Type of Action</mat-label>
           <mat-select *ngIf="symptom!='Eyes' && symptom !='Autonomic Dysfunction' && symptom != 'Swallowing/Choking' && symptom != 'Chorea/Tremors'" [formControlName]="symptom+' Dropdown'"
@@ -54,7 +54,7 @@
               <mat-label *ngIf="symptom == 'Chorea/Tremors' || symptom == 'Swallowing/Choking' || (symptom =='Autonomic Dysfunction' && showAutonomicTextField)">Type of Action</mat-label>
               <input *ngIf="symptom == 'Chorea/Tremors' || symptom == 'Swallowing/Choking' || (symptom =='Autonomic Dysfunction' && showAutonomicTextField)" matInput [formControlName]="symptom+' TextBox'">
         </mat-form-field>
-        <mat-form-field *ngIf="symptom == 'Loss of Consciousness' || symptom == 'Seizure' || symptom == 'Behavior'"
+        <mat-form-field *ngIf="symptom == 'Reduced Consciousness' || symptom == 'Seizure' || symptom == 'Behavior'"
                         class="invisible" style="width: 0;">
           <input matInput>
         </mat-form-field>
