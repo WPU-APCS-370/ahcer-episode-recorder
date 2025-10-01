@@ -76,6 +76,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { StudyFormComponent } from './settings/components/study-form/study-form.component';
 import { DeleteConfirmationComponent } from './settings/components/delete-confirmation/delete-confirmation.component';
 import { UpdateModalComponent } from './view-profile/update-modal/update-modal.component';
+import { AddVideoDialogComponent } from './view-video/add-video-dialog/add-video-dialog.component';
+import { VideoDialogComponent } from './view-video/video-dialog/video-dialog.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -121,7 +123,9 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     EditEpisodeFreeDayComponent,
     StudyFormComponent,
     DeleteConfirmationComponent,
-    UpdateModalComponent
+    UpdateModalComponent,
+    AddVideoDialogComponent,
+    VideoDialogComponent
   ],
     imports: [
       HttpClientModule,

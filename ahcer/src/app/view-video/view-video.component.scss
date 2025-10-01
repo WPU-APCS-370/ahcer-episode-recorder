@@ -42,3 +42,25 @@
     color: #99cc00;
     font-weight: 500;
 }
+.video-title{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  mat-icon{
+    cursor: pointer;
+  }
+}
+.title-input {
+  font-size: 16px;
+  padding: 4px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  width: 200px;
+}
+.btn-view{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

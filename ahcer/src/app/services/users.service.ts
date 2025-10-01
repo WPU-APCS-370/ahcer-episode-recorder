@@ -9,6 +9,7 @@ import { environment } from 'src/environments/environment';
 import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { getAuth } from 'firebase/auth';
+import { arrayUnion } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -42,7 +43,7 @@ export class UsersService {
       return user ? user['study'] ? user['study'] : user.study : null
     }));
     this.ThisUserId$ = this.getCurerntUser().pipe(map((user: any) => {
-      return user ?  user.id : null
+      return user ? user.id : null
     }));
   }
 
@@ -72,11 +73,11 @@ export class UsersService {
 
   changeLastViewedPatient(patientId: any, UserId?: any): Observable<any> {
     return this.userId$.pipe(
-      switchMap((userId:any)=> {
-        if(UserId){
-          return from(this.db.doc(`users/${userId}`).update({ lastPatientViewed: patientId,lastPatientViewdUserId: UserId }))
+      switchMap((userId: any) => {
+        if (UserId) {
+          return from(this.db.doc(`users/${userId}`).update({ lastPatientViewed: patientId, lastPatientViewdUserId: UserId }))
         }
-        else{
+        else {
           return from(this.db.doc(`users/${userId}`).update({ lastPatientViewed: patientId }))
         }
       }),
@@ -91,7 +92,7 @@ export class UsersService {
         from(this.db.doc(`users/${UserId ? UserId : userId}`).get())
       ),
       first(),
-      map(result =>convertOneSnap<User>(result))
+      map(result => convertOneSnap<User>(result))
     )
   }
 
@@ -113,7 +114,6 @@ export class UsersService {
 
   }
 
-
   updateUserVideoArray(videos: any[],UserId?:string): Observable<any> {
     return this.userId$.pipe(
       switchMap(userId =>
@@ -122,14 +122,14 @@ export class UsersService {
       first()
     )
   }
-
+  
   logout() {
     this.afAuth.signOut();
     this.router.navigateByUrl('/login');
     localStorage.removeItem('user')
   }
 
- async createUserByEmailPassword(email: string, password: string): Promise<any> {
+  async createUserByEmailPassword(email: string, password: string): Promise<any> {
     const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     let user = await createUserWithEmailAndPassword(detachedAuth, email, password);
@@ -160,12 +160,12 @@ export class UsersService {
       }))
     );
   }
-  getAllUser(piUser?:string) {
+  getAllUser(piUser?: string) {
     return this.study$.pipe(
       switchMap(studyId => {
         const studyToUse = piUser || studyId;
         if (!studyToUse) {
-          return  this.getAllUsers()
+          return this.getAllUsers()
         }
         return this.db.collection('users', ref =>
           ref.where('study', '==', studyToUse)
@@ -214,7 +214,7 @@ export class UsersService {
     }
   }
 
-  get piUser(){
+  get piUser() {
     if (localStorage.getItem('user')) {
       const data = JSON.parse(localStorage.getItem('user'));
       return data ? data.PI : false;
@@ -224,7 +224,7 @@ export class UsersService {
     }
   }
 
-  onLoginSuccessful(username?:string) {
+  onLoginSuccessful(username?: string) {
     this.afAuth.app.then(cred => {
       let uid = cred.auth().currentUser.uid;
       this.db.firestore.doc(`users/${uid}`)
@@ -235,7 +235,7 @@ export class UsersService {
             let obj = {
               email: cred.auth().currentUser.email,
               isParent: true,
-              study:'',
+              study: '',
               password: '',
               username: username ? username : cred.auth().currentUser.displayName || ''
             };
@@ -249,7 +249,7 @@ export class UsersService {
         });
     });
   }
-  updateUser(username: any,userId:string): Promise<void> {
+  updateUser(username: any, userId: string): Promise<void> {
     return this.db.doc(`users/${userId}`).update(username);
   }
 

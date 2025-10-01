@@ -4,13 +4,20 @@
 
 export const environment = {
   firebase: {
-    apiKey: "AIzaSyCJgOmvxW0I0yXWr7agpeYO5i0Fr4xO3M4",
-    authDomain: "wpu-ahcer-b5e94.firebaseapp.com",
-    projectId: "wpu-ahcer-b5e94",
-    storageBucket: "wpu-ahcer-b5e94.firebasestorage.app",
-    messagingSenderId: "474802796977",
-    appId: "1:474802796977:web:bab6174938b4c2ce966590",
-    measurementId: "G-0DGLWD6ELW",
+    // apiKey: "AIzaSyCJgOmvxW0I0yXWr7agpeYO5i0Fr4xO3M4",
+    // authDomain: "wpu-ahcer-b5e94.firebaseapp.com",
+    // projectId: "wpu-ahcer-b5e94",
+    // storageBucket: "wpu-ahcer-b5e94.firebasestorage.app",
+    // messagingSenderId: "474802796977",
+    // appId: "1:474802796977:web:bab6174938b4c2ce966590",
+    // measurementId: "G-0DGLWD6ELW",
+    apiKey: "AIzaSyAt8bx2B9nJcsns2nDvxuxq72pHJDpVvR8",
+  authDomain: "wpu-ahcer.firebaseapp.com",
+  projectId: "wpu-ahcer",
+  storageBucket: "wpu-ahcer.appspot.com",
+  messagingSenderId: "503871560040",
+  appId: "1:503871560040:web:8ee310bcfb59d135241edd",
+  measurementId: "G-409ZH39HCP"
   },
   production: false,
   deleteAccountUrl: 'http://127.0.0.1:5001/ahcr-38258/us-central1/deleteAccount'

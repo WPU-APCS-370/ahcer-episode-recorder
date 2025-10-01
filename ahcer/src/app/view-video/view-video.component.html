@@ -6,7 +6,8 @@
 
     <div *ngIf="!loading && !fileUploading && !isAdmin">
       Upload New Video
-      <button mat-mini-fab color="accent" (click)="uploadClick()">
+      <button mat-mini-fab color="accent" (click)="openAddVideoDialog()">
+        <!-- uploadClick() -->
         <mat-icon class="add-patient-btn">add</mat-icon>
       </button>
     </div>
@@ -20,7 +21,21 @@
 
     <mat-card-header>
 
-      <mat-card-title>{{video.name}}</mat-card-title>
+      <div class="video-title">
+        <ng-container *ngIf="editIndex !== i; else editMode">
+          <mat-card-title>{{ video.title }}</mat-card-title>
+          <mat-icon class="add-patient-btn" (click)="startEdit(i)">edit</mat-icon>
+        </ng-container>
+
+        <ng-template #editMode>
+          <input [(ngModel)]="video.title"
+                (keyup.enter)="saveTitle(video, i)"
+                class="title-input" />
+          <mat-icon class="add-patient-btn " (click)="saveTitle(video, i, video.userId)">check</mat-icon>
+          <mat-icon class="add-patient-btn" (click)="cancelEdit()">close</mat-icon>
+        </ng-template>
+      </div>
+
 
     </mat-card-header>
     <mat-card-content>
@@ -35,7 +50,10 @@
 
     <mat-card-actions class="patient-actions">
       <!-- <button mat-button (click)="editPatient(patient)">Edit</button> -->
-      <button mat-button color="warn" (click)="onDeleteVideo(i, video.link,video.userId)">Delete</button>
+       <div class="btn-view">
+         <button mat-button color="warn" (click)="onDeleteVideo(i, video.link,video.userId)">Delete</button>
+
+       </div>
 
     </mat-card-actions>
 
@@ -43,4 +61,3 @@
 
 
 </div>
-<input type="file" accept="video/*" style="display: none;" #fileInput (change)="uploadFile($event)">

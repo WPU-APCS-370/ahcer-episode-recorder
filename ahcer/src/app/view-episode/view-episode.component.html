@@ -103,6 +103,12 @@
         </ol>
       </div>
     </div>
+    <div *ngIf="video" style="display: flex;gap: 5px;align-items: center;">
+         Video: {{ video.title }}
+        <button mat-mini-fab color="accent" (click)="openVideo(video)" *ngIf="video?.link">
+          <mat-icon class="add-patient-btn"  > visibility </mat-icon>
+        </button>     
+    </div>
   </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

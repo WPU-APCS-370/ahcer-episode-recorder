@@ -173,6 +173,19 @@
                   cdkAutosizeMinRows="2"
                   formControlName="behavior"></textarea>
       </mat-form-field>
+      <div *ngIf="!loading && !fileUploading && !isAdmin" class="upload-video">
+      {{ video ? 'Video: '+video.title:'Upload Video' }}
+      <div style="display: flex;gap: 5px;align-items: center;">
+        <button mat-mini-fab color="accent" (click)="openVideo(video)" *ngIf="video?.link">
+          <mat-icon class="add-patient-btn"  > visibility </mat-icon>
+        </button>     
+  
+        <button mat-mini-fab color="accent" (click)="video ? onDeleteVideo() : openAddVideoDialog()">
+          <!-- uploadClick() -->
+          <mat-icon class="add-patient-btn"> {{video ? 'delete':'add'}} </mat-icon>
+        </button>
+      </div>
+    </div>
       <button mat-raised-button color="primary" [disabled]="!episodeForm.valid" (click)="onCreateEpisode()">
         Record Episode
       </button>

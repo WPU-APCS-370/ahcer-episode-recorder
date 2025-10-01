@@ -207,6 +207,22 @@
               cdkAutosizeMinRows="2"
               formControlName="behavior"></textarea>
   </mat-form-field>
+
+   <div class="upload-video">
+      {{ video ? 'Video: '+video.title:'Upload Video' }}
+
+      <div style="display: flex;gap: 5px;align-items: center;">
+        <button mat-mini-fab color="accent" (click)="openVideo(video)" *ngIf="video?.link">
+          <mat-icon class="add-patient-btn"  > visibility </mat-icon>
+        </button>     
+  
+        <button mat-mini-fab color="accent" (click)="video ? onDeleteVideo() : openAddVideoDialog()">
+          <!-- uploadClick() -->
+          <mat-icon class="add-patient-btn"> {{video ? 'delete':'add'}} </mat-icon>
+        </button>
+
+      </div>
+    </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-raised-button (click)="close()">Close</button>

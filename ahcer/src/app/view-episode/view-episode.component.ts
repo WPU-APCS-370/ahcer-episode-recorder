@@ -1,9 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Episode} from "../models/episode";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
 import { FreeDay } from '../models/freeday.enum';
+import { VideoDialogComponent } from '../view-video/video-dialog/video-dialog.component';
+import { VideoService } from '../services/video.service';
 
 @Component({
   selector: 'app-view-episode',
@@ -17,8 +19,9 @@ export class ViewEpisodeComponent implements OnInit {
   rescueMeds: Medication[]=[];
   rescueMedsDosesAndTimes: Object={};
   loadingMeds: boolean = false;
-
+  video: any;
   constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId,userId]: [Episode, string,string],
+  private dialog: MatDialog,private videoService: VideoService,
               private dialogRef: MatDialogRef<ViewEpisodeComponent>,
               private medicationService: MedicationService) {
     this.episode = episode;
@@ -32,7 +35,9 @@ export class ViewEpisodeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.videoService.getUserVideos().subscribe(u => {
+      this.video = u?.videos.find(v => v.episodeId == this.episode.id);
+    })
   }
 
   loadRescueMeds() {
@@ -69,5 +74,11 @@ export class ViewEpisodeComponent implements OnInit {
 
   get OFF_DAY(){
     return FreeDay.OFF_DAY.toString();
+  }
+  openVideo(video: any) {
+    this.dialog.open(VideoDialogComponent, {
+      width: '500px',
+      data: { title: video.title, link: video.link }
+    });
   }
 }

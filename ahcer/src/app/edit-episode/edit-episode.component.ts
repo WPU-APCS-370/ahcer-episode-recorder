@@ -9,6 +9,10 @@ import { MedicationService } from "../services/medication.service";
 import { Medication } from "../models/medication";
 import { CreateMedicationComponent } from "../create-medication/create-medication.component";
 import { formGroupErrorMatcher } from "../create-episode/create-episode.component";
+import { VideoService } from '../services/video.service';
+import { AddVideoDialogComponent } from '../view-video/add-video-dialog/add-video-dialog.component';
+import { switchMap } from 'rxjs';
+import { VideoDialogComponent } from '../view-video/video-dialog/video-dialog.component';
 
 @Component({
   selector: 'app-edit-episode',
@@ -19,7 +23,7 @@ export class EditEpisodeComponent implements OnInit {
   patientId: string;
   episode: Episode;
   userId: string
-
+  video: any;
   rescueMedications: Medication[] = [];
   prescriptionMeds: any[] = [];
   archivedRescueMeds: Medication[] = [];
@@ -214,7 +218,7 @@ export class EditEpisodeComponent implements OnInit {
   }
 
   constructor(private dialogRef: MatDialogRef<EditEpisodeComponent>,
-    private fb: UntypedFormBuilder,
+    private fb: UntypedFormBuilder,private videoService: VideoService,
     @Inject(MAT_DIALOG_DATA) [episode, patient, userId]: [Episode, string, string],
     private episodeService: EpisodeService,
     private medicationService: MedicationService,
@@ -272,6 +276,9 @@ export class EditEpisodeComponent implements OnInit {
 
     this.loadRescueMeds();
     this.loadArchivedRescueMeds();
+    this.videoService.getUserVideos().subscribe(u => {
+      this.video = u?.videos.find(v => v.episodeId == this.episode.id);
+    })
   }
 
   loadRescueMeds() {
@@ -477,7 +484,9 @@ export class EditEpisodeComponent implements OnInit {
     this.episodeService.updateEpisode(this.patientId, this.episode.id, updateEpisode,this.userId)
       .subscribe(() => {
         this.dialogRef.close(updateEpisode);
-      });
+      });  
+
+      
   }
 
   onAutonomicOtherClick(value: string) {
@@ -487,6 +496,44 @@ export class EditEpisodeComponent implements OnInit {
       this.showAutonomicTextField = false;
     }
   }
+openAddVideoDialog() {
+    const dialogRef = this.dialog.open(AddVideoDialogComponent, {
+      width: '400px',
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.video = result;
+        let payload =result
+        payload.episodeId = this.episode.id
+        // Save to user
+        this.videoService.addUserVideoArray(payload).subscribe(() => {
+          console.log('Video Saved Successfully!');
+
+        }, () => {
+          console.log('Some error occurred while saving.');
+
+        });
+      }
+    });
+  }
+  onDeleteVideo() {
+    this.videoService.deleteUserVideo(this.video).subscribe(
+      () => {
+        console.log('File deleted successfully');
+        this.video = null
+      },
+      (error) => {
+        console.log('Error deleting file:');
+        this.video = null
+      }
+    );
+  }
+openVideo(video: any) {
+  this.dialog.open(VideoDialogComponent, {
+    width: '500px',
+    data: { title: video.title, link: video.link }
+  });
+}
 
 }
