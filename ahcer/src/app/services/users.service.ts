@@ -196,10 +196,6 @@ export class UsersService {
       );
   }
 
-
-
-
-
   loginWithEmail(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
   }

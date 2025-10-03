@@ -16,6 +16,9 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { debounceTime } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { user } from 'rxfire/auth';
+import { VideoDialogComponent } from '../view-video/video-dialog/video-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-episode-report',
@@ -27,7 +30,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private patientSelection$ = new Subject<any[]>();
   displayedColumns: string[] = ['patientName', 'startTime', 'endTime', 'status', 'duration', 'symptoms',
-    'rescueMeds', 'prescriptionMeds', 'triggers', 'behavior'];
+    'rescueMeds', 'prescriptionMeds', 'triggers', 'behavior', 'video'];
   loadingPatient: boolean = false;
   loadingEpisodes: boolean = false;
   loadingRescueMeds: boolean = false;
@@ -41,11 +44,12 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   filterChipData: { key: string, label: string }[] = [];
   loadedPatientsData: Patient[] = [];
   loadedPatientIds: string[] = [];
-
+  videos: any = [];
   constructor(private medicationService: MedicationService,
     private episodeService: EpisodeService,
     private patientsService: PatientServices,
-    private usersService: UsersService) { }
+    private usersService: UsersService,
+    private dialog: MatDialog,) { }
 
   ngOnInit(): void {
     this.loadingPatient = true;
@@ -54,10 +58,9 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       this.patientsService.getAllRecords().subscribe(
         patients => {
           this.patients = patients
-          // this.loadForAdmin(patients)
+          this.loadAllVideos()
           this.loadingPatient = false
-      this.load()
-
+           this.load()
         }
       )
 
@@ -66,6 +69,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         patients => {
           this.patients = patients
           // this.loadForAdmin(patients)
+          this.loadAllVideos()
           this.loadingPatient = false
       this.load()
 
@@ -74,6 +78,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
     else {
       this.patientsService.getPatients().subscribe(
         patients => { this.patients = patients })
+        this.loadVideos()        
       this.loadingPatient = false
       this.load()
     }
@@ -83,6 +88,55 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
         this.changePatient(selectedPatients);
       });
 
+  }
+  loadVideos() {
+
+    this.usersService.getUserVideos()
+      .pipe( )
+      .subscribe(
+        (result) => {
+          console.log(result);
+          
+          if (result.videos) {
+            this.videos = result.videos;
+            if (result.videos.length > 0) {
+              this.videos = result.videos.sort().reverse() ?? [];
+            }
+          } else {
+            this.videos = [];
+          }
+        }
+      )
+  }
+  loadAllVideos(): void {
+    this.usersService.getAllUser()
+      .pipe()
+      .subscribe(
+        (users: any) => {
+          console.log(users);
+
+          this.videos = [];
+          users.forEach(user => {
+            if (user.videos) {
+              user.videos.forEach(video => {
+                video.userId = user.id;
+                this.videos.push(video);
+              });
+            }
+          });
+          this.videos.sort((a, b) => {
+            if (a.name < b.name) return 1;
+            if (a.name > b.name) return -1;
+            return 0;
+          });
+
+        },
+        error => {
+          console.error('Error loading videos:', error);
+        }
+
+
+      );
   }
 
   load() {
@@ -228,6 +282,7 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
       const taggedEpisodes = episodes.map(ep => ({
         ...ep,
         patientId: patient.id,
+        video: this.videos.find(v => v.episodeId == ep.id),
         patientName: this.getPatientName(patient.id) || 'Unknown'
       }));
        allEpisodes = [...allEpisodes, ...taggedEpisodes];
@@ -242,6 +297,8 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
 
     this.episodes_count = this.episodes.length;
     this.reloadDataSource();
+    console.log('episodes', this.episodes);
+    
   });
 
   }
@@ -554,7 +611,8 @@ exportToExcel() {
       'Rescue Medications': this.displayRescueMedsString(episode.medications?.rescueMeds, true) || '',
       'Prescription Medications': this.displayPrescriptionMedsString(episode.medications?.prescriptionMeds, true) || '',
       'Triggers': this.displayTriggersString(episode.knownTriggers, episode.otherTrigger, true) || '',
-      'Behavior': episode.behavior || ''
+      'Behavior': episode.behavior || '',
+      'Video': episode.video ? episode.video.link : ''
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -577,6 +635,12 @@ private groupEpisodesByPatient() {
   }
   return grouped;
 }
+openVideo(video: any) {
+    this.dialog.open(VideoDialogComponent, {
+      width: '500px',
+      data: { title: video.title, link: video.link }
+    });
+  }
 
 }
 
