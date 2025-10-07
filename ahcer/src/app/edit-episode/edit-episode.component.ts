@@ -277,7 +277,7 @@ export class EditEpisodeComponent implements OnInit {
     this.loadRescueMeds();
     this.loadArchivedRescueMeds();
     this.videoService.getUserVideos().subscribe(u => {
-      this.video = u?.videos.find(v => v.episodeId == this.episode.id);
+      this.video = u?.videos?.find(v => v.episodeId == this.episode.id);
     })
   }
 

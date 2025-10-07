@@ -36,7 +36,7 @@ export class ViewEpisodeComponent implements OnInit {
 
   ngOnInit(): void {
     this.videoService.getUserVideos().subscribe(u => {
-      this.video = u?.videos.find(v => v.episodeId == this.episode.id);
+      this.video = u?.videos?.find(v => v.episodeId == this.episode.id);
     })
   }
 

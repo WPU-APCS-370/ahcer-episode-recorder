@@ -73,4 +73,7 @@
 .policy-link {
   color: #fff;
 }
-
+::ng-deep .mdc-list-item__primary-text{
+  display: flex;
+  gap: 5px;
+}

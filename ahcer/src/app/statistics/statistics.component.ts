@@ -1,0 +1,324 @@
+import { Component } from '@angular/core';
+import { EpisodeService } from '../services/episode.service';
+import { PatientServices } from '../services/patient.service';
+import { UsersService } from '../services/users.service';
+import { Episode } from '../models/episode';
+import { Patient } from '../models/patient';
+import { forkJoin, of, finalize, catchError, Subject } from "rxjs";
+import { debounceTime } from 'rxjs/operators';
+import { analyzeEpisodes, StatsResult } from './episode-utils';
+import { ChartData, ChartOptions } from 'chart.js';
+
+@Component({
+  selector: 'app-statistics',
+  templateUrl: './statistics.component.html',
+  styleUrls: ['./statistics.component.scss']
+})
+export class StatisticsComponent {
+  private patientSelection$ = new Subject<any[]>();
+  loadingPatient: boolean = false;
+  episodes: Episode[] = [];
+  patients: Patient[];
+  currentPatient: Patient;
+  episodes_count: number;
+  loadedPatientsData: Patient[] = [];
+  loadedPatientIds: string[] = [];
+  loadingEpisodes: boolean = false;
+  stats: {
+    last7Days: StatsResult;
+    lastMonth: StatsResult;
+    last6Months: StatsResult;
+    lastYear: StatsResult;
+  };
+  selectedRange: 'last7Days' | 'lastMonth' | 'last6Months' | 'lastYear' = 'last7Days';
+  lastMonthName: string;
+  lastYearNumber: number;
+
+  get currentStat() {
+    if (!this.stats) return null;
+    return this.stats[this.selectedRange];
+  }
+
+  constructor(
+    private episodeService: EpisodeService,
+    private patientsService: PatientServices,
+    private usersService: UsersService,
+  ) { }
+
+  ngOnInit(): void {
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+    this.lastMonthName = prevMonth.toLocaleString('en-US', { month: 'long' });
+    this.lastYearNumber = now.getFullYear() - 1;
+    this.loadingPatient = true;
+    if (this.usersService.isAdmin) {
+      this.patientsService.getAllRecords().subscribe(
+        patients => {
+          this.patients = patients
+          this.loadingPatient = false
+          this.load()
+        }
+      )
+
+    } else if (this.usersService.piUser) {
+      this.patientsService.getAllRecords(this.usersService.piUser).subscribe(
+        patients => {
+          this.patients = patients
+          this.loadingPatient = false
+          this.load()
+
+        })
+    }
+    else {
+      this.patientsService.getPatients().subscribe(
+        patients => { this.patients = patients })
+      this.loadingPatient = false
+      this.load()
+    }
+    this.patientSelection$
+      .pipe(debounceTime(1200))
+      .subscribe(selectedPatients => {
+        this.changePatient(selectedPatients);
+      });
+  }
+  load() {
+    this.usersService.getLastViewedPatient().subscribe(
+      (lastPatient) => {
+        if (lastPatient) {
+          const selectedPatient = this.patients?.find(
+            p =>
+              p.id === lastPatient.lastPatientViewed &&
+              p.userId === lastPatient.lastPatientViewdUserId
+          );
+          if (selectedPatient) {
+            this.patientSelection$.next([selectedPatient]);
+          }
+        }
+        else {
+          this.loadingPatient = false;
+        }
+      })
+  }
+
+  changePatient(patients: any[]) {
+    this.episodes = [];
+    this.episodes_count = 0;
+    this.loadedPatientsData = patients;
+
+    this.loadingEpisodes = true;
+
+    const episodesObservables = patients.map(patient =>
+      this.episodeService.getAllEpisodesByPatient(patient.id, 'desc', patient.userId).pipe(
+        catchError(error => {
+          console.error(`Episodes load failed for patient ${patient.id}`, error);
+          return of([]);
+        })
+      )
+    );
+
+    forkJoin(episodesObservables)
+      .pipe(
+        finalize(() => {
+          this.loadingEpisodes = false;
+        })
+      )
+      .subscribe(episodesResults => {
+        let allEpisodes = [];
+
+        episodesResults.forEach((episodes, index) => {
+          const patient = patients[index];
+          const taggedEpisodes = episodes.map(ep => ({
+            ...ep,
+            patientId: patient.id,
+            patientName: this.getPatientName(patient.id) || 'Unknown'
+          }));
+          allEpisodes = [...allEpisodes, ...taggedEpisodes];
+        });
+
+        this.episodes = allEpisodes;
+        this.episodes_count = this.episodes.length;
+        this.stats = analyzeEpisodes(this.episodes);
+        this.updateChart();
+
+      });
+  }
+  onPatientSelectionChange(patients: any[]) {
+    this.patientSelection$.next(patients);
+  }
+
+  getPatientName(id: string): string {
+    const selected = this.loadedPatientsData.find(p => p.id === id);
+    return selected?.firstName || 'Unknown';
+  }
+
+  ngOnChanges() {
+    this.updateChart();
+  }
+
+  // Chart Data and Options for Duration
+  durationChartData: ChartData<'line'> = { labels: [], datasets: [] };
+  durationChartOptions: ChartOptions<'line'> = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const totalSec = Number(context.parsed.y);
+            const hours = Math.floor(totalSec / 3600);
+            const minutes = Math.floor((totalSec % 3600) / 60);
+            const seconds = totalSec % 60;
+
+            let formatted = '';
+            if (hours > 0) formatted += `${hours}h `;
+            if (minutes > 0 || hours > 0) formatted += `${minutes}m `;
+            formatted += `${seconds}s`;
+
+            return `${context.dataset.label}: ${formatted}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        ticks: {
+          callback: (value) => {
+            const totalSec = Number(value);
+            const hours = Math.floor(totalSec / 3600);
+            const minutes = Math.floor((totalSec % 3600) / 60);
+            const seconds = totalSec % 60;
+            if (hours > 0) {
+              return `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+              return `${minutes}m ${seconds}s`;
+            } else {
+              return `${seconds}s`;
+            }
+          }
+        }
+      }
+    }
+  };
+
+
+  // Chart Data and Options for Frequency
+  frequencyChartData: ChartData<'line'> = { labels: [], datasets: [] };
+  frequencyChartOptions: ChartOptions<'line'> = {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1 // ensures whole numbers
+        },
+        title: {
+          display: true,
+          text: 'Episode Count'
+        }
+      }
+    }
+  };
+
+
+  updateChart() {
+    if (!this.currentStat) return;
+
+    const isMonthly =
+      this.selectedRange === 'last6Months' || this.selectedRange === 'lastYear';
+    const isDaily = !isMonthly;
+
+    let labels: string[] = [];
+    let avgData: number[] = [];
+    let freqData: number[] = [];
+
+    if (isMonthly) {
+      const monthlyGroups: Record<string, { durations: number[]; totalCount: number }> = {};
+
+      this.currentStat.avgDuration.forEach((d: any) => {
+        const month = d.date.slice(0, 7); // yyyy-mm
+        if (!monthlyGroups[month]) monthlyGroups[month] = { durations: [], totalCount: 0 };
+        monthlyGroups[month].durations.push(d.value);
+      });
+
+      this.currentStat.frequency.forEach((f: any) => {
+        const month = f.date.slice(0, 7);
+        if (!monthlyGroups[month]) monthlyGroups[month] = { durations: [], totalCount: 0 };
+        monthlyGroups[month].totalCount += f.count;
+      });
+
+      labels = Object.keys(monthlyGroups).sort();
+
+      labels = labels.map(m => {
+        const [year, month] = m.split('-');
+        const date = new Date(Number(year), Number(month) - 1);
+        const label = date.toLocaleString('en-US', { month: 'short' });
+        return label.replace(/[-,]/g, '');
+      });
+
+      avgData = labels.map((_, idx) => {
+        const key = Object.keys(monthlyGroups).sort()[idx];
+        const d = monthlyGroups[key];
+        if (d.durations.length === 0) return 0;
+        const sum = d.durations.reduce((a, b) => a + b, 0);
+        return sum / d.durations.length;
+      });
+
+      freqData = Object.keys(monthlyGroups)
+        .sort()
+        .map(m => monthlyGroups[m].totalCount);
+    } else {
+      labels = this.currentStat.frequency.map((f: any) => {
+        const date = new Date(f.date);
+        let label = '';
+
+        if (this.selectedRange === 'last7Days') {
+          label = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit'
+          });
+        } else if (this.selectedRange === 'lastMonth') {
+          label = String(date.getDate());
+        } else {
+          label = f.date;
+        }
+
+        return label.replace(/[-,]/g, ''); // 🧹 Remove '-' and ','
+      });
+
+      avgData = this.currentStat.avgDuration.map((d: any) => d.value);
+      freqData = this.currentStat.frequency.map((f: any) => f.count);
+    }
+
+    // Chart configs
+    this.durationChartData = {
+      labels,
+      datasets: [
+        {
+          label: isMonthly ? 'Avg Duration (per month)' : 'Avg Duration (per day)',
+          data: avgData,
+          backgroundColor: 'rgba(54,162,235,0.6)',
+          borderColor: 'blue',
+          borderWidth: 1,
+          tension: 0.3
+        }
+      ]
+    };
+
+    this.frequencyChartData = {
+      labels,
+      datasets: [
+        {
+          label: isMonthly ? 'Frequency (total per month)' : 'Frequency (per day)',
+          data: freqData,
+          backgroundColor: 'rgba(255,99,132,0.6)',
+          borderColor: 'red',
+          borderWidth: 1,
+          tension: 0.3
+        }
+      ]
+    };
+  }
+
+}

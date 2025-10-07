@@ -78,6 +78,8 @@ import { DeleteConfirmationComponent } from './settings/components/delete-confir
 import { UpdateModalComponent } from './view-profile/update-modal/update-modal.component';
 import { AddVideoDialogComponent } from './view-video/add-video-dialog/add-video-dialog.component';
 import { VideoDialogComponent } from './view-video/video-dialog/video-dialog.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { NgChartsModule } from 'ng2-charts';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -125,7 +127,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     DeleteConfirmationComponent,
     UpdateModalComponent,
     AddVideoDialogComponent,
-    VideoDialogComponent
+    VideoDialogComponent,
+    StatisticsComponent
   ],
     imports: [
       HttpClientModule,
@@ -168,7 +171,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
         MatPaginatorModule,
         OverlayModule,
         MatChipsModule,
-        MatExpansionModule
+        MatExpansionModule,
+        NgChartsModule
     ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService

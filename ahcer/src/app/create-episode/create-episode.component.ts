@@ -419,7 +419,9 @@ export class CreateEpisodeComponent implements OnInit {
       first(),
       tap((createdEpisode: any) => {
         this.router.navigateByUrl('/')
-        this.updateVideoEpisode(createdEpisode.id)
+        if(this.video != null) {
+          this.updateVideoEpisode(createdEpisode.id)
+        }
       }),
       catchError(err => {
         console.log(err);

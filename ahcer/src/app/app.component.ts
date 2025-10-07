@@ -14,7 +14,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
   public uid = this.user.userId$.subscribe((results) => this.uid = results)
   public unsubscribe: Subscription[] = [];
   public currentUser: any;
-
+  isAdmin = false;
   constructor(public user: UsersService, private cdRef: ChangeDetectorRef) {
   }
 
@@ -23,8 +23,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentInit {
     // this.getCurrentUser();
   }
 
+
   ngOnInit(): void {
-    // this.getCurrentUser();
+    this.user.getCurerntUser().subscribe((res: User)=>{
+      this.currentUser = res;
+      this.cdRef.detectChanges();
+      this.isAdmin = this.currentUser?.isAdmin;
+    })
   }
 
   // getCurrentUser(){

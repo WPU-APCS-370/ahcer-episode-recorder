@@ -20,6 +20,8 @@ import { ViewVideoComponent } from './view-video/view-video.component';
 import { ViewUsersComponent } from './view-users/view-users.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SettingsComponent } from './settings/settings.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { adminGuard } from './services/admin.guard';
 
 
 
@@ -120,6 +122,11 @@ const routes: Routes = [
     path: 'settings',
     component: SettingsComponent,
    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'statistics',
+    component: StatisticsComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'privacy-policy',
