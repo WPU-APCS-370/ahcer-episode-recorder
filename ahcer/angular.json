@@ -60,6 +60,27 @@
               ],
               "outputHashing": "all"
             },
+            "sandbox": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "9mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "1mb",
+                  "maximumError": "1mb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sandbox.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -76,6 +97,9 @@
           "configurations": {
             "production": {
               "browserTarget": "ahcer:build:production"
+            },
+            "sandbox": {
+              "browserTarget": "ahcer:build:sandbox"
             },
             "development": {
               "browserTarget": "ahcer:build:development"

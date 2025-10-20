@@ -1,4 +1,7 @@
 {
+  "projects": {
+    "default": "wpu-ahcer"
+  },
   "targets": {
     "wpu-ahcer": {
       "hosting": {
@@ -6,9 +9,14 @@
           "wpu-ahcer"
         ]
       }
+    },
+    "acher-sandbox": {
+      "hosting": {
+        "ahcer": [
+          "acher-sandbox"
+        ]
+      }
     }
   },
-  "projects": {
-    "default": "wpu-ahcer"
-  }
+  "etags": {}
 }
