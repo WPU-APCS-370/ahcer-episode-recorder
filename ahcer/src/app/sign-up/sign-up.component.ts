@@ -16,7 +16,8 @@ export class SignUpComponent {
   userForm =this.fb.group({
     username: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
+    consent: [false, Validators.requiredTrue],
   });
 
   constructor(
@@ -33,6 +34,11 @@ ngOnInit(): void {
 
 
   async onCreateUser() {
+    if (!this.userForm.valid) {
+      this.signUpError = 'Consent is required to continue using the app. You may review the privacy policy or contact support with questions.';
+      setTimeout(() => (this.signUpError = ''), 5000);
+      return;
+    }
     const val = this.userForm.value;
 
     this.afAuth.app.then(cred => {

@@ -1,25 +1,32 @@
 <div class="create-user">
-    <h1>Add a New User</h1>
-  
-    <form [formGroup]="userForm">
-      <mat-form-field appearance="fill">
-        <mat-label>Username</mat-label>
-        <input matInput formControlName="username">
-      </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email">
-      </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Password</mat-label>
-        <input matInput formControlName="password">
-      </mat-form-field>
-      <button mat-raised-button color="primary" [disabled]="!userForm.valid" (click)="onCreateUser()">
-        Register
-      </button>
-      <div style="margin-top: 10px;">
-        <span class="error">{{signUpError}} </span>
+  <h1>Add a New User</h1>
+
+  <form [formGroup]="userForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password">
+    </mat-form-field>
+    <p>This app is free for families. With your permission, de-identified and combined data
+      may be used to support rare disease research and help sustain and improve this app. No personal or
+      identifiable health information is ever shared.</p>
+    <mat-checkbox formControlName="consent" style="margin-bottom: 10px;">
+      I understand and agree.
+    </mat-checkbox>
+
+    <div style="margin-top: 2px; margin-bottom: 6px;">
+      <span class="error">{{signUpError}} </span>
     </div>
-    </form>
-  </div>
-  
+    <button mat-raised-button color="primary" (click)="onCreateUser()">
+      Register
+    </button>
+
+  </form>
+</div>

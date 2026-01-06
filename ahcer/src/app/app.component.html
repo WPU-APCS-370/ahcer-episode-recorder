@@ -6,17 +6,16 @@
     <img src="/assets/img/large_e.png" class="menu-logo" alt="E Logo"><span>AHC Episode App</span>
     <div class="user-icon" *ngIf="user.isLoggedIn$ | async">
       <a routerLink="view-profile">
-        <img alt="View Profile"
-             [src]="(user.pictureUrl$ | async)?
+        <img alt="View Profile" [src]="(user.pictureUrl$ | async)?
                       (user.pictureUrl$ | async) :
-                      '../assets/img/default-profile-pic.jpg'"/>
+                      '../assets/img/default-profile-pic.jpg'" />
       </a>
     </div>
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
 
-    <mat-sidenav #start (click)= "start.close()">
+    <mat-sidenav #start (click)="start.close()">
 
       <mat-nav-list>
         <a mat-list-item routerLink="/" *ngIf="user.isLoggedIn$ | async">
@@ -95,7 +94,12 @@
           <span> About</span>
         </a>
 
-        <a mat-list-item (click)="logout()"  *ngIf="user.isLoggedIn$ | async">
+        <a mat-list-item routerLink="privacy-policy">
+          <mat-icon>privacy_tip</mat-icon>
+          <span>Privacy</span>
+        </a>
+
+        <a mat-list-item (click)="logout()" *ngIf="user.isLoggedIn$ | async">
           <mat-icon>logout</mat-icon>
           <span> Log Out</span>
         </a>
@@ -107,16 +111,15 @@
       <router-outlet></router-outlet>
     </div>
     <mat-toolbar color="primary" class="footer">
-      <span class="footer-spacer">
-        AHCER-App &copy; 2022 - V {{version}} |
-        <a mat-list-item class="policy-link" routerLink="privacy-policy">
-          <span> Privacy Policy</span>
+      <div class="footer-content">
+        <span>
+          AHCER-App &copy; 2022 - V {{version}} | <br/>
+        </span>
+        <a class="policy-link" routerLink="privacy-policy">
+          Privacy Policy
         </a>
-      </span>
+      </div>
     </mat-toolbar>
+
   </mat-sidenav-container>
 </div>
-
-
-
-
