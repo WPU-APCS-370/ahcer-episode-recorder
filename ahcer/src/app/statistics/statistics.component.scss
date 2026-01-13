@@ -77,3 +77,24 @@
     margin: 0;
 }
 }
+.trend-label{
+    font-size: 15px;
+    font-weight: 700;
+    margin: 15px 0;
+}
+.summary-cards{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    mat-card{
+        padding: 10px;
+        border-radius: 15px;
+    }
+}
+.period-comparison{
+    margin: 10px 0;
+    font-size: 20px;
+}
+.range-buttons{
+    margin-bottom: 15px;
+}

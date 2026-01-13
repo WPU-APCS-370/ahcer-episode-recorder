@@ -5,6 +5,7 @@ export type StatsResult = {
     mostCommon: string | null;
     mostCommonCount: number;
     frequency: { date: string; count: number }[];
+    symptomBreakdown: { symptom: string; count: number; percentage: number }[];
 };
 
 export function analyzeEpisodes(episodes: Episode[]): {
@@ -49,7 +50,7 @@ export function analyzeEpisodes(episodes: Episode[]): {
         });
 
         if (filtered.length === 0) {
-            return { avgDuration: [], mostCommon: null, mostCommonCount: 0, frequency: [] };
+            return { avgDuration: [], mostCommon: null, mostCommonCount: 0, frequency: [],symptomBreakdown: [], };
         }
 
         const dayGroups: Record<
@@ -104,8 +105,23 @@ export function analyzeEpisodes(episodes: Episode[]): {
                 count: data.count,
             }))
             .sort((a, b) => a.date.localeCompare(b.date));
+        
+            const totalSymptoms = Object.values(symptomCounts).reduce(
+            (a, b) => a + b,
+            0
+        );
 
-        return { avgDuration, mostCommon, mostCommonCount, frequency };
+        const symptomBreakdown = Object.entries(symptomCounts).map(
+            ([symptom, count]) => ({
+                symptom,
+                count,
+                percentage: totalSymptoms
+                    ? Number(((count / totalSymptoms) * 100).toFixed(2))
+                    : 0,
+            })
+        );
+
+        return { avgDuration, mostCommon, mostCommonCount, frequency ,symptomBreakdown};
     }
 
     function hasSymptomData(value: unknown): boolean {

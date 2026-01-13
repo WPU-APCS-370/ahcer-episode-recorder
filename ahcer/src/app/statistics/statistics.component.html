@@ -43,9 +43,62 @@
   <div *ngIf="episodes_count === 0">No episodes found.</div>
   <!-- Only one card shows -->
   <div class="stat-card" *ngIf="currentStat">
-    <h4>Most Common Reported Symptom: {{ currentStat.mostCommon || "None" }} <span>( {{ currentStat.mostCommonCount || 0 }} )</span>  </h4>
+    <h4>Most Common Reported Symptom: {{ currentStat.mostCommon || "None" }} <span>( {{ currentStat.mostCommonCount || 0 }} )</span>  </h4>   
 
-    <!-- Two Line Chart -->
+
+
+        <div class="range-buttons">
+        <button mat-button [color]="selectedRange === 'last7Days' ? 'primary' : ''"
+              (click)="setRange('last7Days')">7 Days</button>
+
+        <button mat-button [color]="selectedRange === 'lastMonth' ? 'primary' : ''"
+              (click)="setRange('lastMonth')">30 Days</button>
+
+        <button mat-button [color]="selectedRange === 'last6Months' ? 'primary' : ''"
+              (click)="setRange('last6Months')">6 Months</button>
+
+        <button mat-button [color]="selectedRange === 'lastYear' ? 'primary' : ''"
+              (click)="setRange('lastYear')">1 Year</button>
+        </div>
+
+<div class="summary-cards" *ngIf="stats">
+  <mat-card>
+    <mat-card-title>Avg Duration (7 Days)</mat-card-title>
+    <p>{{ getAverageFor('last7Days') }}</p>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>Avg Duration (30 Days)</mat-card-title>
+    <p>{{ getAverageFor('lastMonth') }}</p>
+  </mat-card>
+</div>
+
+<div class="trend-label">
+  Trend:
+  <span *ngIf="getTrend(selectedRange) === 'up'" class="up">↑ Increasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'down'" class="down">↓ Decreasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'stable'" class="stable">→ Stable</span>
+</div>
+
+
+<div class="period-comparison">
+  <ng-container *ngIf="getChangePercentage(selectedRange) as change">
+    <span *ngIf="change > 0" class="up">🔼 {{ change | number:'1.0-0' }}% vs {{getRangeLabel(selectedRange)}}</span>
+    <span *ngIf="change < 0" class="down">🔽 {{ (change * -1) | number:'1.0-0' }}% vs {{getRangeLabel(selectedRange)}} </span>
+    <span *ngIf="change == 0" class="stable">→ No change</span>
+  </ng-container>
+</div>
+
+
+
+    <!-- bar Chart -->
+     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
+      <h4>Average Common</h4>
+      <canvas baseChart
+        [data]="symptomPieData"
+        [type]="'pie'">
+      </canvas>
+    </div>
     <!-- Avg Duration Chart -->
     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
       <h4>Average Duration</h4>

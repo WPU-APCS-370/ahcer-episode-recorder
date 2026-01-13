@@ -219,6 +219,7 @@ export class StatisticsComponent {
       }
     }
   };
+symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
 
 
   updateChart() {
@@ -319,6 +320,86 @@ export class StatisticsComponent {
         }
       ]
     };
+    this.symptomPieData = {
+  labels: this.currentStat.symptomBreakdown.map(s => s.symptom),
+  datasets: [
+    {
+      data: this.currentStat.symptomBreakdown.map(s => s.percentage),
+      backgroundColor: ['red', 'blue', 'green', 'orange', 'purple'],
+    }
+  ]
+}
   }
+  setRange(range: 'last7Days' | 'lastMonth' | 'last6Months' | 'lastYear') {
+  this.selectedRange = range;
+  this.updateChart();
+}
+getAverageFor(range: keyof typeof this.stats): string {
+  const data = this.stats[range].avgDuration;
+  if (!data.length) return "0s";
+
+  const avg = data.reduce((a, b) => a + b.value, 0) / data.length;
+  return this.formatDuration(avg);
+}
+
+formatDuration(totalSec: number): string {
+  const hours = Math.floor(totalSec / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+}
+getTrend(range: keyof typeof this.stats): 'up' | 'down' | 'stable' {
+  const freq = this.stats[range].frequency;
+  if (freq.length < 2) return 'stable';
+
+  // Prepare values
+  const y = freq.map(f => f.count);
+  const x = freq.map((_, i) => i);
+
+  // Linear regression slope
+  const n = y.length;
+  const sumX = x.reduce((a,b)=>a+b,0);
+  const sumY = y.reduce((a,b)=>a+b,0);
+  const sumXY = x.reduce((acc,i)=>acc + x[i] * y[i], 0);
+  const sumX2 = x.reduce((acc,i)=>acc + x[i] * x[i], 0);
+
+  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+
+  if (slope > 0.05) return 'up';
+  if (slope < -0.05) return 'down';
+  return 'stable';
+}
+getChangePercentage(range: 'last7Days' | 'lastMonth' | 'last6Months' | 'lastYear') {
+  const current = this.getAverageRaw(range);
+  const prev = this.getPreviousRangeAverage(range);
+
+  if (!prev) return null;
+
+  const diff = ((current - prev) / prev) * 100;
+  return diff;
+}
+
+getAverageRaw(range: keyof typeof this.stats): number {
+  const data = this.stats[range].avgDuration;
+  if (!data.length) return 0;
+  return data.reduce((a, b) => a + b.value, 0) / data.length;
+}
+
+getPreviousRangeAverage(range: string) {
+  if (range === 'last7Days') return this.getAverageRaw('lastMonth');
+  if (range === 'lastMonth') return this.getAverageRaw('last6Months');
+  if (range === 'last6Months') return this.getAverageRaw('lastYear');
+  return null;
+}
+rangeLabels: Record<string, string> = {
+  last7Days: "Last 7 Days",
+  lastMonth: "Last Month",
+  last6Months: "Last 6 Months",
+  lastYear: "Last Year"
+};
+
+getRangeLabel(range: string): string {
+  return this.rangeLabels[range] || range;
+}
+
 
 }
