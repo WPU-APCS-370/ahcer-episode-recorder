@@ -63,13 +63,8 @@
 
 <div class="summary-cards" *ngIf="stats">
   <mat-card>
-    <mat-card-title>Avg Duration (7 Days)</mat-card-title>
-    <p>{{ getAverageFor('last7Days') }}</p>
-  </mat-card>
-
-  <mat-card>
-    <mat-card-title>Avg Duration (30 Days)</mat-card-title>
-    <p>{{ getAverageFor('lastMonth') }}</p>
+    <mat-card-title>AVERAGE EPISODE LENGTH</mat-card-title>
+    <p>{{ getAverageFor(selectedRange) }} of {{ getRangeLabel(selectedRange) }}</p>
   </mat-card>
 </div>
 
@@ -93,7 +88,7 @@
 
     <!-- bar Chart -->
      <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
-      <h4>Average Common</h4>
+      <h4>Symptom Distribution During Episodes</h4>
       <canvas baseChart
         [data]="symptomPieData"
         [type]="'pie'">
@@ -101,7 +96,7 @@
     </div>
     <!-- Avg Duration Chart -->
     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
-      <h4>Average Duration</h4>
+      <h4>Burden Over Time</h4>
       <canvas
         baseChart
         [data]="durationChartData"

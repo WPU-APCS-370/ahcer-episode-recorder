@@ -184,10 +184,13 @@ export class StatisticsComponent {
         ticks: {
           callback: (value) => {
             const totalSec = Number(value);
+            const days = Math.floor(totalSec / 86400);
             const hours = Math.floor(totalSec / 3600);
             const minutes = Math.floor((totalSec % 3600) / 60);
             const seconds = totalSec % 60;
-            if (hours > 0) {
+            if(days > 0) {
+              return `${days}d`;
+            } else if (hours > 0) {
               return `${hours}h ${minutes}m ${seconds}s`;
             } else if (minutes > 0) {
               return `${minutes}m ${seconds}s`;
@@ -336,16 +339,22 @@ symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
 }
 getAverageFor(range: keyof typeof this.stats): string {
   const data = this.stats[range].avgDuration;
-  if (!data.length) return "0s";
+  if (!data.length) return "0";
 
   const avg = data.reduce((a, b) => a + b.value, 0) / data.length;
   return this.formatDuration(avg);
 }
 
 formatDuration(totalSec: number): string {
+  const days = Math.floor(totalSec / 86400);
   const hours = Math.floor(totalSec / 3600);
   const minutes = Math.floor((totalSec % 3600) / 60);
-  return `${hours}h ${minutes}m`;
+  if(days > 0) {
+    return `${days}d`;
+  }else if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}m`;
 }
 getTrend(range: keyof typeof this.stats): 'up' | 'down' | 'stable' {
   const freq = this.stats[range].frequency;
