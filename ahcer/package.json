@@ -7,7 +7,7 @@
     "build": "ng build",
     "build-prod": "ng build --output-path=dist/",
     "build-sandbox": "ng build --configuration sandbox",
-    "deploy-sandbox": "ng build --configuration sandbox && firebase deploy --only hosting:sandbox-ahcer",
+    "deploy-sandbox": "ng build --configuration sandbox && firebase deploy --only hosting:acher-sandbox",
     "deploy-prod": "ng build --configuration production && firebase deploy --only hosting:wpu-ahcer",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "target": "ahcer",
+      "target": "acher-sandbox",
       "public": "dist/ahcer",
       "ignore": [
         "**/.*"
