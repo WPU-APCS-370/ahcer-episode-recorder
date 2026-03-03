@@ -189,13 +189,13 @@ export class StatisticsComponent {
             const minutes = Math.floor((totalSec % 3600) / 60);
             const seconds = totalSec % 60;
             if(days > 0) {
-              return `${days}d`;
+              return `${days} day`;
             } else if (hours > 0) {
-              return `${hours}h ${minutes}m ${seconds}s`;
+              return `${hours} hour ${minutes} minute ${seconds} second`;
             } else if (minutes > 0) {
-              return `${minutes}m ${seconds}s`;
+              return `${minutes} minute ${seconds} second`;
             } else {
-              return `${seconds}s`;
+              return `${seconds} second`;
             }
           }
         }
@@ -300,7 +300,7 @@ symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
       labels,
       datasets: [
         {
-          label: isMonthly ? 'Avg Duration (per month)' : 'Avg Duration (per day)',
+          label: isMonthly ? 'Average Episode Length' : 'Average Episode Length',
           data: avgData,
           backgroundColor: 'rgba(54,162,235,0.6)',
           borderColor: 'blue',
@@ -314,7 +314,7 @@ symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
       labels,
       datasets: [
         {
-          label: isMonthly ? 'Frequency (total per month)' : 'Frequency (per day)',
+          label: isMonthly ? 'Episodes That Month' : 'Episodes That Day',
           data: freqData,
           backgroundColor: 'rgba(255,99,132,0.6)',
           borderColor: 'red',
@@ -324,13 +324,13 @@ symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
       ]
     };
     this.symptomPieData = {
-  labels: this.currentStat.symptomBreakdown.map(s => s.symptom),
-  datasets: [
-    {
-      data: this.currentStat.symptomBreakdown.map(s => s.percentage),
-      backgroundColor: ['red', 'blue', 'green', 'orange', 'purple'],
-    }
-  ]
+    labels: this.currentStat.symptomBreakdown.map(s => s.symptom + '–' + Number(s.percentage.toFixed(0)) + '% '),
+    datasets: [
+      {
+        data: this.currentStat.symptomBreakdown.map(s => Number(s.percentage.toFixed(0))),
+        backgroundColor: ['red', 'blue', 'green', 'orange', 'purple'],
+      }
+    ]
 }
   }
   setRange(range: 'last7Days' | 'lastMonth' | 'last6Months' | 'lastYear') {
@@ -350,11 +350,11 @@ formatDuration(totalSec: number): string {
   const hours = Math.floor(totalSec / 3600);
   const minutes = Math.floor((totalSec % 3600) / 60);
   if(days > 0) {
-    return `${days}d`;
+    return `${days} day`;
   }else if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return `${hours} hour ${minutes} minute`;
   }
-  return `${minutes}m`;
+  return `${minutes} minute`;
 }
 getTrend(range: keyof typeof this.stats): 'up' | 'down' | 'stable' {
   const freq = this.stats[range].frequency;
@@ -409,6 +409,38 @@ rangeLabels: Record<string, string> = {
 getRangeLabel(range: string): string {
   return this.rangeLabels[range] || range;
 }
+get totalEpisodes(): number {
+  return this.currentStat?.frequency?.reduce(
+    (sum, item) => sum + item.count,
+    0
+  ) ?? 0;
+}
+private getMonthYear(date: Date): string {
+  return date.toLocaleString('default', {
+    month: 'long',
+    year: 'numeric'
+  });
+}
+get countLabels(): Record<string, string> {
+  const now = new Date();
 
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
+  const last6MonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+  const lastYear = new Date(now.getFullYear() - 1, 0, 1);
+
+  return {
+    last7Days: `Last 7 Days (${this.getMonthYear(now)})`,
+
+    lastMonth: this.getMonthYear(lastMonth),
+
+    last6Months: `${this.getMonthYear(last6MonthsStart)} - ${this.getMonthYear(now)}`,
+
+    lastYear: `${lastYear.getFullYear()}`
+  };
+}
+getCountLabel(range: string): string {
+  return this.countLabels[range] || range;
+}
 }

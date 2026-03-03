@@ -78,8 +78,8 @@
 
 <div class="period-comparison">
   <ng-container *ngIf="getChangePercentage(selectedRange) as change">
-    <span *ngIf="change > 0" class="up">🔼 {{ change | number:'1.0-0' }}% vs {{getRangeLabel(selectedRange)}}</span>
-    <span *ngIf="change < 0" class="down">🔽 {{ (change * -1) | number:'1.0-0' }}% vs {{getRangeLabel(selectedRange)}} </span>
+    <span *ngIf="change > 0" class="up">Up  {{ change | number:'1.0-0' }}% from {{getRangeLabel(selectedRange)}}</span>
+    <span *ngIf="change < 0" class="down">Down  {{ (change * -1) | number:'1.0-0' }}% from {{getRangeLabel(selectedRange)}} </span>
     <span *ngIf="change == 0" class="stable">→ No change</span>
   </ng-container>
 </div>
@@ -88,15 +88,16 @@
 
     <!-- bar Chart -->
      <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
-      <h4>Symptom Distribution During Episodes</h4>
+      <h4>Where Symptoms Occurred</h4>
       <canvas baseChart
         [data]="symptomPieData"
         [type]="'pie'">
       </canvas>
     </div>
+    <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
     <!-- Avg Duration Chart -->
     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
-      <h4>Burden Over Time</h4>
+      <h4>Average Episode Length {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'by Month' : 'by Day'}}</h4>
       <canvas
         baseChart
         [data]="durationChartData"
@@ -105,10 +106,10 @@
       >
       </canvas>
     </div>
-
+    <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
     <!-- Frequency Chart -->
     <div *ngIf="currentStat" class="chart-container">
-      <h4>Frequency of Episodes</h4>
+      <h4>Number of Episodes {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'per Month' : 'per Day'}}</h4>
       <canvas
         baseChart
         [data]="frequencyChartData"
