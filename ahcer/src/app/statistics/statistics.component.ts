@@ -164,14 +164,18 @@ export class StatisticsComponent {
       tooltip: {
         callbacks: {
           label: (context) => {
-            const totalSec = Number(context.parsed.y);
-            const hours = Math.floor(totalSec / 3600);
+            const totalSec = Math.round(Number(context.parsed.y));
+
+            const days = Math.floor(totalSec / 86400);
+            const hours = Math.floor((totalSec % 86400) / 3600);
             const minutes = Math.floor((totalSec % 3600) / 60);
             const seconds = totalSec % 60;
 
             let formatted = '';
-            if (hours > 0) formatted += `${hours}h `;
-            if (minutes > 0 || hours > 0) formatted += `${minutes}m `;
+
+            if (days > 0) formatted += `${days}d `;
+            if (hours > 0 || days > 0) formatted += `${hours}h `;
+            if (minutes > 0 || hours > 0 || days > 0) formatted += `${minutes}m `;
             formatted += `${seconds}s`;
 
             return `${context.dataset.label}: ${formatted}`;
