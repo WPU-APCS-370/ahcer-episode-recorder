@@ -43,10 +43,11 @@
   <div *ngIf="episodes_count === 0">No episodes found.</div>
   <!-- Only one card shows -->
   <div class="stat-card" *ngIf="currentStat">
-    <h4>Most Common Reported Symptom: {{ currentStat.mostCommon || "None" }} <span>( {{ currentStat.mostCommonCount || 0 }} )</span>  </h4>   
-
-
-
+      <h4 style="font-weight: bold;">
+        Most Common Reported Symptom: {{ formatLabel(currentStat.mostCommon) }} 
+        <span>( {{ currentStat.mostCommonCount || 0 }} {{ currentStat.mostCommonCount > 1 ? 'episodes' : 'episode' }} )</span> 
+      </h4>   
+      <h4 style="font-weight: bold;margin: 0;">Time Range</h4>
         <div class="range-buttons">
         <button mat-button [color]="selectedRange === 'last7Days' ? 'primary' : ''"
               (click)="setRange('last7Days')">7 Days</button>
@@ -64,15 +65,15 @@
 <div class="summary-cards" *ngIf="stats">
   <mat-card>
     <mat-card-title>AVERAGE EPISODE LENGTH</mat-card-title>
-    <p>{{ getAverageFor(selectedRange) }} of {{ getRangeLabel(selectedRange) }}</p>
+    <p style="font-weight: bold;">{{ getAverageFor(selectedRange) }}  ({{ getRangeLabel(selectedRange) }})</p>
   </mat-card>
 </div>
 
 <div class="trend-label">
   Trend:
-  <span *ngIf="getTrend(selectedRange) === 'up'" class="up">↑ Increasing</span>
-  <span *ngIf="getTrend(selectedRange) === 'down'" class="down">↓ Decreasing</span>
-  <span *ngIf="getTrend(selectedRange) === 'stable'" class="stable">→ Stable</span>
+  <span *ngIf="getTrend(selectedRange) === 'up'" class="up"> Increasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'down'" class="down"> Decreasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'stable'" class="stable"> Stable</span>
 </div>
 
 
@@ -97,7 +98,7 @@
     <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
     <!-- Avg Duration Chart -->
     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
-      <h4>Average Episode Length {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'by Month' : 'by Day'}}</h4>
+      <h4>Average Episode Length {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'by Month (days)' : 'by Day'}}</h4>
       <canvas
         baseChart
         [data]="durationChartData"
@@ -109,7 +110,7 @@
     <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
     <!-- Frequency Chart -->
     <div *ngIf="currentStat" class="chart-container">
-      <h4>Number of Episodes {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'per Month' : 'per Day'}}</h4>
+      <h4>Episodes Logged {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'per Month' : 'per Day'}}</h4>
       <canvas
         baseChart
         [data]="frequencyChartData"

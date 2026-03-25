@@ -160,7 +160,7 @@ export class StatisticsComponent {
   durationChartOptions: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' },
+      legend: { display: false },
       tooltip: {
         callbacks: {
           label: (context) => {
@@ -324,7 +324,7 @@ symptomPieData: ChartData<'pie'> = { labels: [], datasets: [] };
       ]
     };
     this.symptomPieData = {
-    labels: this.currentStat.symptomBreakdown.map(s => s.symptom + '–' + Number(s.percentage.toFixed(0)) + '% '),
+    labels: this.currentStat.symptomBreakdown.map(s => this.formatLabel(s.symptom) + '–' + Number(s.percentage.toFixed(0)) + '% '),
     datasets: [
       {
         data: this.currentStat.symptomBreakdown.map(s => Number(s.percentage.toFixed(0))),
@@ -350,11 +350,11 @@ formatDuration(totalSec: number): string {
   const hours = Math.floor(totalSec / 3600);
   const minutes = Math.floor((totalSec % 3600) / 60);
   if(days > 0) {
-    return `${days} day`;
+    return `${days} ${days === 1 ? 'day' : 'days'}`;;
   }else if (hours > 0) {
-    return `${hours} hour ${minutes} minute`;
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
   }
-  return `${minutes} minute`;
+  return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
 }
 getTrend(range: keyof typeof this.stats): 'up' | 'down' | 'stable' {
   const freq = this.stats[range].frequency;
@@ -417,7 +417,7 @@ get totalEpisodes(): number {
 }
 private getMonthYear(date: Date): string {
   return date.toLocaleString('default', {
-    month: 'long',
+    month: 'short',
     year: 'numeric'
   });
 }
@@ -442,5 +442,14 @@ get countLabels(): Record<string, string> {
 }
 getCountLabel(range: string): string {
   return this.countLabels[range] || range;
+}
+formatLabel(value: string): string {
+  if (!value) return 'None';
+
+  return value
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/_/g, ' ')
+    .trim()
+    .replace(/\b\w/g, char => char.toUpperCase());
 }
 }
