@@ -36,7 +36,7 @@
           <span> Record Episodes</span>
         </a>
 
-        <a mat-list-item routerLink="/statistics" *ngIf="(user.isLoggedIn$ | async) && user.isAdmin">
+        <a mat-list-item routerLink="/statistics" *ngIf="user.isLoggedIn$ | async">
 
           <mat-icon>insert_chart</mat-icon>
 

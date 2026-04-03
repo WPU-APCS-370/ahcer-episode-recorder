@@ -126,7 +126,7 @@ const routes: Routes = [
   {
     path: 'statistics',
     component: StatisticsComponent,
-    canActivate: [adminGuard],
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'privacy-policy',
