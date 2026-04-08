@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   public signInClicked: boolean = false;
   public signInError: string = '';
   showFirebaseUI = false;
+  consent: string = '';
   constructor(
     public platform: Platform,
     private fb: FormBuilder,
@@ -30,18 +31,38 @@ export class LoginComponent implements OnInit {
     this.consentForm = this.fb.group({
       consent: [false, Validators.requiredTrue],
     });
+    this.consent = localStorage.getItem('consent');
+    if (this.consent) {
+      this.consentForm.setValue({ consent: true });
+    }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.consentForm.get('consent')?.valueChanges.subscribe((value: boolean) => {
+    if (value === true) {
+      const timestamp = Date.now().toString();
+      localStorage.setItem('consent', timestamp);
+      this.consent = timestamp;
+    } else {
+      localStorage.removeItem('consent'); 
+      this.consent = '';
+    }
+  });
+  }
 
   userForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
-    consent: [false, Validators.requiredTrue],
   });
 
   emailLogin() {
     if (!this.userForm.valid) {
+      this.signInError =
+        'Consent is required to continue using the app. You may review the privacy policy or contact support with questions.';
+      setTimeout(() => (this.signInError = ''), 5000);
+      return;
+    }
+    if (!this.consent) {
       this.signInError =
         'Consent is required to continue using the app. You may review the privacy policy or contact support with questions.';
       setTimeout(() => (this.signInError = ''), 5000);
@@ -52,7 +73,7 @@ export class LoginComponent implements OnInit {
     this.userService
       .loginWithEmail(val.email, val.password)
       .then((res) => {
-        this.userService.onLoginSuccessful();
+        this.userService.onLoginSuccessful('',this.consent);
       })
       .catch((error) => {
         this.signInError = error;
@@ -86,23 +107,29 @@ export class LoginComponent implements OnInit {
   }
 
   openConsentDialog() {
-    this.dialogRef = this.dialog.open(this.consentDialog, {
-      width: '400px',
-    });
+    if (!this.consentForm.value.consent) {
+      this.dialogRef = this.dialog.open(this.consentDialog);
+    }else {
+      this.openAuthPopup();
+    }
   }
 
   async onConsentContinue() {
-    this.dialogRef.close(true);
-
+    this.dialogRef.close(true); 
+    const timestamp = Date.now();
+    localStorage.setItem('consent', JSON.stringify(timestamp));
+   await this.openAuthPopup();
+  }
+ async openAuthPopup() {
     try {
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
-      const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
 
-      this.userService.onLoginSuccessful();
-    } catch (err) {
-      console.error(err);
-    }
+    this.userService.onLoginSuccessful('',this.consent);
+  } catch (err) {
+    console.error(err);
+  }
   }
 }

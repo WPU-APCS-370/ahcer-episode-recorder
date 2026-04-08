@@ -220,9 +220,9 @@ export class UsersService {
     }
   }
 
-  onLoginSuccessful(username?: string) {
+  onLoginSuccessful(username?: string, consent?: string) {
     this.afAuth.app.then(cred => {
-      let uid = cred.auth().currentUser.uid;
+      let uid = cred.auth().currentUser.uid;      
       this.db.firestore.doc(`users/${uid}`)
         .get()
         .then((doc) => {
@@ -233,11 +233,15 @@ export class UsersService {
               isParent: true,
               study: '',
               password: '',
-              username: username ? username : cred.auth().currentUser.displayName || ''
+              username: username ? username : cred.auth().currentUser.displayName || '',
+              consent: consent ? consent : '',
             };
             this.db.collection(`users`).doc(uid).set(obj);
             localStorage.setItem('user', JSON.stringify(obj))
           }
+          else if (!doc.data()?.consent) {
+              this.db.collection(`users`).doc(uid).set({ consent }, { merge: true });
+            }
           else {
             localStorage.setItem('user', JSON.stringify(data))
           }
@@ -247,6 +251,9 @@ export class UsersService {
   }
   updateUser(username: any, userId: string): Promise<void> {
     return this.db.doc(`users/${userId}`).update(username);
+  }
+  updateConsent(consent: string, userId: string): Promise<void> {
+    return this.db.doc(`users/${userId}`).update({ consent });
   }
 
 }

@@ -13,6 +13,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class SignUpComponent {
   public signUpError: string = '';
   study:string = '';
+  consent: string = '';
   userForm =this.fb.group({
     username: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -30,12 +31,32 @@ export class SignUpComponent {
 
 
 ngOnInit(): void {
+  this.consent = localStorage.getItem('consent');
+    if (this.consent) {
+      this.userForm.patchValue({ consent: true });
+    }
+    this.userForm.get('consent')?.valueChanges.subscribe((value: boolean) => {
+    if (value === true) {
+      const timestamp = Date.now().toString();
+      localStorage.setItem('consent', timestamp);
+      this.consent = timestamp;
+    } else {
+      localStorage.removeItem('consent'); 
+      this.consent = '';
+    }
+  });
 }
 
 
   async onCreateUser() {
     if (!this.userForm.valid) {
       this.signUpError = 'Consent is required to continue using the app. You may review the privacy policy or contact support with questions.';
+      setTimeout(() => (this.signUpError = ''), 5000);
+      return;
+    }
+    if (!this.consent) {
+      this.signUpError =
+        'Consent is required to continue using the app. You may review the privacy policy or contact support with questions.';
       setTimeout(() => (this.signUpError = ''), 5000);
       return;
     }
@@ -48,7 +69,7 @@ ngOnInit(): void {
           const childId = res.user.uid;
           if (!parentId) {
             this.userService.loginWithEmail(val.email, val.password).then((res) => {
-              this.userService.onLoginSuccessful(val.username);
+              this.userService.onLoginSuccessful(val.username,this.consent);
             }).catch((error) => {
               console.log(error);
             });
@@ -62,6 +83,7 @@ ngOnInit(): void {
                   username:val.username,
                   email: val.email,
                   password:val.password,
+                  consent: this.consent,
                   study:'',
                 }
                 if (parentId) {

@@ -26,13 +26,14 @@
           <mat-label>Password</mat-label>
           <input type="password" matInput formControlName="password">
         </mat-form-field>
-        <p>This app is free for families. With your permission, de-identified and combined data
-          may be used to support rare disease research and help sustain and improve this app. No personal or
-          identifiable health information is ever shared.</p>
-        <mat-checkbox formControlName="consent" style="margin-bottom: 10px;">
-          I understand and agree.
-        </mat-checkbox>
-
+          <form [formGroup]="consentForm" *ngIf="!consentForm.value.consent">
+            <p>This app is free for families. With your permission, de-identified and combined data
+              may be used to support rare disease research and help sustain and improve this app. No personal or
+              identifiable health information is ever shared.</p>
+            <mat-checkbox formControlName="consent" style="margin-bottom: 10px;">
+              I understand and agree.
+            </mat-checkbox>
+          </form>
         <div style="margin-top: 2px; margin-bottom: 6px;">
           <span class="error">{{signInError}} </span>
         </div>

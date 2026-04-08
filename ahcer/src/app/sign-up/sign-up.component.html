@@ -14,10 +14,10 @@
       <mat-label>Password</mat-label>
       <input matInput formControlName="password">
     </mat-form-field>
-    <p>This app is free for families. With your permission, de-identified and combined data
+    <p *ngIf="consent==null">This app is free for families. With your permission, de-identified and combined data
       may be used to support rare disease research and help sustain and improve this app. No personal or
       identifiable health information is ever shared.</p>
-    <mat-checkbox formControlName="consent" style="margin-bottom: 10px;">
+    <mat-checkbox formControlName="consent" style="margin-bottom: 10px;" *ngIf="consent == null">
       I understand and agree.
     </mat-checkbox>
 
