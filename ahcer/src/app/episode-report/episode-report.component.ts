@@ -4,7 +4,7 @@ import { Patient } from "../models/patient";
 import { EpisodeService } from "../services/episode.service";
 import { PatientServices } from "../services/patient.service";
 import { UsersService } from "../services/users.service";
-import { forkJoin, of, finalize, catchError, Subject } from "rxjs";
+import { forkJoin, of, finalize, catchError, Subject, Observable } from "rxjs";
 import firebase from "firebase/compat";
 import Timestamp = firebase.firestore.Timestamp;
 import { MedicationService } from "../services/medication.service";
@@ -45,50 +45,42 @@ export class EpisodeReportComponent implements OnInit, AfterViewInit {
   loadedPatientsData: Patient[] = [];
   loadedPatientIds: string[] = [];
   videos: any = [];
+  records$: Observable<any[]>;
   constructor(private medicationService: MedicationService,
     private episodeService: EpisodeService,
     private patientsService: PatientServices,
     private usersService: UsersService,
     private dialog: MatDialog,) { }
 
+  
   ngOnInit(): void {
-    this.loadingPatient = true;
+  this.loadingPatient = true;
 
-    if (this.usersService.isAdmin) {
-      this.patientsService.getAllRecords().subscribe(
-        patients => {
-          this.patients = patients
-          this.loadAllVideos()
-          this.loadingPatient = false
-           this.load()
-        }
-      )
+  let records$: Observable<Patient[]>;
 
-    } else if (this.usersService.piUser) {
-      this.patientsService.getAllRecords(this.usersService.piUser).subscribe(
-        patients => {
-          this.patients = patients
-          // this.loadForAdmin(patients)
-          this.loadAllVideos()
-          this.loadingPatient = false
-      this.load()
+  if (this.usersService.isAdmin) {
+    records$ = this.patientsService.getAllRecords();
+    this.loadAllVideos()
+  } else if (this.usersService.piUser) {
+    records$ = this.patientsService.getAllRecords(this.usersService.piUser);
+    this.loadAllVideos()
+  } else {
+    records$ = this.patientsService.getPatients();
+    this.loadVideos()  
+  }
 
-        })
-    }
-    else {
-      this.patientsService.getPatients().subscribe(
-        patients => { this.patients = patients })
-        this.loadVideos()        
-      this.loadingPatient = false
-      this.load()
-    }
-    this.patientSelection$
+  records$.subscribe(records => {
+    this.patients = records;
+    this.loadingPatient = false;
+    this.changePatient(this.patients); 
+  });
+     this.patientSelection$
       .pipe(debounceTime(1200)) // Adjust the debounce delay as needed
       .subscribe(selectedPatients => {
         this.changePatient(selectedPatients);
       });
+}
 
-  }
   loadVideos() {
 
     this.usersService.getUserVideos()

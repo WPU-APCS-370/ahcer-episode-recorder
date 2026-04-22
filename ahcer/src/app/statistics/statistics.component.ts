@@ -4,7 +4,7 @@ import { PatientServices } from '../services/patient.service';
 import { UsersService } from '../services/users.service';
 import { Episode } from '../models/episode';
 import { Patient } from '../models/patient';
-import { forkJoin, of, finalize, catchError, Subject } from "rxjs";
+import { forkJoin, of, finalize, catchError, Subject, Observable } from "rxjs";
 import { debounceTime } from 'rxjs/operators';
 import { analyzeEpisodes, StatsResult } from './episode-utils';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -51,35 +51,27 @@ export class StatisticsComponent {
     this.lastMonthName = prevMonth.toLocaleString('en-US', { month: 'long' });
     this.lastYearNumber = now.getFullYear() - 1;
     this.loadingPatient = true;
+  
+    let records$: Observable<Patient[]>;
+  
     if (this.usersService.isAdmin) {
-      this.patientsService.getAllRecords().subscribe(
-        patients => {
-          this.patients = patients
-          this.loadingPatient = false
-          this.load()
-        }
-      )
-
+      records$ = this.patientsService.getAllRecords();
     } else if (this.usersService.piUser) {
-      this.patientsService.getAllRecords(this.usersService.piUser).subscribe(
-        patients => {
-          this.patients = patients
-          this.loadingPatient = false
-          this.load()
-
-        })
+      records$ = this.patientsService.getAllRecords(this.usersService.piUser);
+    } else {
+      records$ = this.patientsService.getPatients();
     }
-    else {
-      this.patientsService.getPatients().subscribe(
-        patients => { this.patients = patients })
-      this.loadingPatient = false
-      this.load()
-    }
-    this.patientSelection$
-      .pipe(debounceTime(1200))
-      .subscribe(selectedPatients => {
-        this.changePatient(selectedPatients);
-      });
+  
+    records$.subscribe(records => {
+      this.patients = records;
+      this.loadingPatient = false;
+      this.changePatient(this.patients); 
+    });
+       this.patientSelection$
+        .pipe(debounceTime(1200)) // Adjust the debounce delay as needed
+        .subscribe(selectedPatients => {
+          this.changePatient(selectedPatients);
+        });
   }
   load() {
     this.usersService.getLastViewedPatient().subscribe(
