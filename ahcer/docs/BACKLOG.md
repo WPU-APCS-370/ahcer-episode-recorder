@@ -33,40 +33,47 @@ here rather than losing in an issue thread:
   the output up by hand. `DECISIONS.md`'s release process currently states
   that merging a PR "initiates the production deployment," which isn't true
   today; that line is corrected pending this work. See #41.
-- **Three or four distinct Firebase project identities are referenced across
-  the codebase**, but only two (`wpu-ahcer` production, `acher-sandbox`
-  sandbox) are registered in `.firebaserc`. The default dev environment file
-  points at an unregistered project (`wpu-ahcer-b5e94`), and a fourth ID
-  (`ahcr-38258`) appears only in a hardcoded local-emulator URL that nothing
-  in the repo actually starts. See #42 and #43.
+- **`acher-sandbox` is inaccessible — resolved.** Verified directly:
+  `firebase projects:list` under the repo owner's account does not include
+  it, and every commit that created or wired it up belongs to a former
+  contributor (Arsalan Javed), never the owner. It was created under his
+  personal Google account and isn't reachable today. Retiring it rather than
+  chasing access. See #43 (closed) and #44.
+- **`wpu-ahcer-b5e94`, the project the default dev environment pointed at,
+  was also unregistered and unreachable — resolved.** In the same
+  verification pass, a genuinely accessible project turned up:
+  `ahcer-dev`, sitting in the account unused by this codebase. It turned out
+  to be the backend for a separate, earlier mobile-app effort (only
+  Android/iOS apps registered, a live Firestore database, matches the
+  repo's `mobile-app` branch) rather than a spare copy of the web app. A web
+  app was registered under it and `environment.ts`/`.firebaserc` now point
+  at `ahcer-dev` instead of the dead reference. See #43 (closed).
 - **No Firestore or Storage security rules exist in the repo at all** —
   authorization today is enforced client-side. This is the top item in
   `ROADMAP.md`'s Days 1-30 plan. See #46.
 - **`ng test` cannot run in CI as configured** — `karma.conf.js` assumes an
   interactive, non-headless Chrome session and would hang indefinitely in a
   runner. Neither CI pipeline runs it. See #45.
-- **`acher-sandbox` is real, working infrastructure that already exists**
-  from prior work (its own Firebase project, hosting target, and npm
-  scripts) but isn't validated, documented, or part of any deploy process
-  yet. See #44.
 
 ### Stories
 
 | # | Story | Status |
 |---|---|---|
 | [#41](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/41) | Automate production deploys (deploys are currently manual FTP) | Open |
-| [#42](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/42) | Set up a local Firebase Emulator dev environment | Open |
-| [#43](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/43) | Spike: identify the `wpu-ahcer-b5e94` and `ahcr-38258` Firebase projects | Open |
-| [#44](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/44) | Validate and document the `acher-sandbox` environment | Open |
+| [#42](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/42) | Set up a local Firebase Emulator dev environment | Open — now builds on a real, confirmed-accessible `ahcer-dev` project |
+| [#43](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/43) | Spike: identify the `wpu-ahcer-b5e94` and `ahcr-38258` Firebase projects | Closed — resolved, see above |
+| [#44](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/44) | Retire `acher-sandbox`; consolidate on `ahcer-dev` | Open — scope revised |
 | [#45](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/45) | Make unit tests runnable in CI and add a test gate | Open |
 | [#46](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/46) | Add versioned Firestore/Storage security rules with emulator-based tests | Open |
 | [#47](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/47) | Document the environment map (dev / sandbox / production) | Open |
 
 Suggested order: #41 is independent of the rest and can start immediately —
 it's the biggest gap, since every other story assumes deploys are something
-the system does, not something done by hand. #42 unblocks #43, #45, and #46,
-which can then run in parallel. #44 is independent. #47 documents the
-outcome of all of the above, so it comes last.
+the system does, not something done by hand. #43 is resolved, which
+unblocks #42 and #46 to proceed against a known-good project rather than a
+dangling reference; #45 doesn't depend on it. #44 (retiring `acher-sandbox`)
+is independent. #47 documents the outcome of all of the above, so it comes
+last.
 
 ### Superseded issues
 
