@@ -34,8 +34,8 @@ here rather than losing in an issue thread:
   that merging a PR "initiates the production deployment," which isn't true
   today; that line is corrected pending this work. `ahcer.org` itself runs on
   the repo owner's **personal** Linode slice, not project- or org-owned
-  infrastructure — worth weighing as part of the fix, not just the
-  automation gap on top of it. See #41.
+  infrastructure. Decision made: migrate to Firebase Hosting — see #41 and
+  the epic below.
 - **`acher-sandbox` is inaccessible — resolved.** Verified directly:
   `firebase projects:list` under the repo owner's account does not include
   it, and every commit that created or wired it up belongs to a former
@@ -62,7 +62,7 @@ here rather than losing in an issue thread:
 
 | # | Story | Status |
 |---|---|---|
-| [#41](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/41) | Automate production deploys (deploys are currently manual FTP) | Open |
+| [#41](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/41) | Automate production deploys — decision made, see the Firebase Hosting migration epic below | Open — umbrella issue |
 | [#42](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/42) | Set up a local Firebase Emulator dev environment | Open — now builds on a real, confirmed-accessible `ahcer-dev` project |
 | [#43](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/43) | Spike: identify the `wpu-ahcer-b5e94` and `ahcr-38258` Firebase projects | Closed — resolved, see above |
 | [#44](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/44) | Retire `acher-sandbox`; consolidate on `ahcer-dev` | Open — scope revised |
@@ -84,3 +84,110 @@ last.
 and #36 ("Finish automating deploy") were short, undated notes from earlier
 in the project with no acceptance criteria. Closed in favor of #45, #46, and
 #41 respectively, which carry the detail found during this evaluation.
+
+---
+
+## Epic: Migrate Production Hosting to Firebase
+
+### Why
+
+`ahcer.org` currently runs on the repo owner's personal Linode slice
+(#41), reached only by manual FTP, with no working deploy automation. The
+`wpu-ahcer` Firebase project already exists, already has a Hosting site
+provisioned, already has production-ready config in `firebase.json` (SPA
+rewrite, immutable caching on hashed assets, no-cache on the Angular
+service worker files), and already has a working `deploy-prod` npm script.
+Most of the destination is already built — what's missing is connecting
+the domain and automating the deploy, not building a new environment from
+scratch.
+
+The repo owner has full control of `ahcer.org`'s DNS (hosted at DNS Made
+Easy — verified 2026-09-04: a single A record at the apex pointing to the
+Linode server `45.79.42.31`, with `www.ahcer.org` set up as a CNAME that
+follows the apex rather than its own A record, no MX records so no email
+depends on this domain, no existing TXT records). That's what makes this
+move tractable now rather than blocked on someone else's infrastructure,
+unlike the `acher-sandbox` situation in the epic above.
+
+### Sequencing
+
+The two early stories are independent of each other and can run in either
+order, or in parallel:
+
+- **#54** (verify parity) and **#55** (automate deploys) both target
+  `wpu-ahcer.web.app` directly and touch zero production DNS. Doing #55
+  before the DNS cutover means that by the time `ahcer.org` actually points
+  at Firebase, deploys are already flowing to the exact thing being cut
+  over to — the cutover itself becomes a pure DNS change, not a deploy
+  change.
+- **#56** (connect the custom domain) can start any time — it's
+  verification and preparation only, and doesn't move any traffic.
+- **#57** (the actual DNS cutover) depends on #56 being complete, and
+  should not start until #54 has confirmed parity.
+- **#58** (decommission Linode) only happens after #57's rollback grace
+  period passes with no issues.
+- **#59** (docs) closes the loop once the rest is done.
+
+### Stories
+
+| # | Story | Status |
+|---|---|---|
+| [#54](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/54) | Verify Firebase Hosting parity before touching DNS | Open |
+| [#55](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/55) | Automate deploys to Firebase Hosting (wpu-ahcer) | Open |
+| [#56](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/56) | Connect ahcer.org as a custom domain on Firebase Hosting | Open |
+| [#57](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/57) | Cut DNS over from Linode to Firebase Hosting | Open |
+| [#58](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/58) | Decommission the Linode deploy path | Open |
+| [#59](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/59) | Update docs to reflect Firebase Hosting as canonical production | Open |
+
+#41 stays open as the umbrella/decision record until all six close.
+
+### Backup options (must retain — non-negotiable)
+
+Two separate layers, both required, neither optional:
+
+1. **App-version rollback, ongoing, forever.** Verified directly:
+   `firebase hosting:channel:list --project wpu-ahcer` shows the site
+   already runs on Firebase's standard release-history model. Every deploy
+   becomes a numbered release; any previous release can be restored with
+   `firebase hosting:clone wpu-ahcer:<version> wpu-ahcer:live`, or with the
+   "Rollback" action in the console's Release History — no rebuild, no
+   redeploy, takes effect immediately. This is a genuine improvement over
+   today: manual FTP has **no** rollback at all — an overwritten file on
+   the Linode server is just gone. #55 (automate deploys) should confirm
+   this release history keeps accumulating through CI-driven deploys, not
+   just manual ones, and #59 (docs) should record how to actually perform
+   a rollback so it isn't tribal knowledge.
+2. **Infrastructure-level rollback, temporary, migration-only.** Covered
+   already in #57/#58: the Linode server stays fully intact and untouched
+   through an agreed grace period after DNS cutover, so `ahcer.org` can be
+   pointed back at `45.79.42.31` immediately if something is wrong at a
+   level Firebase's own rollback can't fix (DNS/cert issue, Firebase outage,
+   etc). Only decommissioned once that window passes clean.
+
+### Cost
+
+Not evaluated yet — parked deliberately, not forgotten. Before #57 (DNS
+cutover), compare the Linode slice's ongoing cost against Firebase
+Hosting's pricing (free tier covers a meaningful amount of bandwidth/storage;
+costs scale with traffic beyond that) so the decision is made with real
+numbers, not just infrastructure-ownership reasoning. Worth a line in #59
+once known, or its own quick spike if the answer isn't obvious from
+Firebase's pricing page.
+
+### Risks
+
+- **DNS propagation and SSL provisioning aren't instant.** Firebase issues
+  a certificate automatically once DNS is verified as pointing correctly,
+  but this can take anywhere from minutes to about a day. #57 accounts for
+  this by lowering the A record's TTL in advance and treating the cutover
+  as a monitored window, not an instant flip.
+- **`www.ahcer.org` needs a deliberate decision, not an assumption.**
+  Today it's a CNAME that just follows the apex. Firebase's custom-domain
+  flow handles a second domain with a redirect either direction — #56
+  calls out confirming the current options in the console rather than
+  guessing, since getting this wrong breaks `www` access.
+- **Returning visitors have an existing service worker registered for
+  `ahcer.org`.** The domain doesn't change, only the backend serving it
+  does, so the existing Angular service worker should self-update via its
+  no-cache `ngsw.json` version check — but #57 calls for an explicit
+  hard-refresh test on the live domain rather than assuming this works.
