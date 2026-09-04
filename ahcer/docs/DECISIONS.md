@@ -34,7 +34,12 @@ changes must be merged into `main` through a pull request.
 3. Review the complete diff and resolve all conversations.
 4. Run the available production build and manual validation appropriate to the
    change.
-5. Merge the pull request into `main` to initiate the production deployment.
+5. Merge the pull request into `main`.
+6. Deploy to production. As of 2026-09-04 this step is manual: build
+   locally and upload the output via FTP. No automation currently connects a
+   merge to `main` with a production deploy — see
+   [BACKLOG.md](BACKLOG.md#epic-test--dev-environment-setup) and issue #41.
+   Update this section once that lands.
 
 ### Follow-Up
 
