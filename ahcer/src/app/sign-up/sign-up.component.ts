@@ -82,7 +82,6 @@ ngOnInit(): void {
                   isParent: parentId ? false : true,
                   username:val.username,
                   email: val.email,
-                  password:val.password,
                   consent: this.consent,
                   study:'',
                 }
