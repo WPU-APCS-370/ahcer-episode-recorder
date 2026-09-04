@@ -23,12 +23,16 @@ test changes with confidence.
 Evaluating "what exists" for this epic surfaced findings worth recording
 here rather than losing in an issue thread:
 
-- **The production deploy pipeline is currently broken.** `.github/workflows/main_ahcer.yml`
-  deploys straight to `ahcer.org` via SCP on every push to `main`, with no
-  test gate. It failed on both of the last two merges (#39 and #40, both
-  2026-09-04) with an empty `dist/` output — meaning today's `main`/
-  `improvements-phase-2` reconciliation has not actually reached production
-  through this path. See #41.
+- **There is no automated deploy today — production deploys are manual FTP.**
+  `.github/workflows/main_ahcer.yml`, which attempts to build and SCP `dist/`
+  to `ahcer.org` on every push to `main`, is not the real deploy path and
+  never has been in practice; it's a leftover automation attempt that fails
+  on every recent run (including the last two merges, #39 and #40) with an
+  empty `dist/` output. Nobody noticed because it was never load-bearing —
+  the actual production deploy step has been building locally and copying
+  the output up by hand. `DECISIONS.md`'s release process currently states
+  that merging a PR "initiates the production deployment," which isn't true
+  today; that line is corrected pending this work. See #41.
 - **Three or four distinct Firebase project identities are referenced across
   the codebase**, but only two (`wpu-ahcer` production, `acher-sandbox`
   sandbox) are registered in `.firebaserc`. The default dev environment file
@@ -50,7 +54,7 @@ here rather than losing in an issue thread:
 
 | # | Story | Status |
 |---|---|---|
-| [#41](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/41) | Fix broken production deploy pipeline (currently failing on every push to main) | Open — live incident |
+| [#41](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/41) | Automate production deploys (deploys are currently manual FTP) | Open |
 | [#42](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/42) | Set up a local Firebase Emulator dev environment | Open |
 | [#43](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/43) | Spike: identify the `wpu-ahcer-b5e94` and `ahcr-38258` Firebase projects | Open |
 | [#44](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/44) | Validate and document the `acher-sandbox` environment | Open |
@@ -58,10 +62,11 @@ here rather than losing in an issue thread:
 | [#46](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/46) | Add versioned Firestore/Storage security rules with emulator-based tests | Open |
 | [#47](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/47) | Document the environment map (dev / sandbox / production) | Open |
 
-Suggested order: #41 (live incident, independent of the rest) can start
-immediately. #42 unblocks #43, #45, and #46, which can then run in parallel.
-#44 is independent. #47 documents the outcome of all of the above, so it
-comes last.
+Suggested order: #41 is independent of the rest and can start immediately —
+it's the biggest gap, since every other story assumes deploys are something
+the system does, not something done by hand. #42 unblocks #43, #45, and #46,
+which can then run in parallel. #44 is independent. #47 documents the
+outcome of all of the above, so it comes last.
 
 ### Superseded issues
 
