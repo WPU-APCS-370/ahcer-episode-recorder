@@ -32,7 +32,10 @@ here rather than losing in an issue thread:
   the actual production deploy step has been building locally and copying
   the output up by hand. `DECISIONS.md`'s release process currently states
   that merging a PR "initiates the production deployment," which isn't true
-  today; that line is corrected pending this work. See #41.
+  today; that line is corrected pending this work. `ahcer.org` itself runs on
+  the repo owner's **personal** Linode slice, not project- or org-owned
+  infrastructure — worth weighing as part of the fix, not just the
+  automation gap on top of it. See #41.
 - **`acher-sandbox` is inaccessible — resolved.** Verified directly:
   `firebase projects:list` under the repo owner's account does not include
   it, and every commit that created or wired it up belongs to a former
