@@ -63,13 +63,8 @@ export class ViewUsersComponent {
       const response:any = await this.userService.deleteAccount(id)
       console.log(response);
 
-      if (this.isAdmin) {
-        this.loadAllChildrens();
-      } else if (this.isPIuser) {
-        this.loadAllChildrens(this.userService.piUser);
-      } else {
-        this.loadChildrens();
-      }
+      await this.userService.deleteUserDoc(id);
+      this.loadChildrens();
       alert(response.message);
 
     } catch (error) {
