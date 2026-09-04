@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "wpu-ahcer"
+    "default": "wpu-ahcer",
+    "dev": "ahcer-dev"
   },
   "targets": {
     "wpu-ahcer": {
