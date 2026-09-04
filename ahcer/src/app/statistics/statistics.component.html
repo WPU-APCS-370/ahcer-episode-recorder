@@ -1,0 +1,126 @@
+<div class="component-container">
+  <h2 class="header" *ngIf="!loadingPatient && loadedPatientsData.length">
+    <span>
+      Complete episode list
+      <span class="not-printable">
+        for
+        <span *ngFor="let p of loadedPatientsData; let isLast = last">
+          {{ p.firstName }} <span *ngIf="!isLast">, </span>
+        </span>
+      </span>
+    </span>
+  </h2>
+  <p *ngIf="!loadingPatient && !loadedPatientsData.length">
+    No patients found. Please add .
+  </p>
+  <div class="dropdown-container not-printable">
+    <!-- Patient dropdown -->
+    <mat-form-field appearance="fill" *ngIf="patients && patients.length > 1">
+      <mat-label>Choose a Patient</mat-label>
+      <mat-select
+        multiple
+        [(value)]="loadedPatientsData"
+        (selectionChange)="onPatientSelectionChange($event.value)"
+      >
+        <mat-option *ngFor="let patient of patients" [value]="patient">
+          {{ patient.firstName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Duration dropdown -->
+    <mat-form-field appearance="fill"  *ngIf="patients && patients.length > 1">
+      <mat-label>Select Duration</mat-label>
+      <mat-select [(value)]="selectedRange" (selectionChange)="updateChart()">
+        <mat-option value="last7Days">Last 7 Days</mat-option>
+        <mat-option value="lastMonth">Last Month ({{ lastMonthName }})</mat-option>
+        <mat-option value="last6Months">Last 6 Months</mat-option>
+        <mat-option value="lastYear">Last Year ({{ lastYearNumber }})</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="episodes_count === 0">No episodes found.</div>
+  <!-- Only one card shows -->
+  <div class="stat-card" *ngIf="currentStat">
+      <h4 style="font-weight: bold;">
+        Most Common Reported Symptom: {{ formatLabel(currentStat.mostCommon) }} 
+        <span>( {{ currentStat.mostCommonCount || 0 }} {{ currentStat.mostCommonCount > 1 ? 'episodes' : 'episode' }} )</span> 
+      </h4>   
+      <h4 style="font-weight: bold;margin: 0;">Time Range</h4>
+        <div class="range-buttons">
+        <button mat-button [color]="selectedRange === 'last7Days' ? 'primary' : ''"
+              (click)="setRange('last7Days')">7 Days</button>
+
+        <button mat-button [color]="selectedRange === 'lastMonth' ? 'primary' : ''"
+              (click)="setRange('lastMonth')">30 Days</button>
+
+        <button mat-button [color]="selectedRange === 'last6Months' ? 'primary' : ''"
+              (click)="setRange('last6Months')">6 Months</button>
+
+        <button mat-button [color]="selectedRange === 'lastYear' ? 'primary' : ''"
+              (click)="setRange('lastYear')">1 Year</button>
+        </div>
+
+<div class="summary-cards" *ngIf="stats">
+  <mat-card>
+    <mat-card-title>AVERAGE EPISODE LENGTH</mat-card-title>
+    <p style="font-weight: bold;">{{ getAverageFor(selectedRange) }}  ({{ getRangeLabel(selectedRange) }})</p>
+  </mat-card>
+</div>
+
+<div class="trend-label">
+  Trend:
+  <span *ngIf="getTrend(selectedRange) === 'up'" class="up"> Increasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'down'" class="down"> Decreasing</span>
+  <span *ngIf="getTrend(selectedRange) === 'stable'" class="stable"> Stable</span>
+</div>
+
+
+<div class="period-comparison">
+  <ng-container *ngIf="getChangePercentage(selectedRange) as change">
+    <span *ngIf="change > 0" class="up">Up  {{ change | number:'1.0-0' }}% from {{getRangeLabel(selectedRange)}}</span>
+    <span *ngIf="change < 0" class="down">Down  {{ (change * -1) | number:'1.0-0' }}% from {{getRangeLabel(selectedRange)}} </span>
+    <span *ngIf="change == 0" class="stable">→ No change</span>
+  </ng-container>
+</div>
+
+
+
+    <!-- bar Chart -->
+     <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
+      <h4>Where Symptoms Occurred</h4>
+      <canvas baseChart
+        [data]="symptomPieData"
+        [type]="'pie'">
+      </canvas>
+    </div>
+    <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
+    <!-- Avg Duration Chart -->
+    <div *ngIf="currentStat" class="chart-container" style="margin-bottom: 25px;">
+      <h4>Average Episode Length {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'by Month (days)' : 'by Day'}}</h4>
+      <canvas
+        baseChart
+        [data]="durationChartData"
+        [options]="durationChartOptions"
+        [type]="'line'"
+      >
+      </canvas>
+    </div>
+    <h5 style="text-align: center;">Based on {{totalEpisodes}} logged episodes in {{getCountLabel(selectedRange)}}</h5>
+    <!-- Frequency Chart -->
+    <div *ngIf="currentStat" class="chart-container">
+      <h4>Episodes Logged {{selectedRange === 'last6Months' || selectedRange === 'lastYear' ? 'per Month' : 'per Day'}}</h4>
+      <canvas
+        baseChart
+        [data]="frequencyChartData"
+        [options]="frequencyChartOptions"
+        [type]="'line'"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+<div class="spinner-container" *ngIf="loadingPatient || loadingEpisodes">
+  <mat-spinner [diameter]="100"></mat-spinner>
+</div>

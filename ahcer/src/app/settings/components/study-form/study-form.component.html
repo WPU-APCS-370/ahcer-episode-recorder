@@ -1,0 +1,53 @@
+<div class="spinner-container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>
+<div >
+  <h2 mat-dialog-title>{{ data.study ? 'Edit Study' : 'Add Study' }}</h2>
+  <mat-dialog-content>
+    <form [formGroup]="studyForm">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100" *ngIf="!loading">
+        <mat-label>Choose Users</mat-label>
+        <mat-select formControlName="users" multiple>
+          <mat-option *ngFor="let user of users" [value]="user.id">{{
+            user.username
+            }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100" *ngIf="!loading">
+        <mat-label>Choose PI</mat-label>
+        <mat-select formControlName="PI">
+          <mat-option *ngFor="let user of piUsers" [value]="user.id">{{
+            user.username
+            }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" (click)="save()" [disabled]="studyForm.invalid">
+      {{ data.study ? 'Update' : 'Create' }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -45,6 +45,10 @@
       <mat-option value="Other">Other</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Weight (lbs)</mat-label>
+    <input type="number" matInput formControlName="weight">
+  </mat-form-field>
   <mat-form-field appearance="fill" *ngIf="mutationDropdown.value=='Other'">
     <mat-label>Other Mutation</mat-label>
     <input matInput formControlName="otherMutation">

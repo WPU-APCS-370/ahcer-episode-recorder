@@ -1,0 +1,100 @@
+@use '@angular/material' as mat;
+@import '../../styles';
+
+@media only screen and (min-width:1000px) {
+    .component-container {
+        max-width: 90vw;
+        margin: 20px auto;
+    }
+}
+
+@media only screen and (max-width:1000px) {
+    .component-container {
+        max-width: unset;
+        margin: 20px 10px;
+    }
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.spinner-container {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.spinner-container mat-spinner {
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+}
+
+.not-printable {
+    display: inline; // default for non-print
+}
+
+@media print {
+    .not-printable {
+        display: none;
+    }
+}
+
+.mat-mdc-text-field-wrapper {
+    width: 50%;
+}
+
+.stat-card {
+    margin-top: 1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin: 0 15%;
+    span{
+        font-weight: bold;
+        color: rgb(10, 172, 10);
+    }
+}
+
+.dropdown-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dropdown-container mat-form-field {
+    flex: 1 1 300px;
+}
+@media only screen and (max-width: 600px) {
+   .stat-card {
+    margin: 0;
+}
+}
+.trend-label{
+    font-size: 15px;
+    font-weight: 700;
+    margin: 15px 0;
+}
+.summary-cards{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    mat-card{
+        padding: 10px;
+        border-radius: 15px;
+    }
+}
+.period-comparison{
+    margin: 10px 0;
+    font-size: 20px;
+}
+.range-buttons{
+    margin-bottom: 15px;
+}

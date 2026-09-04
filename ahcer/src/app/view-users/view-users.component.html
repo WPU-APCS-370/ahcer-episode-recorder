@@ -1,0 +1,41 @@
+<div class="children-view">
+  <div *ngIf="!loading && !isAdmin && !isPIuser">
+    Add New User <button mat-mini-fab color="accent" routerLink="/add-user">
+    <mat-icon class="add-children-btn">add</mat-icon>
+  </button>
+    </div>
+    <div class="spinner-container" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+
+
+  <mat-card *ngFor="let child of children; index as i"  class="children-card mat-elevation-z10">
+
+    <mat-card-header>
+
+      <mat-card-title>{{child.username | titlecase}}</mat-card-title>
+
+    </mat-card-header>
+    <mat-card-content>
+        <div class="children-container" [ngClass]="{'disable': this.currentUser?.id == child.id}">
+        <span>
+          <b>{{child.email}} </b>
+        </span>
+        <div class="btn">
+          <button mat-mini-fab color="accent" (click)="resetPassword(child.email)"><mat-icon
+            class="add-children-btn">password</mat-icon></button>
+            <button mat-mini-fab color="accent" (click)="deleteUser(child.id)"><mat-icon
+                class="add-children-btn">delete</mat-icon></button>
+          </div>
+      </div>
+      </mat-card-content>
+
+    <!-- <mat-card-actions class="children-actions">
+      <button mat-button (click)="editPatient(children)">Edit</button>
+      <button mat-button color="warn" (click)="onDeletePatient(children)">Delete</button>
+
+    </mat-card-actions> -->
+
+  </mat-card>
+  </div>

@@ -1,0 +1,31 @@
+<div class="setting">
+  <button (click)="allowToken()" class="select-button" mat-flat-button>Allow Notifications</button>
+  <p>{{message}}</p>
+</div>
+
+<div class="setting" *ngIf="usersService.isAdmin">
+  <div class="grid">
+    <ng-container *ngFor="let study of studies">
+      <div class="card" [ngClass]="{'selected-card': study.study != null}">
+        <h3><b>Study Name: </b><span>{{ study.name }}</span></h3>
+        <p><span><b>Start Date:</b>  {{ study.startDate | date }}</span><span> <b>End Date:</b>{{ study.endDate | date }}</span> </p>
+        <div class="btn-container">
+          <button mat-icon-button (click)="openModal(study)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteStudy(study)" color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-icon-button  color="primary" *ngIf="study.study == null" (click)="updateUserStudy(study.id)" >
+            <mat-icon>check_circle</mat-icon>
+          </button>
+          <button mat-icon-button  color="primary" *ngIf="study.study != null" (click)="updateUserStudy('')" >
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <button (click)="openModal()" class="select-button" mat-flat-button>Add Study</button>
+</div>
+

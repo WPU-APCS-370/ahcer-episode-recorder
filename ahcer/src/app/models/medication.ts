@@ -4,6 +4,7 @@ import Timestamp = firebase.firestore.Timestamp;
 export interface Medication {
   name: string,
   type: string,
+  frequency?:string
   doseInfo: {
     amount: number,
     unit: string

@@ -1,6 +1,85 @@
 <div class="login">
-  <h2>Sign Up/Login</h2>
 
-  <firebase-ui (signInSuccessWithAuthResult)="onLoginSuccessful()"></firebase-ui>
+  <ng-container *ngIf="!signInClicked; else elseTemplate">
+    <h2>Sign Up/Login</h2>
+    <button class="login-btn new-account" mat-raised-button routerLink="/signup">Create new Account</button>
+    <button class="login-btn email " mat-raised-button (click)="toggleEmailClicked()">Sign in with Email</button>
+    <!-- <button class="login-btn" mat-raised-button color="warn" (click)="openConsentDialog()">Sign in with Google</button> -->
+    <button class="google-btn" (click)="openConsentDialog()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="google-icon" alt="Google" />
+      <span>Sign in with Google</span>
+    </button>
+
+    <!-- <firebase-ui id="signInwithGoogle" (signInSuccessWithAuthResult)="userService.onLoginSuccessful()"></firebase-ui> -->
+  </ng-container>
+
+  <ng-template #elseTemplate>
+    <div class="create-user">
+      <h1>Login With Email</h1>
+
+      <form [formGroup]="userForm">
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput formControlName="password">
+        </mat-form-field>
+          <form [formGroup]="consentForm" *ngIf="!consentForm.value.consent">
+            <p>This app is free for families. With your permission, de-identified and combined data
+              may be used to support rare disease research and help sustain and improve this app. No personal or
+              identifiable health information is ever shared.</p>
+            <mat-checkbox formControlName="consent" style="margin-bottom: 10px;">
+              I understand and agree.
+            </mat-checkbox>
+          </form>
+        <div style="margin-top: 2px; margin-bottom: 6px;">
+          <span class="error">{{signInError}} </span>
+        </div>
+
+        <div class="button-group">
+          <button mat-raised-button color="primary" (click)="emailLogin()">
+            Login
+          </button>
+          <!-- <button mat-raised-button color="primary" [disabled]="!userForm.get('email')?.valid"   (click)="passwordReset()">
+          Password Reset
+          </button> -->
+          <button mat-raised-button color="warn" (click)="toggleEmailClicked()">
+            Cancel
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </ng-template>
+
 </div>
 
+
+
+<ng-template #consentDialog>
+  <h2 mat-dialog-title>Data Usage Consent</h2>
+
+  <mat-dialog-content>
+    <p>
+      This app is free for families. With your permission, de-identified and combined data
+      may be used to support rare disease research and help sustain and improve this app.
+      No personal or identifiable health information is ever shared.
+    </p>
+
+    <!-- Consent Checkbox -->
+    <form [formGroup]="consentForm">
+      <mat-checkbox formControlName="consent" style="margin-top: 10px;">
+        I understand and agree.
+      </mat-checkbox>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="!consentForm.valid" (click)="onConsentContinue()">
+      Continue
+    </button>
+  </mat-dialog-actions>
+</ng-template>

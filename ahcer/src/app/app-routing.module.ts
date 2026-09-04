@@ -16,6 +16,12 @@ import {PrivacyPolicyComponent} from "./privacy-policy/privacy-policy.component"
 import {EpisodeReportComponent} from "./episode-report/episode-report.component";
 import {UsersService} from "./services/users.service";
 import {first} from "rxjs";
+import { ViewVideoComponent } from './view-video/view-video.component';
+import { ViewUsersComponent } from './view-users/view-users.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { SettingsComponent } from './settings/settings.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { adminGuard } from './services/admin.guard';
 
 
 
@@ -51,10 +57,16 @@ const routes: Routes = [
 
   },
   {
+    path: 'videos',
+    component: ViewVideoComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+
+  },
+  {
     path: 'view-profile',
     component: ViewProfileComponent,
     resolve: {
-      userId: () => inject(UsersService).userId$.pipe(first()),
+      userId: () => inject(UsersService).ThisUserId$.pipe(first()),
     },
     ...canActivate(redirectUnauthorizedToLogin)
   },
@@ -69,8 +81,22 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
+    path: 'users',
+    component: ViewUsersComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'add-user',
+    component: SignUpComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'signup',
+    component: SignUpComponent
   },
   {
     path: 'record-episode',
@@ -91,6 +117,16 @@ const routes: Routes = [
     path: 'episode-report',
     component: EpisodeReportComponent,
    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+   ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'statistics',
+    component: StatisticsComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'privacy-policy',

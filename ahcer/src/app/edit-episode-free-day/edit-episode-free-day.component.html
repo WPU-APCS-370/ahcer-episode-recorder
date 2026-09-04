@@ -1,0 +1,24 @@
+<mat-dialog-content [formGroup]="episodeForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Start Time</mat-label>
+    <input matInput [ngxMatDatetimePicker]="StartTimePicker" formControlName="startTime" />
+    <mat-datepicker-toggle matSuffix [for]="StartTimePicker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #StartTimePicker [showSeconds]="true" [enableMeridian]="true">
+    </ngx-mat-datetime-picker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>End Time</mat-label>
+    <input matInput [ngxMatDatetimePicker]="EndTimePicker" formControlName="endTime" />
+    <mat-datepicker-toggle matSuffix [for]="EndTimePicker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #EndTimePicker [showSeconds]="true" [enableMeridian]="true">
+    </ngx-mat-datetime-picker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Notes</mat-label>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" formControlName="notes"></textarea>
+  </mat-form-field>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button (click)="close()">Close</button>
+
+    <button mat-raised-button color="primary" [disabled]="!episodeForm.valid" (click)="save()">Save</button>
+  </mat-dialog-actions>

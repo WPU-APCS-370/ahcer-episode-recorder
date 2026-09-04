@@ -1,8 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Episode} from "../models/episode";
 import {MedicationService} from "../services/medication.service";
 import {Medication} from "../models/medication";
+import { FreeDay } from '../models/freeday.enum';
+import { VideoDialogComponent } from '../view-video/video-dialog/video-dialog.component';
+import { VideoService } from '../services/video.service';
 
 @Component({
   selector: 'app-view-episode',
@@ -12,15 +15,18 @@ import {Medication} from "../models/medication";
 export class ViewEpisodeComponent implements OnInit {
   episode: Episode;
   patientId: string;
+  userId:string;
   rescueMeds: Medication[]=[];
   rescueMedsDosesAndTimes: Object={};
   loadingMeds: boolean = false;
-
-  constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId]: [Episode, string],
+  video: any;
+  constructor(@Inject(MAT_DIALOG_DATA) [episode, patientId,userId]: [Episode, string,string],
+  private dialog: MatDialog,private videoService: VideoService,
               private dialogRef: MatDialogRef<ViewEpisodeComponent>,
               private medicationService: MedicationService) {
     this.episode = episode;
     this.patientId = patientId;
+    this.userId=userId
     this.loadRescueMeds()
   }
 
@@ -29,7 +35,9 @@ export class ViewEpisodeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.videoService.getUserVideos().subscribe(u => {
+      this.video = u?.videos?.find(v => v.episodeId == this.episode.id);
+    })
   }
 
   loadRescueMeds() {
@@ -42,7 +50,7 @@ export class ViewEpisodeComponent implements OnInit {
           this.rescueMedsDosesAndTimes[med.id] = {doseInfo: med.doseInfo, time: med.time.toDate()};
         }
         this.medicationService.getMedicationsByIds(this.patientId,
-          medications.rescueMeds.map((x)=> x.id))
+          medications.rescueMeds.map((x)=> x.id),false,this.userId)
           .subscribe({
             next: (rescueMeds)=> {
               this.rescueMeds = this.rescueMeds.concat(rescueMeds)
@@ -58,5 +66,19 @@ export class ViewEpisodeComponent implements OnInit {
 
   jsonObjectIsEmpty(object: Object) {
     return !object || (Object.keys(object).length <=0);
+  }
+
+  get NO_EPISODE_TODAY(){
+    return FreeDay.NO_EPISODE_TODAY.toString();
+  }
+
+  get OFF_DAY(){
+    return FreeDay.OFF_DAY.toString();
+  }
+  openVideo(video: any) {
+    this.dialog.open(VideoDialogComponent, {
+      width: '500px',
+      data: { title: video.title, link: video.link }
+    });
   }
 }

@@ -28,6 +28,7 @@ export class EditMedicationComponent implements OnInit {
       doseAmount: [medication.doseInfo?.amount, Validators.required],
       doseUnit: [medication.doseInfo?.unit, Validators.required],
       type: [medication.type, Validators.required],
+      frequency: [medication.frequency, Validators.required],
       active: (medication.type!="Rescue")? medication.active : false
     })
   }
@@ -48,6 +49,7 @@ export class EditMedicationComponent implements OnInit {
         unit: val.doseUnit
       },
       type: val.type,
+      frequency: val.frequency,
       archived: false
     };
 
@@ -56,7 +58,7 @@ export class EditMedicationComponent implements OnInit {
     }
 
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId=> this.medicationService.updateMedication(patientId, this.medication.id, updatedMedication)),
+      switchMap(lastPatient=> this.medicationService.updateMedication(lastPatient.lastPatientViewed, this.medication.id, updatedMedication,lastPatient.lastPatientViewdUserId)),
       first()
     ).subscribe(() => {
       this.dialogRef.close(updatedMedication);

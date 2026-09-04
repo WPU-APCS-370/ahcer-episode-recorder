@@ -1,25 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators} from "@angular/forms";
-import {PatientServices} from "../services/patient.service";
-import {Router} from "@angular/router";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgForm, Validators, FormGroup } from "@angular/forms";
+import { PatientServices } from "../services/patient.service";
+import { ActivatedRoute, Router } from "@angular/router";
 import firebase from "firebase/compat/app";
 import Timestamp = firebase.firestore.Timestamp;
-import {catchError, first, switchMap, tap, throwError} from "rxjs";
-import {EpisodeService} from "../services/episode.service";
-import {Episode} from "../models/episode";
-import {Patient} from "../models/patient";
-import {UsersService} from "../services/users.service";
-import {MedicationService} from "../services/medication.service";
-import {Medication} from "../models/medication";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {CreateMedicationComponent} from "../create-medication/create-medication.component";
-import {ErrorStateMatcher} from "@angular/material/core";
+import { catchError, first, map, of, switchMap, tap, throwError } from "rxjs";
+import { EpisodeService } from "../services/episode.service";
+import { Episode } from "../models/episode";
+import { Patient } from "../models/patient";
+import { UsersService } from "../services/users.service";
+import { MedicationService } from "../services/medication.service";
+import { Medication } from "../models/medication";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { CreateMedicationComponent } from "../create-medication/create-medication.component";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { FreeDay } from '../models/freeday.enum';
+import { AddVideoDialogComponent } from '../view-video/add-video-dialog/add-video-dialog.component';
+import { VideoService } from '../services/video.service';
+import { VideoDialogComponent } from '../view-video/video-dialog/video-dialog.component';
 
 export class formGroupErrorMatcher implements ErrorStateMatcher {
   isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null) {
-    const formGroup = control.parent.controls;
-    const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
-    return control.touched && control.parent.hasError(name+" Error");
+    if (control?.parent.controls) {
+      const formGroup = control.parent.controls;
+      const name = Object.keys(formGroup).find(name => control === formGroup[name]) || null;
+      return control.touched && control.parent.hasError(name + " Error");
+    }
   }
 }
 
@@ -28,9 +34,11 @@ export class formGroupErrorMatcher implements ErrorStateMatcher {
   templateUrl: './create-episode.component.html',
   styleUrls: ['./create-episode.component.scss']
 })
-export class CreateEpisodeComponent implements OnInit{
-  symptomLabels = ["Full Body", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
-                   "Left Hand", "Right Hand", "Eyes", "Loss of Consciousness", "Seizure"];
+export class CreateEpisodeComponent implements OnInit {
+  symptomLabels = ["Apnea/Breathing", "Autonomic Dysfunction", "Behavior", "Chorea/Tremors", "Eyes",
+                    "Full Body", "Left Arm", "Left Hand", "Left Leg", "Reduced Consciousness",
+                    "Right Arm", "Right Hand", "Right Leg", "Seizure", "Swallowing/Choking"]
+;
   loadingPatient: boolean = false;
   loadingRescueMeds: boolean = false;
   loadingPrescriptionMeds: boolean = false;
@@ -38,8 +46,9 @@ export class CreateEpisodeComponent implements OnInit{
   rescueMedications: Medication[] = [];
   prescriptionMeds: Medication[] = [];
   formGroupErrorMatcher: formGroupErrorMatcher = new formGroupErrorMatcher();
+  FreeDay = FreeDay;
 
-  episodeForm =this.fb.group({
+  episodeForm = this.fb.group({
     startTime: [null, Validators.required],
     endTime: [null],
     symptomGroup: this.symptomGroup(),
@@ -54,46 +63,53 @@ export class CreateEpisodeComponent implements OnInit{
       menstruation: false,
       temperature: false,
       water: false,
+      flushing: false,
+      mottling: false,
+      hot_or_cold_body_parts: false,
+      vomiting: false,
       additionalTriggers: ""
     }),
     rescueMedToggle: false,
     rescueMedGroup: this.rescueMedGroup(),
     behavior: ""
   });
+  video: any;
 
   symptomGroup(): UntypedFormGroup {
     let controls = {}
     for(let label of this.symptomLabels) {
       controls[label+' Checkbox'] = false;
-      if (label!="Seizure" && label!="Loss of Consciousness")
+      if (label != "Seizure" && label != "Reduced Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Behavior" && label !=="Chorea/Tremors")
         controls[label+' Dropdown'] = ['']
-      controls[label+' Time'] = null
+      if (label == "Swallowing/Choking" || label == "Chorea/Tremors" || label == "Autonomic Dysfunction" || label == "Behavior")
+        controls[label + ' TextBox'] = ['']
+      controls[label + ' Time'] = null
     }
     let options = {
       validators: (formGroup: UntypedFormGroup) => {
         let checked = 0;
         let errors = {};
         for (let label of this.symptomLabels) {
-          let checkbox = formGroup.controls[label+' Checkbox']
+          let checkbox = formGroup.controls[label + ' Checkbox']
           let checkboxChecked = (checkbox.value === true)
           let dropdownValueEmpty = false;
-          if (label!="Seizure" && label!="Loss of Consciousness") {
+          if (label != "Seizure" && label != "Reduced Consciousness" && label != "Apnea/Breathing" && label !== "Swallowing/Choking" && label !== "Chorea/Tremors" && label !== "Behavior") {
             let dropdown = formGroup.controls[label + ' Dropdown']
             dropdownValueEmpty = (dropdown.value === '')
           }
-          if(checkboxChecked) {
+          if (checkboxChecked) {
             checked++;
           }
           if (checkboxChecked && dropdownValueEmpty) {
-            errors[label+' Dropdown Error']=true;
+            errors[label + ' Dropdown Error'] = true;
           }
         }
-        if (checked < 1){
+        if (checked < 1) {
           return {
             requireCheckboxesToBeChecked: true
           };
         }
-        else if(Object.keys(errors).length > 0) {
+        else if (Object.keys(errors).length > 0) {
           return errors;
         }
 
@@ -103,14 +119,16 @@ export class CreateEpisodeComponent implements OnInit{
     return this.fb.group(controls, options);
   }
 
+  public showAutonomicTextField: boolean = false;
+
   rescueMedGroup(): UntypedFormGroup {
     let controls = {}
-    for(let i=0; i < this.rescueMedications.length; i++) {
+    for (let i = 0; i < this.rescueMedications.length; i++) {
       let medication = this.rescueMedications[i];
-      controls['med-'+i+'-checkbox'] = false;
-      controls['med-'+i+'-dose-amount'] = [medication.doseInfo.amount];
-      controls['med-'+i+'-dose-unit'] = [medication.doseInfo.unit];
-      controls['med-'+i+'-time'] = [null];
+      controls['med-' + i + '-checkbox'] = false;
+      controls['med-' + i + '-dose-amount'] = [medication.doseInfo.amount];
+      controls['med-' + i + '-dose-unit'] = [medication.doseInfo.unit];
+      controls['med-' + i + '-time'] = [null];
     }
     let options = {
       validators: this.medicationValidator()
@@ -118,50 +136,51 @@ export class CreateEpisodeComponent implements OnInit{
     return this.fb.group(controls, options);
   }
 
-   medicationValidator() {
-     return (formGroup: UntypedFormGroup) =>
-     {
-       let checked = 0;
-       let errors = {};
-       for (let i=0; i < this.rescueMedications.length; i++) {
-         let checkbox = formGroup.controls['med-' + i + '-checkbox']
-         let checkboxChecked = (checkbox?.value === true)
-         let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
-         let doseEmpty = (doseAmount?.value === null)
+  medicationValidator() {
+    return (formGroup: UntypedFormGroup) => {
+      let checked = 0;
+      let errors = {};
+      for (let i = 0; i < this.rescueMedications.length; i++) {
+        let checkbox = formGroup.controls['med-' + i + '-checkbox']
+        let checkboxChecked = (checkbox?.value === true)
+        let doseAmount = formGroup.controls['med-' + i + "-dose-amount"];
+        let doseEmpty = (doseAmount?.value === null)
 
-         if (checkboxChecked) {
-           checked++;
-         }
-         if (checkboxChecked && doseEmpty) {
-           errors['med-' + i + "-dose-amount Error"] = true;
-         }
-       }
-       if (checked < 1) {
-         return {
-           requireCheckboxesToBeChecked: true
-         };
-       }
-       else if(Object.keys(errors).length > 0) {
-         return errors;
-       }
+        if (checkboxChecked) {
+          checked++;
+        }
+        if (checkboxChecked && doseEmpty) {
+          errors['med-' + i + "-dose-amount Error"] = true;
+        }
+      }
+      if (checked < 1) {
+        return {
+          requireCheckboxesToBeChecked: true
+        };
+      }
+      else if (Object.keys(errors).length > 0) {
+        return errors;
+      }
 
-       return null;
-     }
-   }
+      return null;
+    }
+  }
 
   constructor(private fb: UntypedFormBuilder,
-              private episodeService: EpisodeService,
-              private patientService: PatientServices,
-              private usersService: UsersService,
-              private medicationService: MedicationService,
-              private router: Router,
-              private dialog: MatDialog) {
+    private episodeService: EpisodeService,
+    private patientService: PatientServices,
+    private usersService: UsersService,
+    private medicationService: MedicationService,
+    private router: Router,
+    private dialog: MatDialog,
+    private videoService: VideoService,
+    private route: ActivatedRoute,) {
     this.loadingPatient = true;
     usersService.getLastViewedPatient()
       .pipe(
-        switchMap(patientId => patientService.getPatientById(patientId))
+        switchMap(lastPatient => patientService.getPatientById(lastPatient.lastPatientViewed, lastPatient.lastPatientViewdUserId))
       )
-      .subscribe( (patient) => {
+      .subscribe((patient) => {
         this.patient = patient;
         this.loadingPatient = false;
       })
@@ -170,8 +189,16 @@ export class CreateEpisodeComponent implements OnInit{
     this.loadActivePrescriptionMeds();
   }
 
+  onAutonomicOtherClick(value: string) {
+    if (value == 'other') {
+      this.showAutonomicTextField = true;
+    } else {
+      this.showAutonomicTextField = false;
+    }
+  }
+
   onMedToggleChange(value: boolean) {
-    if(!value) {
+    if (!value) {
       this.episodeForm.get('rescueMedGroup').clearValidators();
       this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
@@ -180,19 +207,50 @@ export class CreateEpisodeComponent implements OnInit{
       this.episodeForm.get('rescueMedGroup').updateValueAndValidity();
     }
   }
-
+  validatorsCleared: any = false;
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      let startDate = params['date'];
+      if (startDate) {
+        let dateObj = new Date(startDate)
+        this.episodeForm.patchValue({
+          startTime: dateObj,
+          endTime: new Date()
+        });
+      }
+    })
+
+    const behaviorControl = this.episodeForm.get('behavior');
+
+    if (behaviorControl) {
+      behaviorControl.valueChanges.subscribe(value => {
+        const lowerValue = (value || '').toString().toLowerCase().trim();
+        if (lowerValue && !this.validatorsCleared) {
+          this.validatorsCleared = true;
+          Object.keys(this.episodeForm.controls).forEach(field => {
+            if (field !== 'startTime' && field !== 'endTime') {
+              const control = this.episodeForm.get(field);
+              control?.clearValidators();
+              control?.updateValueAndValidity({ emitEvent: false });
+            }
+          });
+        }
+      });
+    }
+
+
   }
 
   loadRescueMeds() {
     this.loadingRescueMeds = true;
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId =>
-        this.medicationService.getMedicationsByType(patientId, true)
+      switchMap(lastPatient =>
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, true, false, true, lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
       medications => {
+        // console.log(medications);
         this.rescueMedications = medications;
         this.episodeForm.removeControl("rescueMedGroup");
         this.episodeForm.addControl("rescueMedGroup", this.rescueMedGroup())
@@ -205,8 +263,8 @@ export class CreateEpisodeComponent implements OnInit{
   loadActivePrescriptionMeds() {
     this.loadingPrescriptionMeds = true;
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId =>
-        this.medicationService.getMedicationsByType(patientId, false, true)
+      switchMap(lastPatient =>
+        this.medicationService.getMedicationsByType(lastPatient.lastPatientViewed, false, true, true, lastPatient.lastPatientViewdUserId)
       ),
       first()
     ).subscribe(
@@ -224,7 +282,7 @@ export class CreateEpisodeComponent implements OnInit{
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
 
-    dialogConfig.data = {isRescue: true};
+    dialogConfig.data = { isRescue: true };
 
     this.dialog
       .open(CreateMedicationComponent, dialogConfig)
@@ -238,45 +296,60 @@ export class CreateEpisodeComponent implements OnInit{
 
   onCreateEpisode() {
     const val = this.episodeForm.value;
-    let symptomKeys = ["fullBody", "leftArm", "rightArm", "leftLeg", "rightLeg",
-                       "leftHand", "rightHand", "eyes", "seizure", "lossOfConsciousness"]
-    let symptoms : Episode['symptoms'] = {
+    let symptomKeys = ["apnea_breathing", "autonomic_dysfunction", "behavior", "chorea_tremors", "eyes", "fullBody", "leftArm", "leftHand", "leftLeg", "lossOfConsciousness", "rightArm", "rightHand", "rightLeg", "seizure", "swallowing_choking"]
+
+    let symptoms: Episode['symptoms'] = {
       seizure: {},
-      lossOfConsciousness:{},
+      lossOfConsciousness: {},
       fullBody: {},
       eyes: {},
+      behavior: {},
       leftArm: {},
       leftHand: {},
       leftLeg: {},
       rightArm: {},
       rightHand: {},
-      rightLeg: {}
+      rightLeg: {},
+      apnea_breathing: {},
+      autonomic_dysfunction: {},
+      swallowing_choking: {},
+      chorea_tremors: {},
     }
 
     for (let index in symptomKeys) {
       let symptom = {}
-      if(val.symptomGroup[this.symptomLabels[index]+' Checkbox']===true) {
-        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness') {
-            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+      if (val.symptomGroup[this.symptomLabels[index] + ' Checkbox'] === true) {
+        if (symptomKeys[index] != 'seizure' && symptomKeys[index] != 'lossOfConsciousness' && symptomKeys[index] !== "apnea_breathing") {
+          if (symptomKeys[index] == "swallowing_choking" || symptomKeys[index] == "chorea_tremors") {
+            symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+          } else {
+            if (symptomKeys[index] == "autonomic_dysfunction" || symptomKeys[index] == "behavior") {
+              symptom['text'] = val.symptomGroup[this.symptomLabels[index] + ' TextBox'];
+            }
+            if (symptomKeys[index] != "behavior") {
+              symptom['type'] = val.symptomGroup[this.symptomLabels[index] + ' Dropdown'];
+            }
+          }
         } else {
           symptom['present'] = true;
         }
-        if(val.symptomGroup[this.symptomLabels[index] + ' Time'])
-          symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
-        else
-          symptom['time'] = Timestamp.fromDate(val.startTime);
+        if (symptomKeys[index] !== 'behavior') {
+          if (val.symptomGroup[this.symptomLabels[index] + ' Time'])
+            symptom['time'] = Timestamp.fromDate(val.symptomGroup[this.symptomLabels[index] + ' Time']);
+          else
+            symptom['time'] = Timestamp.fromDate(val.startTime);
+        }
       }
       symptoms[symptomKeys[index]] = symptom;
     }
 
-    let triggers : [string] = ['']
+    let triggers: [string] = ['']
 
     if (val.trigger === true) {
       let firstValue = true;
       for (let key in val.triggerGroup) {
         if (val.triggerGroup[key] === true) {
-          if (firstValue)
-          {
+          if (firstValue) {
             triggers[0] = key;
             firstValue = false;
           }
@@ -300,8 +373,8 @@ export class CreateEpisodeComponent implements OnInit{
     }
 
     if (val.rescueMedToggle === true) {
-      for (let i=0; i < this.rescueMedications.length; i++) {
-        if(val.rescueMedGroup['med-'+i+'-checkbox']===true) {
+      for (let i = 0; i < this.rescueMedications.length; i++) {
+        if (val.rescueMedGroup['med-' + i + '-checkbox'] === true) {
           let medication = this.rescueMedications[i];
           let time: Timestamp;
           if (val.rescueMedGroup['med-' + i + '-time'])
@@ -328,22 +401,28 @@ export class CreateEpisodeComponent implements OnInit{
       medications['rescueMeds'] = rescueMeds;
 
     const newEpisode: Partial<Episode> = {
+      status: FreeDay.RECORDED,
       symptoms: symptoms,
-      otherTrigger: (val.trigger)?  val.triggerGroup.additionalTriggers : "",
+      otherTrigger: (val.trigger) ? val.triggerGroup.additionalTriggers : "",
       knownTriggers: triggers,
       behavior: val.behavior
     };
 
     newEpisode.startTime = Timestamp.fromDate(val.startTime);
-    if(val.endTime)
+    if (val.endTime)
       newEpisode.endTime = Timestamp.fromDate(val.endTime);
-    if(Object.keys(medications).length != 0)
+    if (Object.keys(medications).length != 0)
       newEpisode.medications = medications
 
     this.usersService.getLastViewedPatient().pipe(
-      switchMap(patientId=> this.episodeService.createEpisode(patientId, newEpisode)),
+      switchMap(lastPatient => this.episodeService.createEpisode(lastPatient.lastPatientViewed, newEpisode, lastPatient.lastPatientViewdUserId)),
       first(),
-      tap(() => this.router.navigateByUrl('/')),
+      tap((createdEpisode: any) => {
+        this.router.navigateByUrl('/')
+        if(this.video != null) {
+          this.updateVideoEpisode(createdEpisode.id)
+        }
+      }),
       catchError(err => {
         console.log(err);
         alert('Could not add new episode.');
@@ -351,6 +430,49 @@ export class CreateEpisodeComponent implements OnInit{
       })
     ).subscribe();
   }
+  openAddVideoDialog() {
+    const dialogRef = this.dialog.open(AddVideoDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.video = result;
+        // Save to user
+        this.videoService.addUserVideoArray(result).subscribe(() => {
+          console.log('Video Saved Successfully!');
+
+        }, () => {
+          console.log('Some error occurred while saving.');
+
+        });
+      }
+    });
+  }
+  updateVideoEpisode(id) {
+    this.videoService.updateUserVideo(this.video.id, {
+      episodeId: id
+    }).subscribe();
+  }
+  onDeleteVideo() {
+    this.videoService.deleteUserVideo(this.video).subscribe(
+      () => {
+        console.log('File deleted successfully');
+        this.video = null
+      },
+      (error) => {
+        console.log('Error deleting file:');
+        this.video = null
+      }
+    );
+  }
+  openVideo(video: any) {
+  this.dialog.open(VideoDialogComponent, {
+    width: '500px',
+    data: { title: video.title, link: video.link }
+  });
+}
+
 
 }
 

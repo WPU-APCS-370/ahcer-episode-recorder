@@ -1,0 +1,47 @@
+.setting{
+  max-width: 400px;
+  margin: 20px auto 10px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  .select-button{
+    background-color: rgb(129, 123, 214);
+  }
+  h3,p{
+    margin-top: 10px;
+  }
+
+  .btn-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .selected-card{
+    background: #9655d5;
+    border: 1px solid #4e108d;
+    color: white;
+  }
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 10px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  background: #fafafa;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+  p{
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+

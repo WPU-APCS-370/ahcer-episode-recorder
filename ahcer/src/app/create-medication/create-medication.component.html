@@ -19,6 +19,7 @@
         <mat-option value="g">g</mat-option>
         <mat-option value="ml">ml</mat-option>
         <mat-option value="caps">caps</mat-option>
+        <mat-option value="L/m">L/m</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -28,6 +29,12 @@
       <mat-option value="Daily">Daily</mat-option>
       <mat-option value="Rescue">Rescue</mat-option>
       <mat-option value="Alternative">Alternative</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Frequency</mat-label>
+    <mat-select formControlName="frequency">
+      <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" [value]="i">{{i}}</mat-option>
     </mat-select>
   </mat-form-field>
   <div [class]="'checkbox-container' + ((!medicationType.value || medicationType.value=='Rescue')? ' invisible':'')">

@@ -17,7 +17,7 @@ import { CreatePatientComponent } from './create-patient/create-patient.componen
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatDatepickerModule} from "@angular/material/datepicker";
@@ -62,6 +62,24 @@ import {OverlayModule} from "@angular/cdk/overlay";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
+import { ViewVideoComponent } from './view-video/view-video.component';
+import { RecordVideoComponent } from './record-video/record-video.component';
+import { ViewUsersComponent } from './view-users/view-users.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { getAuth } from 'firebase/auth';
+import { provideAuth } from '@angular/fire/auth';
+import { initializeApp } from 'firebase/app';
+import { provideFirebaseApp } from '@angular/fire/app';
+import { SettingsComponent } from './settings/settings.component';
+import { EditEpisodeFreeDayComponent } from './edit-episode-free-day/edit-episode-free-day.component';
+import { HttpClientModule } from '@angular/common/http';
+import { StudyFormComponent } from './settings/components/study-form/study-form.component';
+import { DeleteConfirmationComponent } from './settings/components/delete-confirmation/delete-confirmation.component';
+import { UpdateModalComponent } from './view-profile/update-modal/update-modal.component';
+import { AddVideoDialogComponent } from './view-video/add-video-dialog/add-video-dialog.component';
+import { VideoDialogComponent } from './view-video/video-dialog/video-dialog.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { NgChartsModule } from 'ng2-charts';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -98,13 +116,28 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     HelpComponent,
     PrivacyPolicyComponent,
     EpisodeReportComponent,
-    ReportFilterPopupComponent
+    ReportFilterPopupComponent,
+    ViewVideoComponent,
+    RecordVideoComponent,
+    ViewUsersComponent,
+    SignUpComponent,
+    SettingsComponent,
+    EditEpisodeFreeDayComponent,
+    StudyFormComponent,
+    DeleteConfirmationComponent,
+    UpdateModalComponent,
+    AddVideoDialogComponent,
+    VideoDialogComponent,
+    StatisticsComponent
   ],
     imports: [
+      HttpClientModule,
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         AngularFireModule.initializeApp(environment.firebase),
+        // provideFirebaseApp(() => initializeApp(environment.firebase)),
+        // provideAuth(() => getAuth()),
         AngularFireAuthModule,
         FirebaseUIModule.forRoot(firebaseUiAuthConfig),
         AngularFirestoreModule,
@@ -114,6 +147,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
         MatSidenavModule,
         MatListModule,
         ReactiveFormsModule,
+         FormsModule,
         MatFormFieldModule,
         MatSelectModule,
         MatDatepickerModule,
@@ -137,7 +171,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
         MatPaginatorModule,
         OverlayModule,
         MatChipsModule,
-        MatExpansionModule
+        MatExpansionModule,
+        NgChartsModule
     ],
   providers: [
     ScreenTrackingService,UserTrackingService, PatientServices, UsersService

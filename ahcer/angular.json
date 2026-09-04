@@ -28,7 +28,9 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/firebase-messaging-sw.js",
+              "src/manifest.json"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
@@ -58,6 +60,27 @@
               ],
               "outputHashing": "all"
             },
+            "sandbox": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "9mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "1mb",
+                  "maximumError": "1mb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sandbox.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -74,6 +97,9 @@
           "configurations": {
             "production": {
               "browserTarget": "ahcer:build:production"
+            },
+            "sandbox": {
+              "browserTarget": "ahcer:build:sandbox"
             },
             "development": {
               "browserTarget": "ahcer:build:development"
@@ -118,5 +144,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "de6cf771-cf9d-4109-8154-46d37a0a7e43"
   }
 }

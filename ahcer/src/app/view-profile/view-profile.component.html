@@ -3,14 +3,20 @@
   <mat-card class="user-profile-card">
     <mat-card-header>
       <mat-card-title>
-        <h2>{{ (user$ | async)?.firstName }} {{ (user$ | async)?.lastName }}</h2>
+        <h2>{{ (user$ | async)?.username }} </h2>
       </mat-card-title>
-      <mat-card-subtitle>{{ (user$ | async)?.emailAddress }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ (user$ | async)?.email }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <h3>Patient List</h3>
       <p *ngFor="let patient of patients$ | async">{{patient.firstName}} {{patient.lastName}} <a routerLink="/patients">View Details</a></p>
     </mat-card-content>
   </mat-card>
+  <button mat-stroked-button color="success" (click)="openModal(user )" >User Profile</button>
+  <button mat-stroked-button color="warn" (click)="passwordReset()">Password Reset</button>
+  <div style="margin-top: 10px;">
+    <span class="error">{{resetError}} </span>
+  </div>
   <button mat-stroked-button color="warn" (click)="logout()">Log Out</button>
+  <!-- <button mat-stroked-button color="warn" (click)="deleteAcount()">Delete Acount</button> -->
 </div>

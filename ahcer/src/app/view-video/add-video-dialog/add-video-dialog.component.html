@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Add New Video</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Video Title</mat-label>
+    <input matInput [(ngModel)]="videoTitle" />
+  </mat-form-field>
+
+  <input type="file" accept="video/*" (change)="onFileSelected($event)" />
+
+  <div *ngIf="fileUploadMessage" class="message">{{ fileUploadMessage }}</div>
+  <div *ngIf="fileUploadError" class="error">{{ fileUploadError }}</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="uploadVideo()" [disabled]="fileUploading || !videoTitle || !selectedFile">Upload</button>
+</mat-dialog-actions>
