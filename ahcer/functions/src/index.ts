@@ -4,8 +4,25 @@ import {Response} from "express";
 
 admin.initializeApp();
 
-const setCorsHeaders = (response: Response) => {
-  response.set("Access-Control-Allow-Origin", "*");
+type UserAccessData = {
+  PI?: string;
+  isAdmin?: boolean;
+  parentId?: string;
+  study?: string;
+};
+
+const allowedOrigins = new Set([
+  "http://localhost:4200",
+  "https://ahcer.org",
+  "https://www.ahcer.org",
+  "https://wpu-ahcer.web.app",
+  "https://wpu-ahcer.firebaseapp.com",
+]);
+
+const setCorsHeaders = (origin: string | undefined, response: Response) => {
+  if (origin && allowedOrigins.has(origin)) {
+    response.set("Access-Control-Allow-Origin", origin);
+  }
   response.set("Access-Control-Allow-Methods", "POST, OPTIONS");
   response.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 };
@@ -24,9 +41,18 @@ const getBearerToken = (authorizationHeader?: string) => {
 };
 
 exports.deleteAccount = functions.https.onRequest(async (request, response) => {
-  setCorsHeaders(response);
+  const origin = request.get("Origin");
+  setCorsHeaders(origin, response);
 
   try {
+    if (!origin || !allowedOrigins.has(origin)) {
+      response.status(403).send({
+        success: false,
+        message: "Origin not allowed.",
+      });
+      return;
+    }
+
     if (request.method === "OPTIONS") {
       response.status(204).send("");
       return;
@@ -74,12 +100,13 @@ exports.deleteAccount = functions.https.onRequest(async (request, response) => {
       admin.firestore().doc(`users/${uid}`).get(),
     ]);
 
-    const caller = callerSnapshot.data() || {};
-    const target = targetSnapshot.data() || {};
+    const caller = callerSnapshot.data() as UserAccessData | undefined;
+    const target = targetSnapshot.data() as UserAccessData | undefined;
     const canDeleteSelf = decodedToken.uid === uid;
-    const canDeleteChild = target.parentId === decodedToken.uid;
-    const canDeleteStudyUser = Boolean(caller.PI) && caller.PI === target.study;
-    const isAdmin = caller.isAdmin === true;
+    const canDeleteChild = target?.parentId === decodedToken.uid;
+    const canDeleteStudyUser =
+      Boolean(caller?.PI) && caller?.PI === target?.study;
+    const isAdmin = caller?.isAdmin === true;
 
     if (!(canDeleteSelf || canDeleteChild || canDeleteStudyUser || isAdmin)) {
       response.status(403).send({
@@ -89,6 +116,7 @@ exports.deleteAccount = functions.https.onRequest(async (request, response) => {
       return;
     }
 
+    await admin.firestore().doc(`users/${uid}`).delete();
     await admin.auth().deleteUser(uid);
 
     response.status(200).send({
