@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { first, firstValueFrom, from, map, Observable, switchMap } from "rxjs";
+import { first, from, map, Observable, of, switchMap } from "rxjs";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { convertOneSnap } from "./data-utils";
 import { User } from "../models/user";
 import { Router } from "@angular/router";
 import { environment } from 'src/environments/environment';
-import { getApp, getApps, initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { getAuth } from 'firebase/auth';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { arrayUnion } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -97,20 +98,8 @@ export class UsersService {
 
 
   deleteAccount(uid: string) {
-    return this.afAuth.currentUser.then(async currentUser => {
-      if (!currentUser) {
-        throw new Error('Authentication required.');
-      }
-
-      const url = environment.deleteAccountUrl;
-      const idToken = await currentUser.getIdToken();
-
-      return firstValueFrom(this.http.post(url, { uid }, {
-        headers: new HttpHeaders({
-          Authorization: 'Bearer ' + idToken
-        })
-      }));
-    });
+    const url = environment.deleteAccountUrl;
+    return this.http.post(url, { uid }).toPromise();
   }
 
   getUserVideos(): Observable<any> {
@@ -141,23 +130,16 @@ export class UsersService {
   }
 
   async createUserByEmailPassword(email: string, password: string): Promise<any> {
-    const firebaseApp = this.getDetachedAuthApp();
+    const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     let user = await createUserWithEmailAndPassword(detachedAuth, email, password);
     return user;
   }
 
   passwordRest(email: string): Promise<void> {
-    const firebaseApp = this.getDetachedAuthApp();
+    const firebaseApp = initializeApp(environment.firebase, 'authApp');
     const detachedAuth = getAuth(firebaseApp);
     return sendPasswordResetEmail(detachedAuth, email)
-  }
-
-  private getDetachedAuthApp() {
-    const authAppName = 'authApp';
-    return getApps().some(app => app.name === authAppName)
-      ? getApp(authAppName)
-      : initializeApp(environment.firebase, authAppName);
   }
 
 
@@ -250,6 +232,7 @@ export class UsersService {
               email: cred.auth().currentUser.email,
               isParent: true,
               study: '',
+              password: '',
               username: username ? username : cred.auth().currentUser.displayName || '',
               consent: consent ? consent : '',
             };
