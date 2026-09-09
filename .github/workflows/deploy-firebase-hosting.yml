@@ -28,7 +28,12 @@ jobs:
       # TODO(#45): once the CI test gate lands, run the test suite here
       # and let a failure block the deploy step below.
 
+      - name: Write service account credentials
+        run: echo "$FIREBASE_SERVICE_ACCOUNT_WPU_AHCER" > "${{ runner.temp }}/firebase-service-account.json"
+        env:
+          FIREBASE_SERVICE_ACCOUNT_WPU_AHCER: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WPU_AHCER }}
+
       - name: Build and deploy to Firebase Hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: npm run deploy-prod
