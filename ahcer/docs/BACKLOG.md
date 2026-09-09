@@ -194,6 +194,61 @@ Firebase's pricing page.
 
 ---
 
+## Epic: Staging Deploy Environment
+
+### Why
+
+Issue #44 already anticipated this: "If a hosted dev/preview environment
+(not just local `ng serve`) is still desired, add a Hosting target for
+`ahcer-dev` — out of scope for this issue unless requested." It's now
+requested — the goal is testing PRs before they reach production, not
+just after merge.
+
+Two different Firebase features could both be called "staging," and only
+one actually delivers that:
+
+- **A Hosting preview channel under `wpu-ahcer`** — same backend as
+  production. A build deployed there still reads/writes real patient data
+  from a different URL. Not appropriate here.
+- **`ahcer-dev`** — a genuinely separate, isolated Firebase project
+  (its own Firestore/Auth, already has rules and indexes deployed this
+  session) with an unused default Hosting site already provisioned at
+  `ahcer-dev.web.app`. Testing here never touches production data. This is
+  the one that matters.
+
+The existing `development` Angular build configuration already points at
+`ahcer-dev` (via `environment.ts`), but has `optimization: false` and
+`buildOptimizer: false` — fine for local debugging, not representative of
+a build meant to gate real PRs before production.
+
+### Sequencing
+
+- **#64** (staging build config) comes first — everything else deploys
+  whatever this produces.
+- **#65** (automate per-PR previews) depends on #64. Uses Firebase
+  Hosting's preview-channel mechanism via the official
+  `FirebaseExtended/action-hosting-deploy` GitHub Action, so simultaneous
+  PRs get their own URLs instead of clobbering a single shared one.
+- **#66** (docs) closes the loop once both are working.
+
+### Stories
+
+| # | Story | Status |
+|---|---|---|
+| [#64](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/64) | Add a staging build configuration pointed at ahcer-dev | Open |
+| [#65](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/65) | Automate per-PR staging preview deploys | Open |
+| [#66](https://github.com/WPU-APCS-370/ahcer-episode-recorder/issues/66) | Document the staging environment | Open |
+
+### Note
+
+`ahcer-dev` now serves two purposes: local `ng serve` development (existing)
+and hosted PR previews (new), both against the same isolated backend. That's
+intentional, not a conflict — they don't interact (one's a local dev server,
+the other's a deployed build), and both benefit from the same rules/indexes
+work already done there this session.
+
+---
+
 ## Parked: Error tracking / logging (Sentry)
 
 This app has no error tracking or logging today. Errors in production are
