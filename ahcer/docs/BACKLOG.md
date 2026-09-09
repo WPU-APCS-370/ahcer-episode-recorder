@@ -191,3 +191,25 @@ Firebase's pricing page.
   does, so the existing Angular service worker should self-update via its
   no-cache `ngsw.json` version check — but #57 calls for an explicit
   hard-refresh test on the live domain rather than assuming this works.
+
+---
+
+## Parked: Error tracking / logging (Sentry)
+
+This app has no error tracking or logging today. Errors in production are
+only visible if a user happens to report them — exactly the kind of gap
+that let the silently-failing profile-doc write in #51 go unnoticed until
+it was found by manually reading code during this session's dev-environment
+work. Sentry would have surfaced that immediately.
+
+The repo owner already uses Sentry for another app; reusing it here likely
+makes sense — no new tool, probably shares the existing org's event quota
+at little or no extra cost, and it has a mature Angular SDK for this exact
+stack. Not yet verified against the actual plan in use, though, and scope
+(frontend only vs. also the Cloud Functions in `functions/`, source-map
+upload for readable stack traces, dev/prod noise separation) hasn't been
+worked out.
+
+Parked as a single evaluation issue rather than a full epic, unlike the
+Firebase Hosting migration above — that epic only got broken into stories
+after verifying real infrastructure state first. See #62.
